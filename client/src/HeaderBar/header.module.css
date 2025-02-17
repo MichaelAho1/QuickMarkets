@@ -1,0 +1,10 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 10%;
+}
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+}
