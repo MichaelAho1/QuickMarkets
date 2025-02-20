@@ -4,25 +4,22 @@ import styles from './header.module.css';
 const header = () => {
     return (
         <div className={styles.header}>
-            <h1>Stock Sim</h1>
+            <h1 className={styles.title}>Stock Sim</h1>
             <div className={styles.headerInfo}>
-                <h2 className={styles.toTrade}>$10,000.00</h2>
-                <h3>To Trade</h3>
+                <h2 className={styles.value}>$10,000.00<br></br><span className={styles.description}>To Trade</span></h2>
             </div>
             <div className={styles.headerInfo}>
-                <h2 className={styles.toTrade}>$0.00</h2>
-                <h3>Profit</h3>
+                <h2 className={styles.value}>$0.00<br></br><span className={styles.description}>Profit</span></h2>
             </div>
             <div className={styles.headerInfo}>
-                <h2 className={styles.toTrade}>$10,000.00</h2>
-                <h3>Net Worth</h3>
+                <h2 className={styles.value}>$10,000.00<br></br><span className={styles.description}>To Trade</span></h2>
             </div>
             <div className={styles.headerInfo}>
-                <h2 className={styles.toTrade}>$10,000.00</h2>
-                <h3>Invested</h3>
+                <h2 className={styles.value}>$0.00<br></br><span className={styles.description}>Invested</span></h2>
             </div>
         </div>
     );
 };
+
 
 export default header;
