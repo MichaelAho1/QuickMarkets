@@ -26,7 +26,7 @@ const NavBar = () => {
         <>
             {isMobile && (
                 <button className={styles.menuButton} onClick={toggleMenu}>
-                    
+
                 </button>
             )}
 
@@ -40,9 +40,11 @@ const NavBar = () => {
                 <button className={styles.navButton}>
                     <img className={styles.icons} src={bankIcon} alt="Bank" width="100" height="100"/>
                 </button>
-                <button className={styles.navButton}>
-                    <img className={styles.icons} src={settingsIcon} alt="Settings" width="100" height="100"/>
-                </button>
+                <div className={styles.bottomNav}>
+                    <button className={styles.navButton}>
+                        <img className={styles.icons} src={settingsIcon} alt="Settings" width="100" height="100"/>
+                    </button>
+                </div>
             </div>
         </>
     );

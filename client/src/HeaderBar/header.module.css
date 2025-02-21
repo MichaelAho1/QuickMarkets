@@ -8,6 +8,7 @@
 .value {
     margin: 0px;
     padding: 0px;
+    margin-top: 10px;
     font-size: 1.8rem;
     line-height: 0.8;
 }
@@ -24,6 +25,7 @@
     font-size: 3.5rem;
     padding: 0px;
     margin: 0px;
+    margin-top: 10px;
     line-height: 0.9;
 }
 
