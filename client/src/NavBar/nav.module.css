@@ -33,6 +33,10 @@
     max-height: 80px;
 }
 
+.bottomNav {
+    margin-top: 300%;
+}
+
 @media (max-width: 768px) {
     .navContainer {
         width: 100%;

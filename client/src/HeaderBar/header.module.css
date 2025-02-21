@@ -29,6 +29,8 @@
     line-height: 0.9;
 }
 
+
+
 @media (max-width: 1350px) { 
     .header {
         gap: 8.6%;
