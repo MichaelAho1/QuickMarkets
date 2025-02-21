@@ -1,0 +1,79 @@
+.navContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 8%;
+    min-width: 60px;
+    max-width: 100px;
+    background-color: #455A64;
+    position: fixed;
+    padding-top: 1rem;
+    gap: 1rem;
+    z-index: 100;
+}
+
+.navButton {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background-color: #455A64;
+}
+
+.navButton:hover {
+    background-color: #546E7A;
+}
+
+.icons {
+    width: 100%;
+    height: 100%;
+    max-width: 60px;
+    max-height: 80px;
+}
+
+@media (max-width: 768px) {
+    .navContainer {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 1rem 1rem 1rem 1rem; 
+        display: none;
+        background-color: #455A64;
+        z-index: 99;
+    }
+
+    .navContainer.open {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navButton {
+        width: 100%;
+        max-width: 200px;
+        margin: 0.5rem 0;
+    }
+
+    .menuButton {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 101;
+        background-color: #455A64;
+        border: none;
+        padding: 0.8rem;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .menuIcon {
+        width: 24px;
+        height: 24px;
+        color: white;
+    }
+}
