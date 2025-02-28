@@ -1,8 +1,11 @@
 .header {
+    gap: 15%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 5px;
     display: flex;
     background-color: #37474F;
     color: white;
-    gap: 10%;
 }
 
 .value {
@@ -33,7 +36,7 @@
 
 @media (max-width: 1350px) { 
     .header {
-        gap: 8.6%;
+        gap: 10%;
     }
     .title {
         font-size: 2.5rem;
@@ -64,13 +67,13 @@
 
 @media (max-width: 800px) { 
     .header {
-        gap: 8%;
+        gap: 9%;
     }
 }
 
 @media (max-width: 700px) { 
     .title {
-        font-size: 2rem; 
+        font-size: 1.75rem; 
     }
     .value {
         font-size: 0.8rem;
