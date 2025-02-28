@@ -33,7 +33,7 @@ const MarketSection = () => {
 
                 <div className={styles.title}>
                     <h2>Total Market</h2>
-                    <span className={styles.positive}>+10.55%</span>
+                    <span className={styles.positive}>+10.55% | +$782.54</span>
                 </div>
             </div>
 

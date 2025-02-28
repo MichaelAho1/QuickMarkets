@@ -20,6 +20,7 @@
 }
 
 .centerTitle h2 {
+    color: #ffffffee;
     margin: 0;
     font-size: 48px;
     font-weight: 500;
@@ -27,19 +28,23 @@
 }
 
 .date {
-    color: #8B9398;
+    margin: 0;
+    color: #f5f5f5c9;
     font-size: 22px;
     display: block;
-    margin-top: 4px;
 }
 
 .title {
-    text-align: right;
+    text-align: center;
     padding-right: 40px;
 }
 
+.title span {
+    font-size: 20px;
+}
+
 .title h2 {
-    font-size: 28px;
+    font-size: 32px;
     margin: 0;
     padding: 0;
     color: white;
