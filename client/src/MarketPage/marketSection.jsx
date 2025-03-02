@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './marketSection.module.css';
+import GraphSection from './components/graphSection.jsx';
 
 const MarketSection = () => {
     const stockData = [
@@ -10,6 +11,7 @@ const MarketSection = () => {
         { symbol: 'COSTCO', type: 'Retail', volatility: 'Low', dayChange: '+0.45%', priceChange: '+$4.32', price: '$954.72', action: 'Buy' },
         { symbol: 'OKLO', type: 'Retail', volatility: 'High', dayChange: '+7.45%', priceChange: '+$3.43', price: '$52.62', action: 'Buy' },
         { symbol: 'TOST', type: 'Tech', volatility: 'Medium', dayChange: '-0.34%', priceChange: '-$1.11', price: '$40.49', action: 'Buy' },
+        { symbol: 'META', type: 'Tech', volatility: 'Medium', dayChange: '+1.45%', priceChange: '+$12.43', price: '$652.62', action: 'Buy' },
     ];
 
     return (
@@ -18,11 +20,6 @@ const MarketSection = () => {
                 <div className={styles.searchSection}>
                     <div className={styles.searchBar}>
                         <input type="text" placeholder="Search" />
-                        <button className={styles.filterButton}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M3 18v-2h6v2H3zm0-5v-2h12v2H3zm0-5V6h18v2H3z"/>
-                            </svg>
-                        </button>
                     </div>
                 </div>
 
@@ -67,6 +64,7 @@ const MarketSection = () => {
                     </tbody>
                 </table>
             </div>
+            <GraphSection></GraphSection>
         </div>
     );
 };
