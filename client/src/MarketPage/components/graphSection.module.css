@@ -1,0 +1,42 @@
+.graphSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    font-size: 2.2rem;
+    color: white;
+}
+
+.price {
+    font-size: 1.6rem;
+    color: #d8d8d8fa;
+}
+
+.titleDescription {
+    font-size: 1.35rem;
+    color: #d8d8d8d3;
+    font-weight: lighter;
+}
+
+.changeInYear {
+    color: #1DBF1D;
+}
+
+.positive {
+    color: #4CAF50;
+}
+
+.negative {
+    color: #F44336;
+}
+
+.graphSection h2 {
+    margin: 0;
+    margin-top: 12px;
+}
+
+.graphSection h3 {
+    margin: 4px;
+}
