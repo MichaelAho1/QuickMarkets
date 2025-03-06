@@ -78,17 +78,6 @@
     color: #8B9398;
 }
 
-.filterButton {
-    padding: 6px;
-    background-color: #2C3338;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    color: #8B9398;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
 .table {
     width: 100%;

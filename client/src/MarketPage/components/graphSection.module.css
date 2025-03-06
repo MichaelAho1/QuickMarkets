@@ -1,7 +1,9 @@
-.graphSection {
+.graphHeader{
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    background-color: #2C3338;
 }
 
 .title {
@@ -20,8 +22,8 @@
     font-weight: lighter;
 }
 
-.changeInYear {
-    color: #1DBF1D;
+.changeInYear { /*Change to Positve/Negative*/
+    color: #4CAF50;
 }
 
 .positive {
