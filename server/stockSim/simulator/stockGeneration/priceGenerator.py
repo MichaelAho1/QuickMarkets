@@ -1,43 +1,39 @@
 from simulator.utils import getStockData, getETFData
 from ..models import ETF, Stock
-from decimal import Decimal
 import math, random
 
-def generateNewPrices():
-    marketChange = generateTotalMarketPrice("ALL")
-    ETFChanges = {}
+def calculateMarketChanges():
+    marketChange = generateTotalMarketPercentage("ALL") #Calculate first because it is needed for other calculations
+    ETFPercentChanges = {"ALL":marketChange} #Add All because it has already been calculated
+    stockPercentChanges = {}
     stockChanges = {}
+    etfChanges = {}
 
     ETFs = ETF.objects.all()
     for etf in ETFs:
-        if(etf.ticker != "ALL"): #Exclude all because its price has already been calculated
-            ETFChanges[etf.ticker] = generateNewETFPrice(etf.ticker, marketChange)
+        if etf.ticker != "ALL": #Exclude TotalMarket because its price has already been calculated
+            ETFPercentChanges[etf.ticker] = generateNewETFPercentage(etf.ticker, marketChange)
+
+        etfChanges[etf.ticker] = (ETFPercentChanges[etf.ticker] * float(etf.price)) + float(etf.price) #Calculate the actual changes in price
     
     stocks = Stock.objects.all()
     for stock in stocks:
-        ETFTicker = stock.industry #Stocks industry are the same as the ETFs ticker symbol
-        industryChange = ETFChanges[ETFTicker]
-        stockChanges[stock.ticker] = generateNewStockPrice(stock.ticker, marketChange, industryChange)
+        #Stocks industry are the same as the ETFs ticker symbol
+        ETFTicker = stock.industry 
+        industryChange = ETFPercentChanges[ETFTicker]
 
-    total = 0
-    tentotal = 0
-    print(marketChange)
-    print(ETFChanges["TECH"])
-    print(stockChanges["NVDA"])
-    for i in range(0, 365):
-        total += generateTotalMarketPrice("ALL")
-    for i in range(0, 3650):
-        tentotal += generateTotalMarketPrice("ALL")
-    print(total)
-    print(tentotal)
+        stockPercentChanges[stock.ticker] = generateNewStockPercentage(stock.ticker, marketChange, industryChange)
+        stockChanges[stock.ticker] = (stockPercentChanges[stock.ticker] * float(stock.price)) + float(stock.price)
 
-def generateTotalMarketPrice(ticker):
+    print(etfChanges)
+
+
+def generateTotalMarketPercentage(ticker):
     TotalMarketETF = getETFData(ticker)
     changeInPrice = calculateGBM(float(TotalMarketETF.price), float(TotalMarketETF.volatility), float(TotalMarketETF.avgReturn))
     return changeInPrice
 
-
-def generateNewETFPrice(ticker, MarketChange):
+def generateNewETFPercentage(ticker, MarketChange):
     marketWeight = 0.75
     randomWeight = 0.25
 
@@ -47,9 +43,10 @@ def generateNewETFPrice(ticker, MarketChange):
     return (randomChange * randomWeight) + (MarketChange * marketWeight)
 
 
-def generateNewStockPrice(ticker, allChange, industryChange):
+def generateNewStockPercentage(ticker, allChange, industryChange):
     industryWeight = 0.6
     randomWeight = 0.4
+    #otherWeight = 0.2 (UnderValued/Overvalued/Earnings Report/Announcment)
 
     stock = getStockData(ticker)
     randomChange = calculateGBM(float(stock.price), float(stock.volatility), float(stock.avgReturn))
@@ -58,15 +55,13 @@ def generateNewStockPrice(ticker, allChange, industryChange):
 
 #Accounts for Volatility and Long-Term Growth in the market
 def calculateGBM(previousPrice, volatility, avgReturn):
-    # Convert to decimal
     volatility = volatility / 75
-    avgReturn = avgReturn / 200
+    avgReturn = avgReturn / 200 
     dt = 1 / 252
 
-    # GBM components
+    # GBM formula
     epsilon = random.gauss(0, 1)
     drift = (avgReturn - 0.5 * volatility ** 2) * dt
     shock = volatility * math.sqrt(dt) * epsilon
 
-    # Return percent change
-    return (math.exp(drift + shock) - 1) * 100
+    return (math.exp(drift + shock) - 1)
