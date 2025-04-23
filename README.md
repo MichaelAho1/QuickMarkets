@@ -8,6 +8,8 @@ allowing users to observe market behavior, make decisions, and learn the dynamic
 We used Geometric Brownian Motion and market Trends to generate stock data. (Factors in drift, volatility, and long term growth).
 
 We plan on having 2 different modes in the Simulator
+
 -Acclerated Trading - Stocks will update every 10 minutes (1 day = 10 minutes in the generator)
+
 -Paper Trading - Normal Simulator (Uses live data by implementing Yahoos finance API)
 
