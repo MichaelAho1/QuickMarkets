@@ -1,5 +1,6 @@
 Tech Stack
 Frontend - React.js, Figma, Chart.js
+
 Backend - Django (Python), REST APIs
 
 StockSim is a stock market simulator designed to educate users on investing and portfolio management through a fast-paced,
