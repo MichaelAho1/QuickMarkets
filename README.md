@@ -1,5 +1,3 @@
-Tech Stack
-
 Frontend - React.js, Figma, Chart.js
 
 Backend - Django (Python), REST APIs
