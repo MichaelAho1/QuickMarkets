@@ -1,12 +1,15 @@
-import { useState } from 'react'
+// src/App.js
+import { BrowserRouter } from "react-router-dom";
+import PublicRoutes from "./pages/PrivateRoutes.jsx";
+import PrivateRoutes from "./pages/PublicRoutes.jsx";
+
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-
-    </>
-  )
+    <BrowserRouter>
+      <PublicRoutes />
+      <PrivateRoutes />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
