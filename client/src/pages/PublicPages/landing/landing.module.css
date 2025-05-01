@@ -1,3 +1,7 @@
+* {
+    overflow-x: hidden;
+}
+
 section {
     margin: 2%;
     padding-bottom: 50px;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './landing.module.css';
 import Navbar from "../../../components/navBar/navBar.jsx";
 import Footer from "../../../components/footer/footer.jsx";
