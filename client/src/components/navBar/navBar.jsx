@@ -1,25 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './navBar.module.css';
+import styles from './navBar.module.css';
+import RisingStockImg from './img/RisingStock.png';
 
 const NavBar = () => {
     return (
-        <nav className="navbar">
-            <div className="navbar-logo">
-                <Link to="/">QuickMarkets</Link>
-            </div>
-            <ul className="navbar-links">
-                <li>
-                    <Link to="/login">Login</Link>
-                </li>
-                <li>
-                    <Link to="/startSimulator">Simulation Modes</Link>
-                </li>
-                <li>
-                    <Link to="/">Home</Link>
-                </li>
-            </ul>
-        </nav>
+<nav className={styles.navbar}>
+    <div className={styles.navbarLeft}>
+        <img src={RisingStockImg} alt="Logo" className={styles.logo} />
+        <h1>QuickMarkets</h1>
+    </div>
+    <div className={styles.navbarRight}>
+        <p className={styles.navbarItem}>
+            <Link to="/">Home</Link>
+        </p>
+        <p className={styles.navbarItem}>
+            <Link to="/startSimulator">Simulation Modes</Link>
+        </p>
+        <p className={styles.navbarItem}>
+            <Link to="/login">Login</Link>
+        </p>
+    </div>
+</nav>
     );
 };
 
