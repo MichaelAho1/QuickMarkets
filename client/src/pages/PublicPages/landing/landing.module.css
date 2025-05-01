@@ -75,3 +75,7 @@ section {
     font-size: 1.2rem;
     background-color: #774688;
 }
+
+.startButton:hover {
+    cursor: pointer;
+}
