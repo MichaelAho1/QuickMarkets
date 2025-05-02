@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from "../../../components/navBar/navBar.jsx";
+import Navbar from "../components/navBar/navBar.jsx";
 
 function startSim() {
     return (

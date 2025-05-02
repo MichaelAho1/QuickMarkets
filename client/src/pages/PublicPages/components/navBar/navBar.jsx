@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './navBar.module.css';
-import RisingStockImg from './img/RisingStock.png';
+import RisingStockImg from '../../../../assets/logo.png';
 
 const NavBar = () => {
     return (

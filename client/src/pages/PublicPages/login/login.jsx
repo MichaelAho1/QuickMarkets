@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from "../../../components/navBar/navBar.jsx";
+import Navbar from "../components/navBar/navBar.jsx";
 import QuickMarketsImage from "./img/QuickMarketsImg.png";
 import Styles from "./login.module.css";
 import { FaUser, FaLock } from 'react-icons/fa';

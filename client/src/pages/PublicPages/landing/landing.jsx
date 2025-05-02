@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styles from './landing.module.css';
-import Navbar from "../../../components/navBar/navBar.jsx";
-import Footer from "../../../components/footer/footer.jsx";
+import Navbar from "../components/navBar/navBar.jsx";
+import Footer from "../components/footer/footer.jsx";
 import SimulatorGraphics from "./img/SimulatorGraphics.png";
 import CashImage from "./img/Cash.png";
 import FastImage from "./img/Fast.png";
