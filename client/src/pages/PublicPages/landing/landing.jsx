@@ -11,6 +11,13 @@ function landing() {
     return (
         <>
             <Navbar />
+            <div className={styles.heroSection}>
+                <div className={styles.heroContent}>
+                    <h1>QuickMarkets Stock Simulator</h1>
+                    <p>Experience real-time stock trading in a risk-free environment. Perfect your strategies and compete for cash prizes!</p>
+                    <button className={styles.heroButton}>Start Simulation</button>
+                </div>
+            </div>
             <section>
                 <div className={styles.welcomeCard}>
                     <div className={styles.descriptionSection}>
@@ -39,7 +46,7 @@ function landing() {
                         <p>Compete with the community! Climb the ranks, challenge your peers, and prove your trading skills.</p>
                     </div>
                 </div>
-                <button className={styles.startButton}>Start A Simulation</button>
+                <button className={styles.startButton}>Learn More</button>
             </section>
             <Footer />
         </>

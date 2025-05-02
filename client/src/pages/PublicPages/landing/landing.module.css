@@ -1,5 +1,43 @@
-* {
-    overflow-x: hidden;
+.heroSection {
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #774688 0%, #50A85B 100%);
+    color: white;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.heroContent {
+    max-width: 800px;
+}
+
+.heroContent h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.heroContent p {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    line-height: 1.5;
+}
+
+.heroButton {
+    background-color: white;
+    color: #774688;
+    border: none;
+    padding: 20px 40px;
+    font-size: 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.heroButton:hover {
+    transform: scale(1.05);
 }
 
 section {
