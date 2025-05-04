@@ -1,10 +1,13 @@
 import React from 'react';
+import Navbar from "../components/navBar/simulatorNavbar.jsx";
+import styles from "./dashboard.module.css";
 
 function Dashboard() {
     return (
-        <div>
+        <main className={styles.dashboard}>
+            <Navbar />
             <h1>Welcome to the Dashboard</h1>
-        </div>
+        </main>
     );
 }
 

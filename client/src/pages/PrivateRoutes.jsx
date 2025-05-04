@@ -8,9 +8,9 @@ export default function PrivateRoutes() {
   return (
     <Routes>
       <Route path="/admin" element={<Dashboard />} />
-      <Route path="/admin/login" element={<Portfolio />} />
-      <Route path="/admin/users" element={<ExploreStocks />} />
-      <Route path="/admin/stocks" element={<Settings />} />
+      <Route path="/admin/portfolio" element={<Portfolio />} />
+      <Route path="/admin/exploreStocks" element={<ExploreStocks />} />
+      <Route path="/admin/settings" element={<Settings />} />
     </Routes>
   );
 }
