@@ -130,3 +130,34 @@
     font-size: 0.9rem;
     color: #6c757d;
 }
+
+.hamburgerButton {
+    position: fixed;
+    top: 1%;
+    left: 1%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+    z-index: 1000;
+}
+
+.hamburgerIcon {
+    font-size: 1.8rem;
+}
+
+@media screen and (max-width: 968px) {
+    .navBar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 50;
+    }
+
+    .navBar.open {
+        transform: translateX(0);
+    }
+
+    .hamburgerButton {
+        display: block;
+    }
+}

@@ -5,3 +5,10 @@
     background-color: rgb(240, 240, 240);
     overflow-y: auto; 
 }
+
+@media screen and (max-width: 968px) {
+    .dashboard {
+        margin-left: 0px; 
+        width: 100vw; 
+    }
+}
