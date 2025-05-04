@@ -6,6 +6,18 @@
     overflow-y: auto; 
 }
 
+.dashboard header {
+    padding: 2%;
+}
+
+.positiveChange {
+    color: #28a745;
+}
+
+.negativeChange {
+    color: #dc3545;
+}
+
 @media screen and (max-width: 968px) {
     .dashboard {
         margin-left: 0px; 

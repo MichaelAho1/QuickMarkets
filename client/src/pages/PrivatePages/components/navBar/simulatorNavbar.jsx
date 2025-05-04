@@ -83,7 +83,7 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div className={styles.userProfile}>
-                    <img className={styles.userImg} src="" alt="User" />
+                    <img className={styles.userImg} src="www.hi" alt="User" />
                     <div>
                         <p className={styles.userName}>John Doe</p>
                         <p className={styles.userEmail}>john.doe@example.com</p>
