@@ -15,7 +15,7 @@ const NavBar = () => {
             <Link to="/">Home</Link>
         </p>
         <p className={styles.navbarItem}>
-            <Link to="/startSimulator">Simulator Dashboard</Link>
+            <Link to="/admin">Simulator Dashboard</Link>
         </p>
         <p className={styles.navbarItem}>
             <Link to="/login">Login</Link>
