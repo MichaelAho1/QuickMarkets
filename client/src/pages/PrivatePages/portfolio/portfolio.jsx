@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Navbar from "../components/navBar/simulatorNavbar.jsx";
+import styles from "./portfolio.module.css";
 
 function stocksOwned() {
     const [topHoldings, setTopHoldings] = useState([
@@ -8,8 +10,13 @@ function stocksOwned() {
         { symbol: 'AMZN', dayChangePercentage: -2.15, price: 134.67 },
         { symbol: 'GOOG', dayChangePercentage: 0.55, price: 122.34 },
     ]);
+
     return (
-        <div>
+        <div className={styles.portfolio}> 
+            <Navbar />
+            <h1>Welcome to Portfolio</h1>
+            
+                      {/*
                         <section className={styles.topHoldings}>
                             <p className={styles.topHoldingItem}>Top Holdings:</p>
                             {topHoldings.map((stock, index) => (
@@ -23,8 +30,9 @@ function stocksOwned() {
                                         </h4>
                                     </div>
                                 </div>
-                            ))}
+                            ))} 
                         </section>
+                        */}
         </div>
         
     );

@@ -5,6 +5,7 @@ import PortfolioCard from './components/PortfolioCard';
 import LeaderboardCard from './components/LeaderboardCard';
 import PortfolioChartCard from './components/PortfolioChartCard';
 import TopGainersCard from './components/TopGainersCard';
+import NewsCard from './components/newsCard';
 
 const Dashboard = () => {
     const [portfolioValue, setPortfolioValue] = useState(125670);
@@ -28,7 +29,10 @@ const Dashboard = () => {
                     </div>
                     <PortfolioChartCard />
                 </div>
-                <TopGainersCard />
+                <div className={styles.bottomSection}>
+                    <TopGainersCard />
+                    <NewsCard />
+                </div>
             </div>
         </>
     );

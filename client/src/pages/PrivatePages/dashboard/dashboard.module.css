@@ -35,6 +35,25 @@
     box-sizing: border-box; 
 }
 
+.bottomSection {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    padding: 0 2% 2% 2%;
+    box-sizing: border-box;
+    align-items: stretch;
+}
+
+.bottomSection > :first-child {
+    width: 60%;
+    height: 100%;
+}
+
+.bottomSection > :last-child {
+    width: 35%;
+    height: 100%;
+}
+
 .leftColumn {
     display: flex;
     flex-direction: column;
@@ -53,6 +72,15 @@
     }
     
     .leftColumn {
+        width: 100%;
+    }
+
+    .bottomSection {
+        flex-direction: column;
+    }
+
+    .bottomSection > :first-child,
+    .bottomSection > :last-child {
         width: 100%;
     }
 }

@@ -1,10 +1,9 @@
 .topGainersCard {
     background-color: white;
-    padding: 16px;
+    padding: 18px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 60%;
-    margin-left: 2%;
 }
 
 .cardHeader {
@@ -43,7 +42,7 @@
 }
 
 .tabButton:hover {
-    background-color: #000000;
+    background-color: #9cccff;
 }
 
 .activeTab {
