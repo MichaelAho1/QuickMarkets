@@ -8,19 +8,51 @@
 
 .dashboard header {
     padding: 2%;
+    padding-bottom: 0;
 }
 
-.positiveChange {
-    color: #28a745;
+.dashboard header h1 {
+    font-size: 28px;
+    color: #2c3e50;
+    font-weight: 600;
 }
 
-.negativeChange {
-    color: #dc3545;
+.dashboard header h2 {
+    font-size: 18px;
+    color: #7f8c8d;
+    margin: 0;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+}
+
+.mainSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%; 
+    padding: 2%; 
+    box-sizing: border-box; 
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 25%;
 }
 
 @media screen and (max-width: 968px) {
     .dashboard {
         margin-left: 0px; 
         width: 100vw; 
+    }
+    
+    .portfolioCard, .leaderboardCard, .portfolioChartCard, .topGainersCard {
+        width: 100%;
+    }
+    
+    .leftColumn {
+        width: 100%;
     }
 }

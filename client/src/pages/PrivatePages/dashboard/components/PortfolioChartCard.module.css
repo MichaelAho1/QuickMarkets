@@ -1,0 +1,24 @@
+.portfolioChartCard {
+    margin-left: 3%;
+    width: 68%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.chartContent {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-style: italic;
+    margin-top: 15px;
+} 

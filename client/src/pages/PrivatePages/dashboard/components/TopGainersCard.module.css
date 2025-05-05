@@ -1,0 +1,102 @@
+.topGainersCard {
+    background-color: white;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 60%;
+    margin-left: 2%;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.headerContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.headerDescription {
+    color: #666;
+    font-size: 13px;
+    margin: 0;
+}
+
+.tabButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.tabButton {
+    padding: 6px 12px;
+    border: 1px solid #e0e0e0;
+    background: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.tabButton:hover {
+    background-color: #000000;
+}
+
+.activeTab {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+
+.stocksTable {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.stocksTable th {    
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    color: #727272;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.stocksTable th:last-child {
+    padding-right: 0;
+}
+
+.stocksTable td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 13px;
+}
+
+.stocksTable td:last-child {
+    padding-right: 0;
+}
+
+.stocksTable tr:hover {
+    background-color: #f8f9fa;
+}
+
+.positiveChange {
+    color: #28a745;
+}
+
+.negativeChange {
+    color: #dc3545;
+}
+
+@media screen and (max-width: 968px) {
+    .topGainersCard {
+        width: 100%;
+        margin-left: 0;
+    }
+} 

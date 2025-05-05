@@ -1,0 +1,65 @@
+.portfolioCard {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.portfolioHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.portfolioTitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.valueLine {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.portfolioValue {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.positiveChange {
+    color: #28a745;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.negativeChange {
+    color: #dc3545;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 10px;
+}
+
+.actionButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+    transition: background-color 0.2s;
+}
+
+.actionButton:hover {
+    background-color: #0056b3;
+} 

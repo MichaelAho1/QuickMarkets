@@ -1,0 +1,44 @@
+.leaderboardCard {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.cardHeader h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.leaderboardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.leaderboardItem {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.rank {
+    width: 24px;
+    font-weight: bold;
+    color: #666;
+}
+
+.username {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.score {
+    font-weight: 500;
+    color: #333;
+} 
