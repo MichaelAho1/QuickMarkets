@@ -2,6 +2,7 @@ from simulator.utils import getStockData, getETFData
 from ..models import ETF, Stock
 import math, random
 
+#Calls everything in the order it needs to be called
 def calculateMarketChanges():
     marketChange = generateTotalMarketPercentage("ALL") #Calculate first because it is needed for other calculations
     ETFPercentChanges = {"ALL":marketChange} #Add All because it has already been calculated
@@ -24,8 +25,10 @@ def calculateMarketChanges():
 
         stockPercentChanges[stock.ticker] = generateNewStockPercentage(stock.ticker, marketChange, industryChange)
         stockChanges[stock.ticker] = (stockPercentChanges[stock.ticker] * float(stock.price)) + float(stock.price)
-
+    
+    print(marketChange)
     print(etfChanges)
+    print(stockChanges)
 
 
 def generateTotalMarketPercentage(ticker):
@@ -65,3 +68,4 @@ def calculateGBM(previousPrice, volatility, avgReturn):
     shock = volatility * math.sqrt(dt) * epsilon
 
     return (math.exp(drift + shock) - 1)
+
