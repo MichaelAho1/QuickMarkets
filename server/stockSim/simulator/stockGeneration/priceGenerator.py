@@ -29,9 +29,9 @@ def calculateMarketChanges():
         stock.price = stockChanges[stock.ticker]
         stock.save()
     
-    print(marketChange)
-    print(etfChanges)
-    print(stockChanges)
+    #print(marketChange)
+    #print(etfChanges)
+    #print(stockChanges)
 
 def generateTotalMarketPercentage(ticker):
     TotalMarketETF = getETFData(ticker)
@@ -56,21 +56,21 @@ def generateNewStockPercentage(ticker, allChange, industryChange):
         prevDayChange = ((stock.price - stock.prev_price) / stock.prev_price)
         if (prevDayChange > 0):
             if (prevDayChange > 0.10):
-                downPercentage += 0.25
+                downPercentage = -0.18
             elif (prevDayChange > 0.5):
-                downPercentage += 0.15
+                downPercentage = -0.08
             else:
-                downPercentage += 0.05
+                downPercentage = -0.03
         elif (prevDayChange < 0):
             if (prevDayChange < -0.10):
-                upPercentage += 0.25
+                upPercentage = 0.28
             elif (prevDayChange < -0.5):
-                upPercentage += 0.15
+                upPercentage = 0.18
             else:
-                upPercentage += 0.05
+                upPercentage = 0.8
 
-    industryWeight = 0.6
-    randomWeight = 0.4
+    industryWeight = 0.5
+    randomWeight = 0.3
     #otherWeight = 0.2 (UnderValued/Overvalued/Earnings Report/Announcment)
 
     stock = getStockData(ticker)
