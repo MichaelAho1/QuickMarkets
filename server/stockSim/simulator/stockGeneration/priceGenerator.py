@@ -25,11 +25,13 @@ def calculateMarketChanges():
 
         stockPercentChanges[stock.ticker] = generateNewStockPercentage(stock.ticker, marketChange, industryChange)
         stockChanges[stock.ticker] = (stockPercentChanges[stock.ticker] * float(stock.price)) + float(stock.price)
+        stock.prev_price = stock.price
+        stock.price = stockChanges[stock.ticker]
+        stock.save()
     
     print(marketChange)
     print(etfChanges)
     print(stockChanges)
-
 
 def generateTotalMarketPercentage(ticker):
     TotalMarketETF = getETFData(ticker)
@@ -47,13 +49,33 @@ def generateNewETFPercentage(ticker, MarketChange):
 
 
 def generateNewStockPercentage(ticker, allChange, industryChange):
+    downPercentage = 0
+    upPercentage = 0
+    stock = getStockData(ticker)
+    if (stock.prev_price != 0):
+        prevDayChange = ((stock.price - stock.prev_price) / stock.prev_price)
+        if (prevDayChange > 0):
+            if (prevDayChange > 0.10):
+                downPercentage += 0.25
+            elif (prevDayChange > 0.5):
+                downPercentage += 0.15
+            else:
+                downPercentage += 0.05
+        elif (prevDayChange < 0):
+            if (prevDayChange < -0.10):
+                upPercentage += 0.25
+            elif (prevDayChange < -0.5):
+                upPercentage += 0.15
+            else:
+                upPercentage += 0.05
+
     industryWeight = 0.6
     randomWeight = 0.4
     #otherWeight = 0.2 (UnderValued/Overvalued/Earnings Report/Announcment)
 
     stock = getStockData(ticker)
     randomChange = calculateGBM(float(stock.price), float(stock.volatility), float(stock.avgReturn))
-    return (randomChange * randomWeight) + (industryChange * industryWeight)
+    return (randomChange * randomWeight) + (industryChange * industryWeight) + (upPercentage * random.random()) + (downPercentage * random.random())
 
 
 #Accounts for Volatility and Long-Term Growth in the market
