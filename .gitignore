@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 #django
-venv/
+env/
