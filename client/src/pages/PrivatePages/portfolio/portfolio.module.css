@@ -5,3 +5,61 @@
     background-color: rgb(240, 240, 240);
     overflow-y: auto; 
 }
+
+header {
+    padding: 20px 20px;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    color: #4a5568;
+    margin: 0;
+    margin-bottom: 8px;
+}
+
+header h2 {
+    font-size: 2.5rem;
+    color: #1a202c;
+    margin: 0;
+    font-weight: 600;
+}
+
+.stockSection {
+    padding: 0 20px;
+    height: 450px;
+    margin-bottom: 30px;
+}
+
+.card {
+    width: 97.5%;
+    height: calc(100% - 40px);
+    background-color: white;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.contentWrapper {
+    display: flex;
+    gap: 2rem;
+    height: 100%;
+}
+
+.tableWrapper {
+    flex: 2;
+    min-width: 0;
+}
+
+.chartWrapper {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stockSectorCard, .portfolioHistoryCard {
+    flex: 1;
+    background-color: white;
+    padding: 20px;
+}

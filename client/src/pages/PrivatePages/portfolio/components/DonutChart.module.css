@@ -1,0 +1,93 @@
+.chartContainer {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chartContainer h3 {
+    margin: 0 0 1.5rem 0;
+    color: #1a202c;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.chartContent {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.donutChart {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--color) var(--start) var(--end),
+        transparent var(--end) var(--start)
+    );
+}
+
+.donutChart::before {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    background: white;
+    border-radius: 50%;
+    top: 15%;
+    left: 15%;
+}
+
+.legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+}
+
+.colorDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.symbol {
+    font-weight: 500;
+    color: #1a202c;
+    min-width: 50px;
+}
+
+.percentage {
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+/* Scrollbar styling for legend */
+.legend::-webkit-scrollbar {
+    width: 6px;
+}
+
+.legend::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.legend::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.legend::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} 
