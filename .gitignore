@@ -25,3 +25,5 @@ dist-ssr
 
 #django
 env/
+
+.env
