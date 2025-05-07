@@ -18,11 +18,11 @@ const DonutChart = ({ stocks }) => {
 
     // Generate colors for each segment
     const colors = [
-        '#4F46E5', // Indigo
-        '#7C3AED', // Violet
-        '#EC4899', // Pink
-        '#F59E0B', // Amber
-        '#10B981', // Emerald
+        '#4F46E5', 
+        '#7C3AED', 
+        '#EC4899', 
+        '#F59E0B', 
+        '#10B981', 
     ];
 
     return (

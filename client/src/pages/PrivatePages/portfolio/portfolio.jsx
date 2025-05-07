@@ -8,6 +8,7 @@ import styles from "./portfolio.module.css";
 function stocksOwned() {
     const [portfolioValue, setPortfolioValue] = useState(1374.85);
     
+    //Temp Stocks
     const stocks = [
         {
             symbol: 'AAPL',
