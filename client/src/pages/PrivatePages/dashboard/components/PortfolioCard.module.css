@@ -47,11 +47,11 @@
 .buttonContainer {
     display: flex;
     gap: 10px;
+    color: white;
 }
 
 .actionButton {
     background-color: #007bff;
-    color: white;
     border: none;
     padding: 8px 16px;
     border-radius: 4px;
@@ -63,3 +63,8 @@
 .actionButton:hover {
     background-color: #0056b3;
 } 
+
+.buttonContainer a, .buttonContainer a {
+    text-decoration: none;
+    color: inherit;
+}

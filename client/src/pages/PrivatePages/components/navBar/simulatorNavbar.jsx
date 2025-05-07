@@ -58,12 +58,6 @@ const Navbar = () => {
                                 <Link to="/admin/exploreStocks">Stocks</Link>
                             </p>
                         </div>
-                        <div className={styles.mainNavBottom}>
-                            <p className={styles.navBarItem}>
-                                <IoSettingsOutline />
-                                <Link to="/admin/settings">Settings</Link>
-                            </p>
-                        </div>
                     </div>
                     <div className={styles.watchList}>
                         <p className={styles.navBarHeader} onClick={toggleWatchlist}>

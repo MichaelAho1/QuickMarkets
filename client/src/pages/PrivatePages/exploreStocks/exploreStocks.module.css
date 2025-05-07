@@ -56,7 +56,8 @@
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+    margin-top: 30px;
+
 }
 
 .popularStocks h2 {
@@ -132,7 +133,6 @@
     padding-right: 10px;
 }
 
-/* Custom scrollbar styles */
 .stocksGrid::-webkit-scrollbar {
     width: 8px;
 }

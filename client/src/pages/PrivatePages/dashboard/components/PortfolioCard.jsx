@@ -1,6 +1,7 @@
 import React from 'react';
 import { BsPiggyBank } from "react-icons/bs";
 import styles from "./PortfolioCard.module.css";
+import { Link } from 'react-router-dom';
 
 const PortfolioCard = ({ portfolioValue, portfolioDayChange }) => {
     return (
@@ -17,8 +18,12 @@ const PortfolioCard = ({ portfolioValue, portfolioDayChange }) => {
                 </h4>
             </div>
             <div className={styles.buttonContainer}>
-                <button className={styles.actionButton}>Sell Stocks</button>
-                <button className={styles.actionButton}>Buy Stocks</button>
+                <Link to="/admin/exploreStocks" className={styles.actionButton}>
+                    Buy Stocks
+                </Link>
+                <Link to="/admin/Portfolio" className={styles.actionButton}>
+                    Sell Stocks
+                </Link>
             </div>
         </div>
     );
