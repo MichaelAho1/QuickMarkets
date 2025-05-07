@@ -5,3 +5,243 @@
     background-color: rgb(240, 240, 240);
     overflow-y: auto; 
 }
+
+.content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.searchSection {
+    margin-bottom: 30px;
+}
+
+.searchSection h1 {
+    font-size: 2rem;
+    color: #1a202c;
+    margin-bottom: 20px;
+}
+
+.searchBar {
+    position: relative;
+    max-width: 600px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.searchBar input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    transition: all 0.2s;
+}
+
+.searchBar input:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.popularStocks {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.popularStocks h2 {
+    font-size: 1.5rem;
+    color: #1a202c;
+    margin-bottom: 20px;
+}
+
+.popularStocksGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+.sectorFilter {
+    margin-bottom: 30px;
+}
+
+.sectorFilter h2 {
+    font-size: 1.5rem;
+    color: #1a202c;
+    margin-bottom: 15px;
+}
+
+.sectorButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.sectorButton {
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.sectorButton:hover {
+    background-color: #f8fafc;
+    border-color: #4F46E5;
+    color: #4F46E5;
+}
+
+.activeSector {
+    background-color: #4F46E5;
+    color: white;
+    border-color: #4F46E5;
+}
+
+.allStocks {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.allStocks h2 {
+    font-size: 1.5rem;
+    color: #1a202c;
+    margin-bottom: 20px;
+}
+
+.stocksGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Custom scrollbar styles */
+.stocksGrid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.stocksGrid::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.stocksGrid::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.stocksGrid::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.stockCard {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.stockCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stockHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.symbol {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #1a202c;
+}
+
+.positive {
+    color: #059669;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.negative {
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.stockName {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.stockPrice {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 8px;
+}
+
+.stockSector {
+    font-size: 0.8rem;
+    color: #64748b;
+    background-color: #e2e8f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+@media screen and (max-width: 1024px) {
+    .popularStocksGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .popularStocksGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stocksGrid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .sectorButtons {
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .sectorButton {
+        white-space: nowrap;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .popularStocksGrid {
+        grid-template-columns: 1fr;
+    }
+}
