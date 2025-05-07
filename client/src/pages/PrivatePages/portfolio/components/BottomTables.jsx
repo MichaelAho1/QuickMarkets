@@ -21,7 +21,7 @@ const BottomTables = () => {
     return (
         <div className={styles.bottomSection}>
             <div className={styles.sectorCard}>
-                <h3>Stock Sectors Owned</h3>
+                <h3>Sectors Owned</h3>
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
                         <thead>
