@@ -10,40 +10,63 @@ const StockModal = ({ stock, onClose }) => {
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
-                    <div className={styles.stockInfo}>
-                        <h1>{stock.symbol}</h1>
-                        <h2>{stock.name}</h2>
-                    </div>
+                    <h1>Stock Overview</h1>
                     <button className={styles.closeButton} onClick={onClose}>
                         <IoClose size={24} />
                     </button>
                 </div>
 
                 <div className={styles.modalBody}>
-                    <div className={styles.priceSection}>
-                        <div className={styles.currentPrice}>
-                            <span className={styles.price}>${stock.price.toFixed(2)}</span>
-                            <span className={stock.change >= 0 ? styles.positive : styles.negative}>
-                                {stock.change >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-                                {Math.abs(stock.change)}%
-                            </span>
+                    <div className={styles.mainContent}>
+                        <div className={styles.priceSection}>
+                            <div className={styles.stockInfo}>
+                                <div className={styles.stockHeader}>
+                                    <div className={styles.stockLogo}>
+                                        <div className={styles.logoPlaceholder}>
+                                            {stock.symbol.slice(0, 2)}
+                                        </div>
+                                    </div>
+                                    <div className={styles.stockTitle}>
+                                        <h2>{stock.symbol}</h2>
+                                        <h3>{stock.name}</h3>
+                                    </div>
+                                </div>
+                                <div className={styles.priceInfo}>
+                                    <span className={styles.price}>${stock.price.toFixed(2)}</span>
+                                    <span className={stock.change >= 0 ? styles.positive : styles.negative}>
+                                        {stock.change >= 0 ? <FaArrowUp /> : <FaArrowDown />}
+                                        {Math.abs(stock.change)}%
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div className={styles.priceDetails}>
-                            <div className={styles.detailItem}>
-                                <span className={styles.label}>Open</span>
-                                <span className={styles.value}>${(stock.price * 0.98).toFixed(2)}</span>
-                            </div>
-                            <div className={styles.detailItem}>
-                                <span className={styles.label}>High</span>
-                                <span className={styles.value}>${(stock.price * 1.02).toFixed(2)}</span>
-                            </div>
-                            <div className={styles.detailItem}>
-                                <span className={styles.label}>Low</span>
-                                <span className={styles.value}>${(stock.price * 0.97).toFixed(2)}</span>
-                            </div>
-                            <div className={styles.detailItem}>
-                                <span className={styles.label}>Volume</span>
-                                <span className={styles.value}>{(Math.random() * 10000000).toLocaleString()}</span>
+
+                        <div className={styles.statsSection}>
+                            <div className={styles.statsGrid}>
+                                <div className={styles.statCard}>
+                                    <span className={styles.label}>Opening Price</span>
+                                    <span className={styles.value}>${(stock.price * 0.98).toFixed(2)}</span>
+                                </div>
+                                <div className={styles.statCard}>
+                                    <span className={styles.label}>Closing Price</span>
+                                    <span className={styles.value}>${stock.price.toFixed(2)}</span>
+                                </div>
+                                <div className={styles.statCard}>
+                                    <span className={styles.label}>1 Week Return</span>
+                                    <span className={styles.value}>{(Math.random() * 10 - 5).toFixed(2)}%</span>
+                                </div>
+                                <div className={styles.statCard}>
+                                    <span className={styles.label}>1 Month Return</span>
+                                    <span className={styles.value}>{(Math.random() * 20 - 10).toFixed(2)}%</span>
+                                </div>
+                                <div className={styles.statCard}>
+                                    <span className={styles.label}>6 Month Return</span>
+                                    <span className={styles.value}>{(Math.random() * 30 - 15).toFixed(2)}%</span>
+                                </div>
+                                <div className={styles.statCard}>
+                                    <span className={styles.label}>1 Year Return</span>
+                                    <span className={styles.value}>{(Math.random() * 50 - 25).toFixed(2)}%</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -51,34 +74,6 @@ const StockModal = ({ stock, onClose }) => {
                     <div className={styles.chartSection}>
                         <div className={styles.chartPlaceholder}>
                             <p>Stock Chart Coming Soon</p>
-                        </div>
-                    </div>
-
-                    <div className={styles.infoSection}>
-                        <div className={styles.infoCard}>
-                            <h3>Company Overview</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                        </div>
-                        <div className={styles.infoCard}>
-                            <h3>Key Statistics</h3>
-                            <div className={styles.statsGrid}>
-                                <div className={styles.statItem}>
-                                    <span className={styles.label}>Market Cap</span>
-                                    <span className={styles.value}>${(Math.random() * 1000000000000).toLocaleString()}</span>
-                                </div>
-                                <div className={styles.statItem}>
-                                    <span className={styles.label}>P/E Ratio</span>
-                                    <span className={styles.value}>{(Math.random() * 50).toFixed(2)}</span>
-                                </div>
-                                <div className={styles.statItem}>
-                                    <span className={styles.label}>EPS</span>
-                                    <span className={styles.value}>${(Math.random() * 10).toFixed(2)}</span>
-                                </div>
-                                <div className={styles.statItem}>
-                                    <span className={styles.label}>Dividend Yield</span>
-                                    <span className={styles.value}>{(Math.random() * 5).toFixed(2)}%</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

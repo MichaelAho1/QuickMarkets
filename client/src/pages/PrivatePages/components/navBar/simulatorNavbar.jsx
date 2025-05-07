@@ -6,7 +6,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { BsPiggyBank } from "react-icons/bs";
 import { AiOutlineStock } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
-import { IoIosArrowDown, IoMdMenu } from "react-icons/io"; // Added menu icon
+import { IoIosArrowDown, IoMdMenu } from "react-icons/io"; 
 
 const Navbar = () => {
     const [isWatchlistCollapsed, setIsWatchlistCollapsed] = useState(false);
