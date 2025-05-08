@@ -7,5 +7,5 @@ realistic trading experience. Built by a team of 4, this project compresses real
 allowing users to observe market behavior, make decisions, and learn the dynamics of stock investing quickly. 
 We used Geometric Brownian Motion and market Trends to generate stock data. (Factors in drift, volatility, and long term growth).
 
--Acclerated Trading - Stocks will update every 5 minutes (1 day = 5 minutes in the generator)
+-Acclerated Trading - 1 day = 5 minutes in the simulator
 
