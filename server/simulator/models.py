@@ -47,12 +47,12 @@ class UserStock(models.Model):
         return f"{self.user.username} - {self.stock.ticker}"
 
 class StockPriceHistory(models.Model):
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, db_column='ticker', to_field='ticker')
+    stockTicker = models.ForeignKey(Stock, on_delete=models.CASCADE, db_column='ticker', to_field='ticker')
     date = models.DateField() 
     closingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00) 
 
     class Meta:
-        unique_together = (('stock', 'date'),)
+        unique_together = (('stockTicker', 'date'),)
 
     def __str__(self):
-        return f"{self.stock.ticker} on {self.date}"
+        return f"{self.stockTicker.ticker} on {self.date}"

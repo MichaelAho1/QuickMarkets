@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, StockSerializer
+from .serializers import UserSerializer, StockSerializer, StockHistorySerializer
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from simulator.models import Stock
+from simulator.models import Stock, StockPriceHistory
 from simulator.models import User as SimulatorUser
 from rest_framework.permissions import IsAuthenticated
 
@@ -20,9 +20,26 @@ class ViewStockPrices(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, format=None):
-        stocks = [(stock.ticker, stock.stockName, stock.currPrice, stock.prevPrice, stock.sectorType.ticker) for stock in Stock.objects.all()]
+        stocks = [{
+            "ticker": stock.ticker,
+            "stockName": stock.stockName,
+            "currPrice": stock.currPrice,
+            "prevPrice": stock.prevPrice,
+            "sectorType": stock.sectorType.ticker
+        } for stock in Stock.objects.all()]
         return Response(stocks)
     
+class ViewHistoricalStockPrice(APIView):
+    serializer_class = StockHistorySerializer
+    permission_classes = [AllowAny]
+    def get(self, request, format=None):
+        ticker = request.query_params.get('ticker')
+        history = StockPriceHistory.objects.filter(stockTicker=ticker).order_by('date')
+        serializer = StockHistorySerializer(history, many=True)
+        return Response(serializer.data)
+        
+
+
 class ViewSimulatorUser(APIView):
     permission_classes = [IsAuthenticated]
 

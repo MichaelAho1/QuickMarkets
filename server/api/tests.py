@@ -9,10 +9,14 @@ class ViewSimulatorUserTest(APITestCase):
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.simulator_user = SimulatorUser.objects.create(username=self.user.username, cashBalance=100000.00)
 
-    def test_view_simulator_user_authenticated(self):
+    def testViewSimulatoruser(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get('/api/view-simulator-user/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], self.user.username)
         self.assertEqual(response.data['cashBalance'], self.simulator_user.cashBalance)
+
+    def testViewStockPrices(self):
+        response = self.client.get('/api/view-stock-prices/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
