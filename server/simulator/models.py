@@ -59,7 +59,7 @@ class StockPriceHistory(models.Model):
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
+    stockTicker = models.ForeignKey(Stock, on_delete=models.CASCADE)
     shares = models.FloatField()
     transactionType = models.CharField(max_length=4, choices=[("BUY", "Buy"), ("SELL", "Sell")])
     priceAtTransaction = models.FloatField()

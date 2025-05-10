@@ -30,4 +30,4 @@ class StockHistorySerializer(serializers.ModelSerializer):
 class TransactStock(serializers.ModelSerializer):
     class Meta:
         model = UserStock
-        fields = [""]
+        fields = ["user", "stockTicker", "shares", "transactionType", "priceAtTransaction", "timestamp"]
