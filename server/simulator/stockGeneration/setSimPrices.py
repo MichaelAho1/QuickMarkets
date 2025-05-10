@@ -27,7 +27,7 @@ def setStockPrices():
                 "stockName": data["stockName"],
                 "currPrice": data["currPrice"],
                 "sectorType": sector,  
-                "volatility": .3, #Should be between 10-45
+                "volatility": .3, #Should be between 15-60
                 "avgReturn": 0.18
             }
         )
@@ -48,7 +48,7 @@ def setETFPrices():
                 "price": data["price"],
                 "prev_price": data["price"],
                 "industry": data["industry"],
-                "volatility": .2,
+                "volatility": .2, #Should be between 10-25
                 "avgReturn": 0.18,
             }
         )
