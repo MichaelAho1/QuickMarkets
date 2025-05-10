@@ -37,8 +37,6 @@ class ViewHistoricalStockPrice(APIView):
         history = StockPriceHistory.objects.filter(stockTicker=ticker).order_by('date')
         serializer = StockHistorySerializer(history, many=True)
         return Response(serializer.data)
-        
-
 
 class ViewSimulatorUser(APIView):
     permission_classes = [IsAuthenticated]

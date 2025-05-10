@@ -16,7 +16,11 @@ class ViewSimulatorUserTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], self.user.username)
         self.assertEqual(response.data['cashBalance'], self.simulator_user.cashBalance)
-
+   
     def testViewStockPrices(self):
         response = self.client.get('/api/view-stock-prices/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def testViewStockHistory(self):
+        response = self.client.get('/api/view-price-history/?ticker=PEP')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

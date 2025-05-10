@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User 
 from rest_framework import serializers
-from simulator.models import User as SimulatorUser, Stock, StockPriceHistory
+from simulator.models import User as SimulatorUser, Stock, StockPriceHistory, UserStock
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,3 +27,7 @@ class StockHistorySerializer(serializers.ModelSerializer):
         model = StockPriceHistory
         fields = ["stockTicker", "date", "closingPrice"]
 
+class TransactStock(serializers.ModelSerializer):
+    class Meta:
+        model = UserStock
+        fields = [""]
