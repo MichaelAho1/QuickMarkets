@@ -18,6 +18,9 @@ class ETF(models.Model):
     #industries - Tech, Finance, Consumer, Energy
     industry = models.CharField(max_length=15, default="Tech")
 
+    def __str__(self):
+        return f"{self.ticker}"
+
 
 class Stock(models.Model):
     ticker = models.CharField(max_length=10, primary_key=True)
