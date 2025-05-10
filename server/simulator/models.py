@@ -26,6 +26,7 @@ class Stock(models.Model):
     ticker = models.CharField(max_length=10, primary_key=True)
     stockName = models.CharField(max_length=50, default='') 
     currPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    prevPrice = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     sectorType = models.ForeignKey(ETF, on_delete=models.CASCADE, db_column='etf_ticker', to_field='ticker')
     volatility = models.DecimalField(max_digits=3, decimal_places=1, default=0.0) 
     avgReturn = models.DecimalField(max_digits=3, decimal_places=1, default=0.0) 

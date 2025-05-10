@@ -13,9 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
         
         SimulatorUser.objects.create(
             username=user.username,
-            cashBalance=10000.00
+            cashBalance=100000.00
         )
-
         return user
     
 class StockSerializer(serializers.ModelSerializer):
