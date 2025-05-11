@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, StockSerializer, StockHistorySerializer
+from .serializers import UserSerializer, StockSerializer, StockHistorySerializer, TransactStock, UserStockSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from simulator.models import Stock, StockPriceHistory
+from simulator.models import Stock, StockPriceHistory, UserStock
 from simulator.models import User as SimulatorUser
 from rest_framework.permissions import IsAuthenticated
 
@@ -52,3 +52,27 @@ class ViewSimulatorUser(APIView):
         }
         return Response(data)
 
+
+
+class buyStock(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TransactStock
+
+    def get(self, request):
+        simulator_user = SimulatorUser.objects.get(username=request.user.username)
+        return UserStock.objects.filter(User=simulator_user)
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(User=self.request.user)
+        else:
+            print(serializer.errors)
+
+
+class sellStock(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TransactStock
+
+    def get(self, request):
+        simulator_user = SimulatorUser.objects.get(username=request.user.username)
+        return UserStock.objects.filter(User=simulator_user)
