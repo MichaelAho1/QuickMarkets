@@ -20,13 +20,13 @@ def calculateMarketChanges():
     stocks = Stock.objects.all()
     for stock in stocks:
         #Stocks industry are the same as the ETFs ticker symbol
-        ETFTicker = stock.industry 
+        ETFTicker = stock.sectorType.ticker
         industryChange = ETFPercentChanges[ETFTicker]
 
         stockPercentChanges[stock.ticker] = generateNewStockPercentage(stock.ticker, marketChange, industryChange)
-        stockChanges[stock.ticker] = (stockPercentChanges[stock.ticker] * float(stock.price)) + float(stock.price)
-        stock.prev_price = stock.price
-        stock.price = stockChanges[stock.ticker]
+        stockChanges[stock.ticker] = (stockPercentChanges[stock.ticker] * float(stock.currPrice)) + float(stock.currPrice)
+        stock.prevPrice = stock.currPrice
+        stock.currPrice = stockChanges[stock.ticker]
         stock.save()
     
     #print(marketChange)
@@ -52,8 +52,8 @@ def generateNewStockPercentage(ticker, allChange, industryChange):
     downPercentage = 0
     upPercentage = 0
     stock = getStockData(ticker)
-    if (stock.prev_price != 0):
-        prevDayChange = ((stock.price - stock.prev_price) / stock.prev_price)
+    if (stock.prevPrice != 0):
+        prevDayChange = ((stock.currPrice - stock.prevPrice) / stock.prevPrice)
         if (prevDayChange > 0):
             if (prevDayChange > 0.10):
                 downPercentage = -0.18
@@ -63,18 +63,18 @@ def generateNewStockPercentage(ticker, allChange, industryChange):
                 downPercentage = -0.03
         elif (prevDayChange < 0):
             if (prevDayChange < -0.10):
-                upPercentage = 0.28
-            elif (prevDayChange < -0.5):
                 upPercentage = 0.18
+            elif (prevDayChange < -0.5):
+                upPercentage = 0.0
             else:
-                upPercentage = 0.8
+                upPercentage = 0.05
 
     industryWeight = 0.5
     randomWeight = 0.3
     #otherWeight = 0.2 (UnderValued/Overvalued/Earnings Report/Announcment)
 
     stock = getStockData(ticker)
-    randomChange = calculateGBM(float(stock.price), float(stock.volatility), float(stock.avgReturn))
+    randomChange = calculateGBM(float(stock.currPrice), float(stock.volatility), float(stock.avgReturn))
     return (randomChange * randomWeight) + (industryChange * industryWeight) + (upPercentage * random.random()) + (downPercentage * random.random())
 
 
