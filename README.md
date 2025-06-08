@@ -1,6 +1,6 @@
-Frontend - React.js, Figma, Chart.js
+Frontend - React.js, Chart.js
 
-Backend - Django (Python), REST APIs
+Backend - Django, Python, REST APIs
 
 QuickMarkets is a stock market simulator designed to educate users on investing and portfolio management through a fast-paced,
 realistic trading experience. Built by a team of 4, this project compresses real-time trading days into minutes,
