@@ -12,24 +12,24 @@ Local Setup Instructions
 
 Frontend: React.js, JavaScript
 
-cd client
+1. cd client
 
-npm install vite@latest
+2. npm install vite@latest
 
-create a .env file
+3. create a .env file
 
-copy and paste: VITE_API_URL="http://127.0.0.1:8000" into the .env file
+4. copy and paste: VITE_API_URL="http://127.0.0.1:8000" into the .env file
 
-npm run dev
+5. npm run dev
 
 Backend: Django, Python
 
-cd server
+1. cd server
 
-python -m venv env
+2. python -m venv env
 
-./env/Scripts/activate (Windows Powershell)
+3. ./env/Scripts/activate (Windows Powershell)
 
-pip install -r requirements.txt
+4. pip install -r requirements.txt
 
-python manage.py runserver
+5. python manage.py runserver
