@@ -60,6 +60,10 @@ function ExploreStocks() {
         setSelectedStock(null);
     };
 
+    const handleTransactionComplete = () => {
+        // Added for later use
+    };
+
     return (
         <div className={styles.exploreStocks}>
             <Navbar />
@@ -152,6 +156,7 @@ function ExploreStocks() {
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
                     stock={selectedStock}
+                    onTransactionComplete={handleTransactionComplete}
                 />
             )}
         </div>

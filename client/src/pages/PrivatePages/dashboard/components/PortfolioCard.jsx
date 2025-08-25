@@ -3,7 +3,30 @@ import { BsPiggyBank } from "react-icons/bs";
 import styles from "./PortfolioCard.module.css";
 import { Link } from 'react-router-dom';
 
-const PortfolioCard = ({ portfolioValue, portfolioDayChange }) => {
+const PortfolioCard = ({ portfolioValue, portfolioDayChange, loading = false }) => {
+    if (loading) {
+        return (
+            <div className={styles.portfolioCard}>
+                <div className={styles.portfolioHeader}>
+                    <BsPiggyBank />
+                    <p className={styles.portfolioTitle}>Portfolio Value</p>
+                </div>
+                <div className={styles.valueLine}>
+                    <h2 className={styles.portfolioValue}>Loading...</h2>
+                    <h4 className={styles.loadingChange}>--</h4>
+                </div>
+                <div className={styles.buttonContainer}>
+                    <Link to="/admin/exploreStocks" className={styles.actionButton}>
+                        Buy Stocks
+                    </Link>
+                    <Link to="/admin/Portfolio" className={styles.actionButton}>
+                        Sell Stocks
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.portfolioCard}>
             <div className={styles.portfolioHeader}>

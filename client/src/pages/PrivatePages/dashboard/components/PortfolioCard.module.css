@@ -39,9 +39,14 @@
 }
 
 .negativeChange {
-    color: #dc3545;
+    color: #dc2626;
     font-size: 20px;
     font-weight: 500;
+}
+
+.loadingChange {
+    color: #6b7280;
+    font-style: italic;
 }
 
 .buttonContainer {

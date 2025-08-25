@@ -1,10 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './StockModal.module.css';
 import { IoClose } from "react-icons/io5";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import api from '../../../../api/api.js';
 
-const StockModal = ({ stock, onClose }) => {
+const StockModal = ({ stock, onClose, onTransactionComplete }) => {
+    const [shares, setShares] = useState('');
+    const [transactionType, setTransactionType] = useState('buy');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
     if (!stock) return null;
+
+    const handleTransaction = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        if (!shares || shares <= 0) {
+            setError('Please enter a valid number of shares');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const endpoint = transactionType === 'buy' ? '/api/buy-stock/' : '/api/sell-stock/';
+            const response = await api.post(endpoint, {
+                ticker: stock.symbol,
+                shares: parseFloat(shares)
+            });
+
+            // Clear form and show success
+            setShares('');
+            setError('');
+            
+            if (onTransactionComplete) {
+                onTransactionComplete(response.data);
+            }
+            
+            setTimeout(() => {
+                onClose();
+            }, 1500);
+
+        } catch (error) {
+            setError(error.response?.data?.error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className={styles.modalOverlay}>
@@ -68,6 +111,66 @@ const StockModal = ({ stock, onClose }) => {
                                     <span className={styles.value}>{(Math.random() * 50 - 25).toFixed(2)}%</span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className={styles.transactionSection}>
+                            <h3>Trade {stock.symbol}</h3>
+                            <form onSubmit={handleTransaction} className={styles.transactionForm}>
+                                <div className={styles.transactionTypeToggle}>
+                                    <button
+                                        type="button"
+                                        className={`${styles.toggleButton} ${transactionType === 'buy' ? styles.active : ''}`}
+                                        onClick={() => setTransactionType('buy')}
+                                    >
+                                        Buy
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`${styles.toggleButton} ${transactionType === 'sell' ? styles.active : ''}`}
+                                        onClick={() => setTransactionType('sell')}
+                                    >
+                                        Sell
+                                    </button>
+                                </div>
+                                
+                                <div className={styles.sharesInput}>
+                                    <label htmlFor="shares">Number of Shares:</label>
+                                    <input
+                                        id="shares"
+                                        type="number"
+                                        step="0.0001"
+                                        min="0.0001"
+                                        value={shares}
+                                        onChange={(e) => setShares(e.target.value)}
+                                        placeholder="Enter shares"
+                                        required
+                                    />
+                                </div>
+
+                                {shares && (
+                                    <div className={styles.transactionSummary}>
+                                        <p>Total {transactionType === 'buy' ? 'Cost' : 'Value'}: 
+                                            <span className={styles.totalAmount}>
+                                                ${(parseFloat(shares || 0) * stock.price).toFixed(2)}
+                                            </span>
+                                        </p>
+                                    </div>
+                                )}
+
+                                {error && (
+                                    <div className={styles.errorMessage}>
+                                        {error}
+                                    </div>
+                                )}
+
+                                <button 
+                                    type="submit" 
+                                    className={`${styles.transactionButton} ${transactionType === 'buy' ? styles.buyButton : styles.sellButton}`}
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Processing...' : `${transactionType === 'buy' ? 'Buy' : 'Sell'} ${stock.symbol}`}
+                                </button>
+                            </form>
                         </div>
                     </div>
 

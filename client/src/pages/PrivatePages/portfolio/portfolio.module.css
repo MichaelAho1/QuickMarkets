@@ -25,6 +25,93 @@ header h2 {
     font-weight: 600;
 }
 
+.portfolio header h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0.5rem 0 2rem 0;
+}
+
+.portfolioSummary {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.summaryItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    min-width: 150px;
+}
+
+.summaryItem .label {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.summaryItem .value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.summaryItem .value.positive {
+    color: #059669;
+}
+
+.summaryItem .value.negative {
+    color: #dc2626;
+}
+
+.loadingContainer,
+.errorContainer,
+.emptyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+}
+
+.loadingContainer p {
+    color: #64748b;
+    font-size: 1.125rem;
+}
+
+.errorContainer p {
+    color: #dc2626;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+}
+
+.errorContainer button {
+    padding: 0.75rem 1.5rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.errorContainer button:hover {
+    background-color: #2563eb;
+}
+
+.emptyContainer p {
+    color: #64748b;
+    font-size: 1.125rem;
+}
+
 .stockSection {
     padding: 0 20px;
     height: 450px;

@@ -1,116 +1,87 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import BottomTables from './components/BottomTables';
 import StockTable from './components/StockTable';
 import DonutChart from './components/DonutChart';
 import styles from "./portfolio.module.css";
+import api from '../../../api/api.js';
 
 function stocksOwned() {
-    const [portfolioValue, setPortfolioValue] = useState(1374.85);
-    
-    //Temp Stocks
-    const stocks = [
-        {
-            symbol: 'AAPL',
-            name: 'Apple Inc.',
-            shares: 10,
-            avgCost: 145.50,
-            currentPrice: 150.25,
-            totalValue: 1502.50,
-            profitLoss: 47.50,
-            profitLossPercentage: 3.26
-        },
-        {
-            symbol: 'MSFT',
-            name: 'Microsoft Corporation',
-            shares: 5,
-            avgCost: 275.00,
-            currentPrice: 280.75,
-            totalValue: 1403.75,
-            profitLoss: 28.75,
-            profitLossPercentage: 2.09
-        },
-        {
-            symbol: 'GOOGL',
-            name: 'Alphabet Inc.',
-            shares: 3,
-            avgCost: 120.00,
-            currentPrice: 125.50,
-            totalValue: 376.50,
-            profitLoss: 16.50,
-            profitLossPercentage: 4.58
-        },
-        {
-            symbol: 'AMZN',
-            name: 'Amazon.com Inc.',
-            shares: 8,
-            avgCost: 140.00,
-            currentPrice: 145.25,
-            totalValue: 1162.00,
-            profitLoss: 42.00,
-            profitLossPercentage: 3.75
-        },
-        {
-            symbol: 'TSLA',
-            name: 'Tesla Inc.',
-            shares: 2,
-            avgCost: 175.00,
-            currentPrice: 180.50,
-            totalValue: 361.00,
-            profitLoss: 11.00,
-            profitLossPercentage: 3.14
-        },
-        {
-            symbol: 'META',
-            name: 'Meta Platforms Inc.',
-            shares: 6,
-            avgCost: 305.00,
-            currentPrice: 320.75,
-            totalValue: 1924.50,
-            profitLoss: 94.50,
-            profitLossPercentage: 5.16
-        },
-        {
-            symbol: 'NVDA',
-            name: 'NVIDIA Corporation',
-            shares: 4,
-            avgCost: 420.00,
-            currentPrice: 450.25,
-            totalValue: 1801.00,
-            profitLoss: 121.00,
-            profitLossPercentage: 7.20
-        },
-        {
-            symbol: 'JPM',
-            name: 'JPMorgan Chase & Co.',
-            shares: 7,
-            avgCost: 173.00,
-            currentPrice: 175.50,
-            totalValue: 1228.50,
-            profitLoss: 17.50,
-            profitLossPercentage: 1.45
-        },
-        {
-            symbol: 'V',
-            name: 'Visa Inc.',
-            shares: 5,
-            avgCost: 272.50,
-            currentPrice: 280.25,
-            totalValue: 1401.25,
-            profitLoss: 38.75,
-            profitLossPercentage: 2.84
-        },
-        {
-            symbol: 'WMT',
-            name: 'Walmart Inc.',
-            shares: 12,
-            avgCost: 61.00,
-            currentPrice: 60.75,
-            totalValue: 729.00,
-            profitLoss: -3.00,
-            profitLossPercentage: -0.41
+    const [portfolioData, setPortfolioData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchPortfolioData();
+    }, []);
+
+    const fetchPortfolioData = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/api/user-portfolio/');
+            setPortfolioData(response.data);
+            setError(null);
+        } catch (err) {
+            setError('Failed to fetch portfolio data');
+            console.error('Error fetching portfolio:', err);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
+
+    const handleTransactionComplete = () => {
+        fetchPortfolioData();
+    };
+
+    if (loading) {
+        return (
+            <div className={styles.portfolio}>
+                <Navbar />
+                <div className={styles.loadingContainer}>
+                    <p>Loading portfolio data...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className={styles.portfolio}>
+                <Navbar />
+                <div className={styles.errorContainer}>
+                    <p>Error: {error}</p>
+                    <button onClick={fetchPortfolioData}>Retry</button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!portfolioData) {
+        return (
+            <div className={styles.portfolio}>
+                <Navbar />
+                <div className={styles.emptyContainer}>
+                    <p>No portfolio data available</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Transforms API data to match component expectations
+    const stocks = portfolioData.portfolio.map(stock => ({
+        symbol: stock.ticker,
+        name: stock.stockName,
+        shares: stock.shares,
+        avgCost: stock.averageCost,
+        currentPrice: stock.currentPrice,
+        totalValue: stock.currentValue,
+        profitLoss: stock.profitLoss,
+        profitLossPercentage: stock.profitLossPercent
+    }));
+
+    const portfolioValue = portfolioData.summary.totalPortfolioValue;
+    const cashBalance = portfolioData.summary.cashBalance;
+    const totalNetWorth = portfolioData.summary.totalNetWorth;
 
     return (
         <div className={styles.portfolio}> 
@@ -118,6 +89,23 @@ function stocksOwned() {
             <header>
                 <h1>Total Portfolio Value</h1>
                 <h2>${portfolioValue.toFixed(2)}</h2>
+                <div className={styles.portfolioSummary}>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.label}>Cash Balance:</span>
+                        <span className={styles.value}>${cashBalance.toFixed(2)}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.label}>Total Net Worth:</span>
+                        <span className={styles.value}>${totalNetWorth.toFixed(2)}</span>
+                    </div>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.label}>Overall P&L:</span>
+                        <span className={`${styles.value} ${portfolioData.summary.overallProfitLoss >= 0 ? styles.positive : styles.negative}`}>
+                            {portfolioData.summary.overallProfitLoss >= 0 ? '+' : ''}${portfolioData.summary.overallProfitLoss.toFixed(2)} 
+                            ({portfolioData.summary.overallProfitLossPercent >= 0 ? '+' : ''}{portfolioData.summary.overallProfitLossPercent.toFixed(2)}%)
+                        </span>
+                    </div>
+                </div>
             </header>
             <div className={styles.stockSection}>
                 <div className={styles.card}>
