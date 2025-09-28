@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './StockTable.module.css';
 
-const StockTable = ({ stocks }) => {
+const StockTable = ({ stocks, onStockClick }) => {
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -36,7 +36,11 @@ const StockTable = ({ stocks }) => {
                     </thead>
                     <tbody>
                         {stocks.map((stock) => (
-                            <tr key={stock.symbol}>
+                            <tr 
+                                key={stock.symbol} 
+                                className={styles.clickableRow}
+                                onClick={() => onStockClick && onStockClick(stock)}
+                            >
                                 <td>{stock.symbol}</td>
                                 <td>{stock.name}</td>
                                 <td>{stock.shares}</td>

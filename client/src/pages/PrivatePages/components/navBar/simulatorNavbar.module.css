@@ -112,6 +112,7 @@
     align-items: center;
     gap: 15px;
     background-color: #f1f3f5;
+    position: relative;
 }
 
 .userImg {
@@ -119,6 +120,13 @@
     height: 40px;
     object-fit: cover;
     border: 2px solid #adb5bd;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.userImg:hover {
+    transform: scale(1.05);
 }
 
 .userName {
@@ -129,6 +137,36 @@
 .userEmail {
     font-size: 0.9rem;
     color: #6c757d;
+}
+
+.profileDropdown {
+    position: absolute;
+    top: -10px;
+    right: 15px;
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 120px;
+    overflow: hidden;
+}
+
+.logoutButton {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background-color: white;
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+}
+
+.logoutButton:hover {
+    background-color: #f8f9fa;
 }
 
 .hamburgerButton {

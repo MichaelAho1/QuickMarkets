@@ -3,6 +3,7 @@ import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import BottomTables from './components/BottomTables';
 import StockTable from './components/StockTable';
 import DonutChart from './components/DonutChart';
+import StockModal from '../components/StockModal/StockModal';
 import styles from "./portfolio.module.css";
 import api from '../../../api/api.js';
 
@@ -10,6 +11,8 @@ function stocksOwned() {
     const [portfolioData, setPortfolioData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedStock, setSelectedStock] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         fetchPortfolioData();
@@ -31,6 +34,28 @@ function stocksOwned() {
 
     const handleTransactionComplete = () => {
         fetchPortfolioData();
+    };
+
+    const handleStockClick = (stock) => {
+        const stockForModal = {
+            symbol: stock.symbol,
+            name: stock.name,
+            openingPrice: stock.openingPrice, 
+            currentPrice: stock.currentPrice,
+            oneWeekChange: 0,
+            oneMonthChange: 0,
+            threeMonthChange: 0,
+            sixMonthChange: 0,
+            sector: stock.sector
+        };
+        
+        setSelectedStock(stockForModal);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedStock(null);
     };
 
     if (loading) {
@@ -74,9 +99,11 @@ function stocksOwned() {
         shares: stock.shares,
         avgCost: stock.averageCost,
         currentPrice: stock.currentPrice,
+        openingPrice: stock.openingPrice,
         totalValue: stock.currentValue,
         profitLoss: stock.profitLoss,
-        profitLossPercentage: stock.profitLossPercent
+        profitLossPercentage: stock.profitLossPercent,
+        sector: stock.sector
     }));
 
     const portfolioValue = portfolioData.summary.totalPortfolioValue;
@@ -111,7 +138,7 @@ function stocksOwned() {
                 <div className={styles.card}>
                     <div className={styles.contentWrapper}>
                         <div className={styles.tableWrapper}>
-                            <StockTable stocks={stocks} />
+                            <StockTable stocks={stocks} onStockClick={handleStockClick} />
                         </div>
                         <div className={styles.chartWrapper}>
                             <DonutChart stocks={stocks} />
@@ -120,6 +147,14 @@ function stocksOwned() {
                 </div>
             </div>
             <BottomTables />
+            
+            {selectedStock && (
+                <StockModal
+                    stock={selectedStock}
+                    onClose={handleCloseModal}
+                    onTransactionComplete={handleTransactionComplete}
+                />
+            )}
         </div>
     );
 }
