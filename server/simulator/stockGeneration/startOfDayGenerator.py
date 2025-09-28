@@ -2,6 +2,7 @@ from simulator.utils import getStockData, getETFData
 from ..models import ETF, Stock
 import math, random
 
+"Generates the prices for the first price of the day (market open)"
 #Calls everything in the order it needs to be called
 def calculateMarketChanges():
     marketChange = generateTotalMarketPercentage("ALL") #Calculate first because it is needed for other calculations
