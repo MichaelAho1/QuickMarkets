@@ -7,7 +7,9 @@ import { BsPiggyBank } from "react-icons/bs";
 import { AiOutlineStock } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoIosArrowDown, IoMdMenu } from "react-icons/io";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../../api/constants'; 
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../../api/constants';
+import { useStockData } from '../../../../contexts/StockContext'; 
 
 const Navbar = () => {
     const [isWatchlistCollapsed, setIsWatchlistCollapsed] = useState(false);
@@ -15,6 +17,12 @@ const Navbar = () => {
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
+
+    const { 
+        getWatchlistStocks, 
+        watchlistLoading, 
+        watchlistError 
+    } = useStockData();
 
     const toggleWatchlist = () => {
         setIsWatchlistCollapsed(!isWatchlistCollapsed);
@@ -57,13 +65,8 @@ const Navbar = () => {
         };
     }, [isProfileDropdownOpen]);
 
-    const stocks = [
-        { symbol: 'AAPL', dayChangePercentage: 1.25 },
-        { symbol: 'MSFT', dayChangePercentage: -0.78 },
-        { symbol: 'TSLA', dayChangePercentage: 3.10 },
-        { symbol: 'AMZN', dayChangePercentage: -2.15 },
-        { symbol: 'GOOG', dayChangePercentage: 0.55 },
-    ];
+
+    const watchlistStocks = getWatchlistStocks();
 
     return (
         <>
@@ -98,18 +101,35 @@ const Navbar = () => {
                     </div>
                     <div className={styles.watchList}>
                         <p className={styles.navBarHeader} onClick={toggleWatchlist}>
-                            <span className={styles.watchListTitle}>WATCHLIST</span>
+                            <span className={styles.watchListTitle}>WATCHLIST ({watchlistStocks.length}/5)</span>
                             <IoIosArrowDown className={`${styles.caret} ${isWatchlistCollapsed ? styles.collapsed : ''}`} />
                         </p>
                         <div className={`${styles.collapsibleContent} ${isWatchlistCollapsed ? styles.collapsed : ''}`}>
-                            {stocks.map((stock) => (
-                                <div className={styles.watchListItem} key={stock.symbol}>
-                                    <span>{stock.symbol}</span>
-                                    <span className={stock.dayChangePercentage >= 0 ? styles.positiveChange : styles.negativeChange}>
-                                        {stock.dayChangePercentage >= 0 ? '+' : ''}{stock.dayChangePercentage.toFixed(2)}%
-                                    </span>
+                            {watchlistLoading ? (
+                                <div className={styles.watchlistLoading}>
+                                    <span>Loading...</span>
                                 </div>
-                            ))}
+                            ) : (
+                                watchlistStocks.map((stock) => {
+                                    const percentageChange = ((stock.currPrice - stock.prevPrice) / stock.prevPrice) * 100;
+                                    const isPositive = percentageChange >= 0;
+                                    
+                                    return (
+                                        <div className={styles.watchListItem} key={stock.ticker}>
+                                            <div className={styles.stockInfo}>
+                                                <span className={styles.symbol}>{stock.ticker}</span>
+                                                <span className={styles.price}>${stock.currPrice.toFixed(2)}</span>
+                                            </div>
+                                            <div className={styles.stockActions}>
+                                                <span className={isPositive ? styles.positiveChange : styles.negativeChange}>
+                                                    {isPositive ? <FaArrowUp size={10} /> : <FaArrowDown size={10} />}
+                                                    {Math.abs(percentageChange).toFixed(1)}%
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
                         </div>
                     </div>
                 </div>

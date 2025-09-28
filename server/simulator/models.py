@@ -64,3 +64,13 @@ class Transaction(models.Model):
     transactionType = models.CharField(max_length=4, choices=[("BUY", "Buy"), ("SELL", "Sell")])
     priceAtTransaction = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='username', to_field='username')
+    ticker = models.CharField(max_length=10)
+
+    class Meta:
+        unique_together = (('user', 'ticker'),)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.ticker}"
