@@ -2,23 +2,23 @@
 End of day generator to store daily stock prices in StockPriceHistory
 This should be called at the end of each trading day to store the day's price data
 """
-from datetime import date, datetime
+from datetime import timedelta
 from ..models import Stock, StockPriceHistory
-import random
+from ..utils import get_current_simulation_date
 
 def storeEndOfDayPrices():
     """
     Store the current day's stock prices in StockPriceHistory
     This should be called at the end of each trading day
     """
-    today = date.today()
+    simulation_date = get_current_simulation_date()
     stocks = Stock.objects.all()
     
     for stock in stocks:
         day_change = float(stock.currPrice) - float(stock.prevPrice)
         StockPriceHistory.objects.update_or_create(
             stockTicker=stock,
-            date=today,
+            date=simulation_date,
             defaults={
                 'closingPrice': stock.currPrice,
                 'openingPrice': stock.prevPrice,
@@ -26,27 +26,7 @@ def storeEndOfDayPrices():
             }
         )
     
-    print(f"Stored end-of-day prices for {len(stocks)} stocks on {today}")
-
-def getHistoricalData(ticker, days=30):
-    """
-    Get historical data for a specific stock
-    Returns data for the specified number of days
-    """
-    try:
-        stock = Stock.objects.get(ticker=ticker)
-        end_date = date.today()
-        start_date = date.fromordinal(end_date.toordinal() - days)
-        
-        history = StockPriceHistory.objects.filter(
-            stockTicker=stock,
-            date__gte=start_date,
-            date__lte=end_date
-        ).order_by('date')
-        
-        return history
-    except Stock.DoesNotExist:
-        return None
+    print(f"Stored end-of-day prices for {len(stocks)} stocks on simulation day {simulation_date}")
 
 def getPriceDataForPeriod(ticker, period):
     """
@@ -55,7 +35,7 @@ def getPriceDataForPeriod(ticker, period):
     """
     try:
         stock = Stock.objects.get(ticker=ticker)
-        end_date = date.today()
+        current_simulation_date = get_current_simulation_date()
         
         if period == '1w':
             days = 7
@@ -70,12 +50,12 @@ def getPriceDataForPeriod(ticker, period):
         else:
             days = 30  # Default to 1 month
         
-        start_date = date.fromordinal(end_date.toordinal() - days)
+        start_date = current_simulation_date - timedelta(days=days)
         
         history = StockPriceHistory.objects.filter(
             stockTicker=stock,
             date__gte=start_date,
-            date__lte=end_date
+            date__lte=current_simulation_date
         ).order_by('date')
         
         return history

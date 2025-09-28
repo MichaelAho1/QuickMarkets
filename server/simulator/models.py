@@ -6,6 +6,29 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
+
+class SimulationDay(models.Model):
+    """Tracks the current simulation day"""
+    current_day = models.IntegerField(default=1)
+    start_date = models.DateField(default='2024-01-01')  # Base date for simulation
+    
+    class Meta:
+        verbose_name = "Simulation Day"
+        verbose_name_plural = "Simulation Days"
+    
+    def __str__(self):
+        return f"Day {self.current_day}"
+    
+    def get_simulation_date(self):
+        """Get the actual date for the current simulation day"""
+        from datetime import timedelta
+        return self.start_date + timedelta(days=self.current_day - 1)
+    
+    def increment_day(self):
+        """Move to the next simulation day"""
+        self.current_day += 1
+        self.save()
+        return self.get_simulation_date()
     
 class ETF(models.Model):
     ticker = models.CharField(max_length=4, unique=True, primary_key=True) 

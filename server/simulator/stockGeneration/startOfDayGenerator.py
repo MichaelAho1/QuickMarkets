@@ -1,10 +1,13 @@
-from simulator.utils import getStockData, getETFData
+from simulator.utils import getStockData, getETFData, increment_simulation_day
 from ..models import ETF, Stock
 import math, random
 
 "Generates the prices for the first price of the day (market open)"
 #Calls everything in the order it needs to be called
 def calculateMarketChanges():
+    # Increment simulation day when starting a new day
+    new_simulation_date = increment_simulation_day()
+    print(f"Starting new simulation day: {new_simulation_date}")
     marketChange = generateTotalMarketPercentage("ALL") #Calculate first because it is needed for other calculations
     ETFPercentChanges = {"ALL":marketChange} #Add All because it has already been calculated
     stockPercentChanges = {}
