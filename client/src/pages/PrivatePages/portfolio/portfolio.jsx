@@ -44,7 +44,7 @@ function stocksOwned() {
         setSelectedStock(null);
     };
 
-    if (portfolioLoading) {
+    if (portfolioLoading || !calculatedPortfolio) {
         return (
             <div className={styles.portfolio}>
                 <Navbar />
