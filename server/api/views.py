@@ -264,3 +264,28 @@ class UserPortfolio(APIView):
             return Response({"error": "User not found"}, status=404)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+class TransactionHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            simulator_user = SimulatorUser.objects.get(username=request.user.username)
+            # Get last 5 transactions 
+            transactions = Transaction.objects.filter(user=simulator_user).order_by('-timestamp')[:5]
+            transaction_data = []
+            for transaction in transactions:
+                total_value = transaction.shares * transaction.priceAtTransaction
+
+                transaction_data.append({
+                    "date": transaction.timestamp.strftime("%Y-%m-%d"),
+                    "value": total_value,
+                    "change": f"{transaction.transactionType} {transaction.shares} shares of {transaction.stockTicker.ticker} @ ${transaction.priceAtTransaction}"
+                })
+            
+            return Response(transaction_data)
+            
+        except SimulatorUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
