@@ -1,28 +1,72 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "./LeaderboardCard.module.css";
+import { useStockData } from '../../../../contexts/StockContext';
 
 const LeaderboardCard = () => {
+    const [leaderboardData, setLeaderboardData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const { getLeaderboard } = useStockData();
+
+    useEffect(() => {
+        fetchLeaderboardData();
+    }, [getLeaderboard]);
+
+    const fetchLeaderboardData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await getLeaderboard();
+            setLeaderboardData(data);
+        } catch (err) {
+            setError('Failed to load leaderboard data');
+            console.error('Error fetching leaderboard:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(value);
+    };
+
+    if (loading) {
+        return (
+            <div className={styles.leaderboardCard}>
+                <div className={styles.cardHeader}>
+                    <h3>Leaderboard</h3>
+                </div>
+                <div className={styles.leaderboardContent}>
+                    <div className={styles.loadingContainer}>
+                        <p>Loading leaderboard...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.leaderboardCard}>
             <div className={styles.cardHeader}>
                 <h3>Leaderboard</h3>
             </div>
             <div className={styles.leaderboardContent}>
-                <div className={styles.leaderboardItem}>
-                    <span className={styles.rank}>1</span>
-                    <span className={styles.username}>John Doe</span>
-                    <span className={styles.score}>$150,000</span>
-                </div>
-                <div className={styles.leaderboardItem}>
-                    <span className={styles.rank}>2</span>
-                    <span className={styles.username}>Jane Smith</span>
-                    <span className={styles.score}>$145,000</span>
-                </div>
-                <div className={styles.leaderboardItem}>
-                    <span className={styles.rank}>3</span>
-                    <span className={styles.username}>Mike Johnson</span>
-                    <span className={styles.score}>$140,000</span>
-                </div>
+                {leaderboardData.map((user, index) => (
+                    <div 
+                        key={user.username} 
+                        className={styles.leaderboardItem}
+                    >
+                        <span className={styles.rank}>#{index + 1}</span>
+                        <span className={styles.username}>{user.username}</span>
+                        <span className={styles.score}>{formatCurrency(user.totalNetWorth)}</span>
+                    </div>
+                ))}
             </div>
         </div>
     );

@@ -289,3 +289,34 @@ class TransactionHistoryView(APIView):
             return Response({"error": "User not found"}, status=404)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+class LeaderboardView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        try:
+            # Get all users and calculate their total net worth
+            users = SimulatorUser.objects.all()
+            leaderboard_data = []
+            
+            for user in users:
+                # Calculate portfolio value
+                user_stocks = UserStock.objects.filter(user=user)
+                total_net_worth = user.cashBalance or 0
+                
+                for user_stock in user_stocks:
+                    current_value = user_stock.stock.currPrice * user_stock.sharesAmount
+                    total_net_worth += current_value
+                
+                leaderboard_data.append({
+                    "username": user.username,
+                    "totalNetWorth": float(total_net_worth),
+                })
+            
+            # Sort by total net worth (descending)
+            leaderboard_data.sort(key=lambda x: x['totalNetWorth'], reverse=True)
+            
+            return Response(leaderboard_data[:3])
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)

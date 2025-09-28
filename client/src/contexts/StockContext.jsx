@@ -68,6 +68,10 @@ export const StockProvider = ({ children }) => {
         return stocks;
     };
 
+    const getLeaderboard = async () => {
+        return await stockCacheService.getLeaderboard();
+    };
+
     const value = {
         stocks,
         loading,
@@ -80,7 +84,8 @@ export const StockProvider = ({ children }) => {
         getTopGainers,
         getTopLosers,
         getPopularStocks,
-        getAllStocks
+        getAllStocks,
+        getLeaderboard
     };
 
     return (

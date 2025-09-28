@@ -131,6 +131,17 @@ class StockCacheService {
         this.clearCache();
         return await this.getStockPrices(true);
     }
+
+    // Get leaderboard data
+    async getLeaderboard() {
+        try {
+            const response = await api.get('/api/leaderboard/');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching leaderboard:', error);
+            throw error;
+        }
+    }
 }
 
 // Create singleton instance
