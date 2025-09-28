@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import styles from "./exploreStocks.module.css";
-import { FaSearch, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaSearch, FaArrowUp, FaArrowDown, FaTimes } from "react-icons/fa";
 import StockModal from '../components/StockModal/StockModal';
 
 function ExploreStocks() {
@@ -47,6 +47,19 @@ function ExploreStocks() {
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
+    };
+    // Filter stocks based on search query and sector
+    const getFilteredStocks = (stocks) => {
+        return stocks.filter(stock => {
+            const matchesSearch = searchQuery === '' || 
+                stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                stock.name.toLowerCase().includes(searchQuery.toLowerCase());
+            
+            const matchesSector = selectedSector === 'all' || 
+                stock.sector.toLowerCase() === selectedSector;
+            
+            return matchesSearch && matchesSector;
+        });
     };
 
     const handleSectorChange = (sectorId) => {
@@ -102,9 +115,7 @@ function ExploreStocks() {
                 <div className={styles.allStocks}>
                     <h2>All Stocks</h2>
                     <div className={styles.stocksGrid}>
-                        {allStocks
-                            .filter(stock => selectedSector === 'all' || stock.sector.toLowerCase() === selectedSector)
-                            .map(stock => (
+                        {getFilteredStocks(allStocks).map(stock => (
                                 <div 
                                     key={stock.symbol} 
                                     className={styles.stockCard}
@@ -130,7 +141,7 @@ function ExploreStocks() {
                 <div className={styles.popularStocks}>
                     <h2>Most Popular Stocks</h2>
                     <div className={styles.popularStocksGrid}>
-                        {popularStocks.map(stock => (
+                        {getFilteredStocks(popularStocks).map(stock => (
                             <div 
                                 key={stock.symbol} 
                                 className={styles.stockCard}
