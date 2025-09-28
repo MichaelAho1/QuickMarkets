@@ -10,6 +10,8 @@ from simulator.models import User as SimulatorUser
 from rest_framework.permissions import IsAuthenticated
 from decimal import Decimal
 from django.db import transaction
+from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
+from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -347,5 +349,35 @@ class WatchlistView(APIView):
             
         except SimulatorUser.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulateStartOfDayView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Simulate start of day price changes"""
+        try:
+            calculateMarketChanges()
+            return Response({
+                "message": "Start of day simulation completed successfully",
+                "status": "success"
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulateDuringDayView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Simulate during day price changes"""
+        try:
+            price_changes = generateDuringDayChanges()
+            applyDuringDayChanges(price_changes)
+            return Response({
+                "message": "During day simulation completed successfully",
+                "status": "success",
+                "changes_applied": len(price_changes)
+            })
         except Exception as e:
             return Response({"error": str(e)}, status=500)

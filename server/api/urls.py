@@ -10,4 +10,6 @@ urlpatterns = [
     path('transaction-history/', views.TransactionHistoryView.as_view(), name='transaction-history'),
     path('leaderboard/', views.LeaderboardView.as_view(), name='leaderboard'),
     path('watchlist/', views.WatchlistView.as_view(), name='watchlist'),
+    path('simulate-start-of-day/', views.SimulateStartOfDayView.as_view(), name='simulate-start-of-day'),
+    path('simulate-during-day/', views.SimulateDuringDayView.as_view(), name='simulate-during-day'),
 ]
