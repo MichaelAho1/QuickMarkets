@@ -1,14 +1,46 @@
 import React from 'react';
 import styles from './BottomTables.module.css';
 
-const BottomTables = () => {
-    const sectors = [
-        { name: 'Technology', percentage: 45, value: 2500 },
-        { name: 'Healthcare', percentage: 20, value: 1100 },
-        { name: 'Finance', percentage: 15, value: 850 },
-        { name: 'Consumer Goods', percentage: 10, value: 550 },
-        { name: 'Energy', percentage: 10, value: 550 }
-    ];
+const BottomTables = ({ portfolioData }) => {
+    // Calculate sector allocation from portfolio data
+    const calculateSectorAllocation = () => {
+        if (!portfolioData || !portfolioData.portfolio) {
+            return [];
+        }
+
+        const sectorMap = {};
+        let totalPortfolioValue = 0;
+
+        // Group stocks by sector and calculate values
+        portfolioData.portfolio.forEach(stock => {
+            const sector = stock.sector || 'Unknown';
+            const value = stock.currentValue || 0;
+            
+            if (!sectorMap[sector]) {
+                sectorMap[sector] = {
+                    name: sector,
+                    value: 0,
+                    stocks: []
+                };
+            }
+            
+            sectorMap[sector].value += value;
+            sectorMap[sector].stocks.push(stock);
+            totalPortfolioValue += value;
+        });
+
+        // Convert to array and calculate percentages
+        const sectors = Object.values(sectorMap).map(sector => ({
+            name: sector.name,
+            value: sector.value,
+            percentage: totalPortfolioValue > 0 ? (sector.value / totalPortfolioValue * 100) : 0
+        }));
+
+        // Sort by value (descending)
+        return sectors.sort((a, b) => b.value - a.value);
+    };
+
+    const sectors = calculateSectorAllocation();
 
     const history = [
         { date: '2024-03-15', value: 4800, change: '+2.5%' },
@@ -32,21 +64,23 @@ const BottomTables = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {sectors.map((sector, index) => (
-                                <tr key={index}>
-                                    <td>{sector.name}</td>
-                                    <td>
-                                        <div className={styles.percentageBar}>
-                                            <div 
-                                                className={styles.barFill} 
-                                                style={{ width: `${sector.percentage}%` }}
-                                            ></div>
-                                            <span>{sector.percentage}%</span>
-                                        </div>
-                                    </td>
-                                    <td>${sector.value.toLocaleString()}</td>
-                                </tr>
-                            ))}
+                            {
+                                sectors.map((sector, index) => (
+                                    <tr key={index}>
+                                        <td>{sector.name}</td>
+                                        <td>
+                                            <div className={styles.percentageBar}>
+                                                <div 
+                                                    className={styles.barFill} 
+                                                    style={{ width: `${sector.percentage}%` }}
+                                                ></div>
+                                                <span>{sector.percentage.toFixed(1)}%</span>
+                                            </div>
+                                        </td>
+                                        <td>${sector.value.toLocaleString()}</td>
+                                    </tr>
+                                ))
+                            }
                         </tbody>
                     </table>
                 </div>

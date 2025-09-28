@@ -114,9 +114,12 @@ function stocksOwned() {
         <div className={styles.portfolio}> 
             <Navbar />
             <header>
-                <h1>Total Portfolio Value</h1>
-                <h2>${portfolioValue.toFixed(2)}</h2>
+                <h1>Portfolio Overview</h1>
                 <div className={styles.portfolioSummary}>
+                    <div className={styles.summaryItem}>
+                        <span className={styles.label}>Total Portfolio Value:</span>
+                        <span className={styles.value}>${portfolioValue.toFixed(2)}</span>
+                    </div>
                     <div className={styles.summaryItem}>
                         <span className={styles.label}>Cash Balance:</span>
                         <span className={styles.value}>${cashBalance.toFixed(2)}</span>
@@ -146,7 +149,7 @@ function stocksOwned() {
                     </div>
                 </div>
             </div>
-            <BottomTables />
+            <BottomTables portfolioData={portfolioData} />
             
             {selectedStock && (
                 <StockModal
