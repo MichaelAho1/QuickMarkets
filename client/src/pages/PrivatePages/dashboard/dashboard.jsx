@@ -6,43 +6,23 @@ import LeaderboardCard from './components/LeaderboardCard';
 import PortfolioChartCard from './components/PortfolioChartCard';
 import TopGainersCard from './components/TopGainersCard';
 import NewsCard from './components/newsCard';
-import api from '../../../api/api.js';
+import { useStockData } from '../../../contexts/StockContext';
 
 const Dashboard = () => {
-    const [portfolioData, setPortfolioData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [portfolioValue, setPortfolioValue] = useState(0);
-    const [portfolioDayChange, setPortfolioDayChange] = useState(0);
-
-    useEffect(() => {
-        fetchPortfolioData();
-    }, []);
-
-    const fetchPortfolioData = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/api/user-portfolio/');
-            setPortfolioData(response.data);
-            
-            setPortfolioValue(response.data.summary.totalPortfolioValue);
-            
-            // This will/can be changed 
-            const dayChange = response.data.summary.overallProfitLossPercent;
-            setPortfolioDayChange(dayChange);
-            
-        } catch (err) {
-            console.error('Error fetching portfolio data:', err);
-            // Use default values if API fails
-            setPortfolioValue(0);
-            setPortfolioDayChange(0);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { 
+        portfolioLoading, 
+        refreshPortfolioData,
+        getPortfolioSummary
+    } = useStockData();
 
     const handleTransactionComplete = () => {
-        fetchPortfolioData();
+        refreshPortfolioData();
     };
+
+    // Get calculated portfolio summary
+    const portfolioSummary = getPortfolioSummary();
+    const totalNetWorth = portfolioSummary.totalNetWorth;
+    const portfolioDayChange = portfolioSummary.portfolioDayChange;
 
     return (
         <>
@@ -55,9 +35,9 @@ const Dashboard = () => {
                 <div className={styles.mainSection}>
                     <div className={styles.leftColumn}>
                         <PortfolioCard 
-                            portfolioValue={portfolioValue}
+                            portfolioValue={totalNetWorth}
                             portfolioDayChange={portfolioDayChange}
-                            loading={loading}
+                            loading={portfolioLoading}
                         />
                         <LeaderboardCard />
                     </div>

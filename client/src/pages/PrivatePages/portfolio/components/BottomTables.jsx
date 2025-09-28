@@ -35,7 +35,7 @@ const BottomTables = ({ portfolioData }) => {
         // Group stocks by sector and calculate values
         portfolioData.portfolio.forEach(stock => {
             const sector = stock.sector || 'Unknown';
-            const value = stock.currentValue || 0;
+            const value = stock.totalValue || 0;
             
             if (!sectorMap[sector]) {
                 sectorMap[sector] = {

@@ -19,7 +19,8 @@ function ExploreStocks() {
         error, 
         getPopularStocks, 
         getAllStocks, 
-        getStocksBySector 
+        getStocksBySector,
+        refreshPortfolioData
     } = useStockData();
 
     // Sector mapping for filtering
@@ -89,7 +90,7 @@ function ExploreStocks() {
     };
 
     const handleTransactionComplete = () => {
-        // Added for later use
+        refreshPortfolioData();
     };
 
     if (loading) {
