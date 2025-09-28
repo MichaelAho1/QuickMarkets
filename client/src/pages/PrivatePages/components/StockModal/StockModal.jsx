@@ -75,10 +75,10 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                     </div>
                                 </div>
                                 <div className={styles.priceInfo}>
-                                    <span className={styles.price}>${stock.price.toFixed(2)}</span>
-                                    <span className={stock.change >= 0 ? styles.positive : styles.negative}>
-                                        {stock.change >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-                                        {Math.abs(stock.change)}%
+                                    <span className={styles.price}>${stock.currentPrice.toFixed(2)}</span>
+                                    <span className={stock.currentPrice >= stock.openingPrice ? styles.positive : styles.negative}>
+                                        {stock.currentPrice >= stock.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
+                                        {Math.abs(((stock.currentPrice - stock.openingPrice) / stock.openingPrice * 100)).toFixed(1)}%
                                     </span>
                                 </div>
                             </div>
@@ -88,27 +88,35 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                             <div className={styles.statsGrid}>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>Opening Price</span>
-                                    <span className={styles.value}>${(stock.price * 0.98).toFixed(2)}</span>
+                                    <span className={styles.value}>${stock.openingPrice.toFixed(2)}</span>
                                 </div>
                                 <div className={styles.statCard}>
-                                    <span className={styles.label}>Closing Price</span>
-                                    <span className={styles.value}>${stock.price.toFixed(2)}</span>
+                                    <span className={styles.label}>Current Price</span>
+                                    <span className={styles.value}>${stock.currentPrice.toFixed(2)}</span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Week Return</span>
-                                    <span className={styles.value}>{(Math.random() * 10 - 5).toFixed(2)}%</span>
+                                    <span className={`${styles.value} ${stock.oneWeekChange >= 0 ? styles.positive : styles.negative}`}>
+                                        {stock.oneWeekChange >= 0 ? '+' : ''}{stock.oneWeekChange.toFixed(1)}%
+                                    </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Month Return</span>
-                                    <span className={styles.value}>{(Math.random() * 20 - 10).toFixed(2)}%</span>
+                                    <span className={`${styles.value} ${stock.oneMonthChange >= 0 ? styles.positive : styles.negative}`}>
+                                        {stock.oneMonthChange >= 0 ? '+' : ''}{stock.oneMonthChange.toFixed(1)}%
+                                    </span>
+                                </div>
+                                <div className={styles.statCard}>
+                                    <span className={styles.label}>3 Month Return</span>
+                                    <span className={`${styles.value} ${stock.threeMonthChange >= 0 ? styles.positive : styles.negative}`}>
+                                        {stock.threeMonthChange >= 0 ? '+' : ''}{stock.threeMonthChange.toFixed(1)}%
+                                    </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>6 Month Return</span>
-                                    <span className={styles.value}>{(Math.random() * 30 - 15).toFixed(2)}%</span>
-                                </div>
-                                <div className={styles.statCard}>
-                                    <span className={styles.label}>1 Year Return</span>
-                                    <span className={styles.value}>{(Math.random() * 50 - 25).toFixed(2)}%</span>
+                                    <span className={`${styles.value} ${stock.sixMonthChange >= 0 ? styles.positive : styles.negative}`}>
+                                        {stock.sixMonthChange >= 0 ? '+' : ''}{stock.sixMonthChange.toFixed(1)}%
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +159,7 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                     <div className={styles.transactionSummary}>
                                         <p>Total {transactionType === 'buy' ? 'Cost' : 'Value'}: 
                                             <span className={styles.totalAmount}>
-                                                ${(parseFloat(shares || 0) * stock.price).toFixed(2)}
+                                                ${(parseFloat(shares || 0) * stock.currentPrice).toFixed(2)}
                                             </span>
                                         </p>
                                     </div>

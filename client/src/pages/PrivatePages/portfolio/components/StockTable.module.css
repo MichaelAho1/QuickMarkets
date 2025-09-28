@@ -35,6 +35,15 @@
     background-color: #f9fafb; 
 }
 
+.clickableRow {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickableRow:hover {
+    background-color: #e2e8f0 !important;
+}
+
 .positive {
     color: #059669;
 }

@@ -10,6 +10,7 @@ function ExploreStocks() {
     const [selectedStock, setSelectedStock] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // TODO: SHOULD GET THIS FROM SERVER AND SHOULD BE IN A DIFFERENT FILE (GLOBAL)
     const sectors = [
         { id: 'all', name: 'All Sectors' },
         { id: 'tech', name: 'Technology' },
@@ -19,27 +20,29 @@ function ExploreStocks() {
         { id: 'consumer', name: 'Consumer Goods' }
     ];
 
+    // TODO: SHOULD GET THIS FROM SERVER AND SHOULD BE IN A DIFFERENT FILE (GLOBAL)
     const popularStocks = [
-        { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 875.42, change: 1.1, changePercent: 1.1, volume: 45000000, marketCap: 2150000000000, peRatio: 75.2, description: 'NVIDIA Corporation is a technology company that designs and manufactures graphics processing units (GPUs) for gaming, professional visualization, data centers, and artificial intelligence.', sector: 'Technology', industry: 'Semiconductors' },
-        { symbol: 'META', name: 'Meta Platforms', price: 320.75, change: 1.5, changePercent: 1.5, volume: 25000000, marketCap: 850000000000, peRatio: 28.5, description: 'Meta Platforms, Inc. is a technology company that focuses on building products that enable people to connect and share with friends and family through mobile devices, personal computers, virtual reality headsets, and in-home devices.', sector: 'Technology', industry: 'Internet Services' },
-        { symbol: 'TSLA', name: 'Tesla Inc.', price: 178.75, change: 0.9, changePercent: 0.9, volume: 85000000, marketCap: 565000000000, peRatio: 42.3, description: 'Tesla, Inc. designs, develops, manufactures, leases, and sells electric vehicles, and energy generation and storage systems in the United States, China, and internationally.', sector: 'Automotive', industry: 'Electric Vehicles' },
-        { symbol: 'AAPL', name: 'Apple Inc.', price: 185.92, change: 2.5, changePercent: 2.5, volume: 65000000, marketCap: 2900000000000, peRatio: 31.2, description: 'Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide.', sector: 'Technology', industry: 'Consumer Electronics' },
-        { symbol: 'MSFT', name: 'Microsoft Corp.', price: 415.32, change: 1.8, changePercent: 1.8, volume: 25000000, marketCap: 3100000000000, peRatio: 35.8, description: 'Microsoft Corporation develops and supports software, services, devices, and solutions worldwide.', sector: 'Technology', industry: 'Software' }
+        { symbol: 'NVDA', name: 'NVIDIA Corp.', openingPrice: 870.00, currentPrice: 875.42, oneWeekChange: 2.1, oneMonthChange: 8.5, threeMonthChange: 15.2, sixMonthChange: 28.7, sector: 'Technology' },
+        { symbol: 'META', name: 'Meta Platforms', openingPrice: 315.00, currentPrice: 320.75, oneWeekChange: 1.8, oneMonthChange: 5.2, threeMonthChange: 12.4, sixMonthChange: 22.1, sector: 'Technology' },
+        { symbol: 'TSLA', name: 'Tesla Inc.', openingPrice: 177.00, currentPrice: 178.75, oneWeekChange: 0.9, oneMonthChange: 3.1, threeMonthChange: 8.7, sixMonthChange: 18.3, sector: 'Automotive' },
+        { symbol: 'AAPL', name: 'Apple Inc.', openingPrice: 181.00, currentPrice: 185.92, oneWeekChange: 2.5, oneMonthChange: 6.8, threeMonthChange: 11.2, sixMonthChange: 19.5, sector: 'Technology' },
+        { symbol: 'MSFT', name: 'Microsoft Corp.', openingPrice: 408.00, currentPrice: 415.32, oneWeekChange: 1.8, oneMonthChange: 4.9, threeMonthChange: 9.8, sixMonthChange: 16.4, sector: 'Technology' }
     ];
 
+    // TODO: SHOULD GET THIS FROM SERVER AND SHOULD BE IN A DIFFERENT FILE (GLOBAL)
     const allStocks = [
-        { symbol: 'AAPL', name: 'Apple Inc.', price: 185.92, change: 2.5, changePercent: 2.5, volume: 65000000, marketCap: 2900000000000, peRatio: 31.2, description: 'Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide.', sector: 'Technology', industry: 'Consumer Electronics' },
-        { symbol: 'MSFT', name: 'Microsoft Corp.', price: 415.32, change: 1.8, changePercent: 1.8, volume: 25000000, marketCap: 3100000000000, peRatio: 35.8, description: 'Microsoft Corporation develops and supports software, services, devices, and solutions worldwide.', sector: 'Technology', industry: 'Software' },
-        { symbol: 'JPM', name: 'JPMorgan Chase', price: 142.65, change: -0.8, changePercent: -0.8, volume: 15000000, marketCap: 420000000000, peRatio: 12.5, description: 'JPMorgan Chase & Co. operates as a financial services company worldwide.', sector: 'Financial Services', industry: 'Banking' },
-        { symbol: 'JNJ', name: 'Johnson & Johnson', price: 158.42, change: 0.5, changePercent: 0.5, volume: 8000000, marketCap: 380000000000, peRatio: 15.2, description: 'Johnson & Johnson researches and develops, manufactures, and sells various products in the health care field worldwide.', sector: 'Healthcare', industry: 'Pharmaceuticals' },
-        { symbol: 'XOM', name: 'Exxon Mobil', price: 102.75, change: -1.2, changePercent: -1.2, volume: 20000000, marketCap: 410000000000, peRatio: 8.5, description: 'Exxon Mobil Corporation explores for and produces crude oil and natural gas in the United States and internationally.', sector: 'Energy', industry: 'Oil & Gas' },
-        { symbol: 'PG', name: 'Procter & Gamble', price: 145.33, change: 0.3, changePercent: 0.3, volume: 7000000, marketCap: 340000000000, peRatio: 24.8, description: 'The Procter & Gamble Company provides branded consumer packaged goods to consumers in North and Latin America, Europe, the Asia Pacific, Greater China, India, the Middle East, and Africa.', sector: 'Consumer Goods', industry: 'Household Products' },
-        { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 142.65, change: 1.2, changePercent: 1.2, volume: 20000000, marketCap: 1800000000000, peRatio: 25.6, description: 'Alphabet Inc. provides various products and platforms in the United States, Europe, the Middle East, Africa, the Asia-Pacific, Canada, and Latin America.', sector: 'Technology', industry: 'Internet Services' },
-        { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 178.75, change: -0.9, changePercent: -0.9, volume: 30000000, marketCap: 1850000000000, peRatio: 60.5, description: 'Amazon.com, Inc. engages in the retail sale of consumer products and subscriptions in North America and internationally.', sector: 'Technology', industry: 'E-commerce' },
-        { symbol: 'TSLA', name: 'Tesla Inc.', price: 178.75, change: 0.9, changePercent: 0.9, volume: 85000000, marketCap: 565000000000, peRatio: 42.3, description: 'Tesla, Inc. designs, develops, manufactures, leases, and sells electric vehicles, and energy generation and storage systems in the United States, China, and internationally.', sector: 'Automotive', industry: 'Electric Vehicles' },
-        { symbol: 'META', name: 'Meta Platforms', price: 320.75, change: 1.5, changePercent: 1.5, volume: 25000000, marketCap: 850000000000, peRatio: 28.5, description: 'Meta Platforms, Inc. is a technology company that focuses on building products that enable people to connect and share with friends and family through mobile devices, personal computers, virtual reality headsets, and in-home devices.', sector: 'Technology', industry: 'Internet Services' },
-        { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 875.42, change: 1.1, changePercent: 1.1, volume: 45000000, marketCap: 2150000000000, peRatio: 75.2, description: 'NVIDIA Corporation is a technology company that designs and manufactures graphics processing units (GPUs) for gaming, professional visualization, data centers, and artificial intelligence.', sector: 'Technology', industry: 'Semiconductors' },
-        { symbol: 'V', name: 'Visa Inc.', price: 280.25, change: -0.4, changePercent: -0.4, volume: 12000000, marketCap: 580000000000, peRatio: 32.5, description: 'Visa Inc. operates as a payments technology company worldwide.', sector: 'Financial Services', industry: 'Payment Processing' }
+        { symbol: 'AAPL', name: 'Apple Inc.', openingPrice: 181.00, currentPrice: 185.92, oneWeekChange: 2.5, oneMonthChange: 6.8, threeMonthChange: 11.2, sixMonthChange: 19.5, sector: 'Technology' },
+        { symbol: 'MSFT', name: 'Microsoft Corp.', openingPrice: 408.00, currentPrice: 415.32, oneWeekChange: 1.8, oneMonthChange: 4.9, threeMonthChange: 9.8, sixMonthChange: 16.4, sector: 'Technology' },
+        { symbol: 'JPM', name: 'JPMorgan Chase', openingPrice: 144.00, currentPrice: 142.65, oneWeekChange: -0.8, oneMonthChange: -2.1, threeMonthChange: 1.5, sixMonthChange: 4.2, sector: 'Financial Services' },
+        { symbol: 'JNJ', name: 'Johnson & Johnson', openingPrice: 157.50, currentPrice: 158.42, oneWeekChange: 0.5, oneMonthChange: 1.2, threeMonthChange: 2.8, sixMonthChange: 5.1, sector: 'Healthcare' },
+        { symbol: 'XOM', name: 'Exxon Mobil', openingPrice: 104.00, currentPrice: 102.75, oneWeekChange: -1.2, oneMonthChange: -3.5, threeMonthChange: -1.8, sixMonthChange: 2.3, sector: 'Energy' },
+        { symbol: 'PG', name: 'Procter & Gamble', openingPrice: 145.00, currentPrice: 145.33, oneWeekChange: 0.3, oneMonthChange: 0.8, threeMonthChange: 2.1, sixMonthChange: 3.7, sector: 'Consumer Goods' },
+        { symbol: 'GOOGL', name: 'Alphabet Inc.', openingPrice: 141.00, currentPrice: 142.65, oneWeekChange: 1.2, oneMonthChange: 3.4, threeMonthChange: 7.8, sixMonthChange: 12.6, sector: 'Technology' },
+        { symbol: 'AMZN', name: 'Amazon.com Inc.', openingPrice: 180.00, currentPrice: 178.75, oneWeekChange: -0.9, oneMonthChange: 1.2, threeMonthChange: 4.5, sixMonthChange: 8.9, sector: 'Technology' },
+        { symbol: 'TSLA', name: 'Tesla Inc.', openingPrice: 177.00, currentPrice: 178.75, oneWeekChange: 0.9, oneMonthChange: 3.1, threeMonthChange: 8.7, sixMonthChange: 18.3, sector: 'Automotive' },
+        { symbol: 'META', name: 'Meta Platforms', openingPrice: 315.00, currentPrice: 320.75, oneWeekChange: 1.8, oneMonthChange: 5.2, threeMonthChange: 12.4, sixMonthChange: 22.1, sector: 'Technology' },
+        { symbol: 'NVDA', name: 'NVIDIA Corp.', openingPrice: 870.00, currentPrice: 875.42, oneWeekChange: 2.1, oneMonthChange: 8.5, threeMonthChange: 15.2, sixMonthChange: 28.7, sector: 'Technology' },
+        { symbol: 'V', name: 'Visa Inc.', openingPrice: 281.00, currentPrice: 280.25, oneWeekChange: -0.4, oneMonthChange: 0.8, threeMonthChange: 3.2, sixMonthChange: 6.8, sector: 'Financial Services' }
     ];
 
     const handleSearch = (e) => {
@@ -109,13 +112,13 @@ function ExploreStocks() {
                                 >
                                     <div className={styles.stockHeader}>
                                         <span className={styles.symbol}>{stock.symbol}</span>
-                                        <span className={stock.change >= 0 ? styles.positive : styles.negative}>
-                                            {stock.change >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-                                            {Math.abs(stock.change)}%
+                                        <span className={stock.currentPrice >= stock.openingPrice ? styles.positive : styles.negative}>
+                                            {stock.currentPrice >= stock.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
+                                            {Math.abs(((stock.currentPrice - stock.openingPrice) / stock.openingPrice * 100)).toFixed(1)}%
                                         </span>
                                     </div>
                                     <div className={styles.stockName}>{stock.name}</div>
-                                    <div className={styles.stockPrice}>${stock.price.toFixed(2)}</div>
+                                    <div className={styles.stockPrice}>${stock.currentPrice.toFixed(2)}</div>
                                     <div className={styles.stockSector}>
                                         {sectors.find(s => s.id === stock.sector.toLowerCase())?.name}
                                     </div>
@@ -135,13 +138,13 @@ function ExploreStocks() {
                             >
                                 <div className={styles.stockHeader}>
                                     <span className={styles.symbol}>{stock.symbol}</span>
-                                    <span className={stock.change >= 0 ? styles.positive : styles.negative}>
-                                        {stock.change >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-                                        {Math.abs(stock.change)}%
+                                    <span className={stock.currentPrice >= stock.openingPrice ? styles.positive : styles.negative}>
+                                        {stock.currentPrice >= stock.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
+                                        {Math.abs(((stock.currentPrice - stock.openingPrice) / stock.openingPrice * 100)).toFixed(1)}%
                                     </span>
                                 </div>
                                 <div className={styles.stockName}>{stock.name}</div>
-                                <div className={styles.stockPrice}>${stock.price.toFixed(2)}</div>
+                                <div className={styles.stockPrice}>${stock.currentPrice.toFixed(2)}</div>
                                 <div className={styles.stockSector}>
                                     {sectors.find(s => s.id === stock.sector.toLowerCase())?.name}
                                 </div>

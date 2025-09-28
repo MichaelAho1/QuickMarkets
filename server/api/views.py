@@ -226,13 +226,14 @@ class UserPortfolio(APIView):
                 cost_basis = user_stock.averageCost * user_stock.sharesAmount
                 profit_loss = current_value - cost_basis
                 profit_loss_percent = (profit_loss / cost_basis * 100) if cost_basis > 0 else 0
-                
+                stockPrevPrice = stock.prevPrice
                 stock_data = {
                     "ticker": stock.ticker,
                     "stockName": stock.stockName,
                     "shares": float(user_stock.sharesAmount),
                     "averageCost": float(user_stock.averageCost),
                     "currentPrice": float(stock.currPrice),
+                    "openingPrice": float(stockPrevPrice),
                     "currentValue": float(current_value),
                     "costBasis": float(cost_basis),
                     "profitLoss": float(profit_loss),

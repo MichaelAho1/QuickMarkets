@@ -5,11 +5,11 @@ const TopGainersCard = () => {
     const [activeTab, setActiveTab] = useState('gainers');
 
     const tableData = [
-        { name: 'Apple Inc.', stock: 'AAPL', price: 185.92, change: 2.5, sector: 'Technology' },
-        { name: 'Microsoft Corp.', stock: 'MSFT', price: 415.32, change: 1.8, sector: 'Technology' },
-        { name: 'Alphabet Inc.', stock: 'GOOGL', price: 142.65, change: 1.2, sector: 'Technology' },
-        { name: 'NVIDIA Corp.', stock: 'NVDA', price: 875.42, change: 1.1, sector: 'Technology' },
-        { name: 'Tesla Inc.', stock: 'TSLA', price: 178.75, change: 0.9, sector: 'Automotive' },
+        { name: 'Apple Inc.', stock: 'AAPL', openingPrice: 181.00, currentPrice: 185.92, oneWeekChange: 2.5, sector: 'Technology' },
+        { name: 'Microsoft Corp.', stock: 'MSFT', openingPrice: 408.00, currentPrice: 415.32, oneWeekChange: 1.8, sector: 'Technology' },
+        { name: 'Alphabet Inc.', stock: 'GOOGL', openingPrice: 141.00, currentPrice: 142.65, oneWeekChange: 1.2, sector: 'Technology' },
+        { name: 'NVIDIA Corp.', stock: 'NVDA', openingPrice: 870.00, currentPrice: 875.42, oneWeekChange: 1.1, sector: 'Technology' },
+        { name: 'Tesla Inc.', stock: 'TSLA', openingPrice: 177.00, currentPrice: 178.75, oneWeekChange: 0.9, sector: 'Automotive' },
     ];
 
     return (
@@ -41,7 +41,7 @@ const TopGainersCard = () => {
                             <th>Symbol</th>
                             <th>Name</th>
                             <th>Price</th>
-                            <th>% Change</th>
+                            <th>Weekly Change</th>
                             <th>Sector</th>
                         </tr>
                     </thead>
@@ -50,9 +50,9 @@ const TopGainersCard = () => {
                             <tr key={index}>
                                 <td>{row.stock}</td>
                                 <td>{row.name}</td>
-                                <td>${row.price.toFixed(2)}</td>
-                                <td className={row.change >= 0 ? styles.positiveChange : styles.negativeChange}>
-                                    {row.change >= 0 ? '+' : ''}{row.change}%
+                                <td>${row.currentPrice.toFixed(2)}</td>
+                                <td className={row.oneWeekChange >= 0 ? styles.positiveChange : styles.negativeChange}>
+                                    {row.oneWeekChange >= 0 ? '+' : ''}{row.oneWeekChange}%
                                 </td>
                                 <td>{row.sector}</td>
                             </tr>

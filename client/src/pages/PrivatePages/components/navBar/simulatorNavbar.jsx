@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './simulatorNavbar.module.css';
 import logo from '../../../../assets/logo.png';
 import { MdOutlineDashboard } from "react-icons/md";
 import { BsPiggyBank } from "react-icons/bs";
 import { AiOutlineStock } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
-import { IoIosArrowDown, IoMdMenu } from "react-icons/io"; 
+import { IoIosArrowDown, IoMdMenu } from "react-icons/io";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../../api/constants'; 
 
 const Navbar = () => {
     const [isWatchlistCollapsed, setIsWatchlistCollapsed] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const navigate = useNavigate();
+    const dropdownRef = useRef(null);
 
     const toggleWatchlist = () => {
         setIsWatchlistCollapsed(!isWatchlistCollapsed);
@@ -19,6 +23,39 @@ const Navbar = () => {
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+
+    const toggleProfileDropdown = () => {
+        setIsProfileDropdownOpen(!isProfileDropdownOpen);
+    };
+
+    const handleLogout = () => {
+        // Clear tokens from localStorage
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
+        
+        // Close dropdown
+        setIsProfileDropdownOpen(false);
+        
+        // Navigate to login page
+        navigate('/login');
+    };
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsProfileDropdownOpen(false);
+            }
+        };
+
+        if (isProfileDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isProfileDropdownOpen]);
 
     const stocks = [
         { symbol: 'AAPL', dayChangePercentage: 1.25 },
@@ -76,12 +113,27 @@ const Navbar = () => {
                         </div>
                     </div>
                 </div>
-                <div className={styles.userProfile}>
-                    <img className={styles.userImg} src="www.hi" alt="User" />
+                <div className={styles.userProfile} ref={dropdownRef}>
+                    <img 
+                        className={styles.userImg} 
+                        src="www.hi" 
+                        alt="User" 
+                        onClick={toggleProfileDropdown}
+                    />
                     <div>
                         <p className={styles.userName}>John Doe</p>
                         <p className={styles.userEmail}>john.doe@example.com</p>
                     </div>
+                    {isProfileDropdownOpen && (
+                        <div className={styles.profileDropdown}>
+                            <button 
+                                className={styles.logoutButton}
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
                 </div>
             </nav>
         </>
