@@ -4,6 +4,7 @@ import { IoClose } from "react-icons/io5";
 import { FaArrowUp, FaArrowDown, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import api from '../../../../api/api.js';
 import { useStockData } from '../../../../contexts/StockContext';
+import StockChart from '../../../../components/StockChart';
 
 const StockModal = ({ stock, onClose, onTransactionComplete }) => {
     const [shares, setShares] = useState('');
@@ -212,9 +213,10 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                     </div>
 
                     <div className={styles.chartSection}>
-                        <div className={styles.chartPlaceholder}>
-                            <p>Stock Chart Coming Soon</p>
-                        </div>
+                        <StockChart 
+                            ticker={stock.symbol} 
+                            stockName={stock.name}
+                        />
                     </div>
                 </div>
             </div>
