@@ -5,27 +5,27 @@ const NewsCard = () => {
     const newsItems = [
         {
             id: 1,
-            title: "Tech Stocks Rally on Strong Earnings",
-            source: "Financial Times",
-            time: "2h ago"
+            title: "Placeholder",
+            source: "Placeholder",
+            time: ""
         },
         {
             id: 2,
-            title: "Federal Reserve Signals Rate Cut",
-            source: "Bloomberg",
-            time: "4h ago"
+            title: "Placeholder",
+            source: "Placeholder",
+            time: ""
         },
         {
             id: 3,
-            title: "New AI Technology Boosts Market Confidence",
-            source: "Wall Street Journal",
-            time: "6h ago"
+            title: "Placeholder",
+            source: "Placeholder",
+            time: ""
         }
     ];
 
     return (
         <div className={styles.newsCard}>
-            <h2>Market News</h2>
+            <h2>Market News (Coming Soon)</h2>
             <div className={styles.newsList}>
                 {newsItems.map((news) => (
                     <div key={news.id} className={styles.newsItem}>
