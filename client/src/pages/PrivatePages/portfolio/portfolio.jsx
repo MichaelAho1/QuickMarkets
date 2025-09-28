@@ -146,7 +146,7 @@ function stocksOwned() {
                     </div>
                 </div>
             </div>
-            <BottomTables />
+            <BottomTables portfolioData={portfolioData} />
             
             {selectedStock && (
                 <StockModal
