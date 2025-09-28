@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import BottomTables from './components/BottomTables';
 import StockTable from './components/StockTable';
-import DonutChart from './components/DonutChart';
+import PieChart from './components/PieChart';
 import StockModal from '../components/StockModal/StockModal';
 import styles from "./portfolio.module.css";
 import { useStockData } from '../../../contexts/StockContext';
@@ -94,7 +94,7 @@ function stocksOwned() {
                             <StockTable stocks={stocks} onStockClick={handleStockClick} />
                         </div>
                         <div className={styles.chartWrapper}>
-                            <DonutChart stocks={stocks} />
+                            <PieChart stocks={stocks} />
                         </div>
                     </div>
                 </div>
