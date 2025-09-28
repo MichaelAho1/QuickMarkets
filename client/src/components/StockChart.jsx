@@ -67,21 +67,11 @@ const StockChart = ({ ticker, stockName }) => {
             }
 
             // Format data for Chart.js
-            const labels = data.map(item => {
-                const date = new Date(item.date);
-                return date.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-            });
-
+            const labels = data.map(item => 
+                new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            );
             const prices = data.map(item => parseFloat(item.close));
-            const changes = data.map(item => parseFloat(item.change));
-
-            // Calculate price change percentage
-            const firstPrice = prices[0];
-            const lastPrice = prices[prices.length - 1];
-            const totalChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+            const totalChange = ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100;
 
             setChartData({
                 labels,

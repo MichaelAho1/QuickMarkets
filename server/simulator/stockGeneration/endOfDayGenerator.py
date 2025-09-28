@@ -15,28 +15,16 @@ def storeEndOfDayPrices():
     stocks = Stock.objects.all()
     
     for stock in stocks:
-        # Check if we already have data for today
-        existing_record = StockPriceHistory.objects.filter(
+        day_change = float(stock.currPrice) - float(stock.prevPrice)
+        StockPriceHistory.objects.update_or_create(
             stockTicker=stock,
-            date=today
-        ).first()
-        
-        if existing_record:
-            # Update existing record
-            existing_record.closingPrice = stock.currPrice
-            existing_record.openingPrice = stock.prevPrice
-            existing_record.dayChange = float(stock.currPrice) - float(stock.prevPrice)
-            existing_record.save()
-        else:
-            # Create new record
-            day_change = float(stock.currPrice) - float(stock.prevPrice)
-            StockPriceHistory.objects.create(
-                stockTicker=stock,
-                date=today,
-                closingPrice=stock.currPrice,
-                openingPrice=stock.prevPrice,
-                dayChange=day_change,
-            )
+            date=today,
+            defaults={
+                'closingPrice': stock.currPrice,
+                'openingPrice': stock.prevPrice,
+                'dayChange': day_change
+            }
+        )
     
     print(f"Stored end-of-day prices for {len(stocks)} stocks on {today}")
 

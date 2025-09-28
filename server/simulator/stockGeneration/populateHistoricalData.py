@@ -20,26 +20,18 @@ def populateHistoricalData(days_back=30):
     
     for stock in stocks:
         print(f"Creating historical data for {stock.ticker}...")
-        
-        # Start with the current price and work backwards
-        current_price = float(stock.currPrice)
+R        current_price = float(stock.currPrice)
         
         for i in range(days_back):
             data_date = today - timedelta(days=i)
             
-            # Skip if data already exists for this date
+            # Skip if data already exists
             if StockPriceHistory.objects.filter(stockTicker=stock, date=data_date).exists():
                 continue
             
-            # Generate realistic price movement
-            # Small random change between -2% and +2%
-            price_change_percent = random.uniform(-0.02, 0.02)
-            new_price = current_price * (1 + price_change_percent)
+            # Generate price movement (-2% to +2%)
+            new_price = max(current_price * (1 + random.uniform(-0.02, 0.02)), 0.01)
             
-            # Ensure price doesn't go below $0.01
-            new_price = max(new_price, 0.01)
-            
-            # Create the historical record
             StockPriceHistory.objects.create(
                 stockTicker=stock,
                 date=data_date,
@@ -48,7 +40,6 @@ def populateHistoricalData(days_back=30):
                 dayChange=new_price - current_price,
             )
             
-            # Update current_price for next iteration (going backwards)
             current_price = new_price
     
     print(f"Historical data created for {len(stocks)} stocks over {days_back} days")

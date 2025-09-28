@@ -402,14 +402,12 @@ class StockChartDataView(APIView):
                 return Response({"error": "No historical data found for this stock"}, status=404)
             
             # Format data for chart
-            chart_data = []
-            for record in history:
-                chart_data.append({
-                    "date": record.date.strftime("%Y-%m-%d"),
-                    "open": float(record.openingPrice),
-                    "close": float(record.closingPrice),
-                    "change": float(record.dayChange)
-                })
+            chart_data = [{
+                "date": record.date.strftime("%Y-%m-%d"),
+                "open": float(record.openingPrice),
+                "close": float(record.closingPrice),
+                "change": float(record.dayChange)
+            } for record in history]
             
             return Response({
                 "ticker": ticker,
