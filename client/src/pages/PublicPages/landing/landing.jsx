@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './landing.module.css';
 import Navbar from "../components/navBar/navBar.jsx";
 import Footer from "../components/footer/footer.jsx";
@@ -8,6 +9,12 @@ import FastImage from "./img/Fast.png";
 import Leaderboard from "./img/Leaderboard.png";
 
 function landing() {
+    const navigate = useNavigate();
+
+    const handleJoinForFree = () => {
+        navigate('/signup');
+    };
+
     return (
         <>
             <Navbar />
@@ -15,7 +22,7 @@ function landing() {
                 <div className={styles.heroContent}>
                     <h1>QuickMarkets Stock Simulator</h1>
                     <p>Experience accelerated stock trading in a risk-free environment.</p>
-                    <button className={styles.heroButton}>Join For Free</button>
+                    <button className={styles.heroButton} onClick={handleJoinForFree}>Join For Free</button>
                 </div>
             </div>
             <section>
