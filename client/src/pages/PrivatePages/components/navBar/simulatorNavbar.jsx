@@ -123,7 +123,7 @@ const Navbar = () => {
                                             <div className={styles.stockActions}>
                                                 <span className={isPositive ? styles.positiveChange : styles.negativeChange}>
                                                     {isPositive ? <FaArrowUp size={10} /> : <FaArrowDown size={10} />}
-                                                    {Math.abs(percentageChange).toFixed(1)}%
+                                                    {Math.abs(percentageChange).toFixed(2)}%
                                                 </span>
                                             </div>
                                         </div>

@@ -4,6 +4,7 @@ import { IoClose } from "react-icons/io5";
 import { FaArrowUp, FaArrowDown, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import api from '../../../../api/api.js';
 import { useStockData } from '../../../../contexts/StockContext';
+import StockChart from '../../../../components/StockChart';
 
 const StockModal = ({ stock, onClose, onTransactionComplete }) => {
     const [shares, setShares] = useState('');
@@ -107,7 +108,7 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                     <span className={styles.price}>${stock.currentPrice.toFixed(2)}</span>
                                     <span className={stock.currentPrice >= stock.openingPrice ? styles.positive : styles.negative}>
                                         {stock.currentPrice >= stock.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
-                                        {Math.abs(((stock.currentPrice - stock.openingPrice) / stock.openingPrice * 100)).toFixed(1)}%
+                                        {Math.abs(((stock.currentPrice - stock.openingPrice) / stock.openingPrice * 100)).toFixed(2)}%
                                     </span>
                                 </div>
                             </div>
@@ -126,25 +127,25 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Week Return</span>
                                     <span className={`${styles.value} ${stock.oneWeekChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.oneWeekChange >= 0 ? '+' : ''}{stock.oneWeekChange.toFixed(1)}%
+                                        {stock.oneWeekChange >= 0 ? '+' : ''}{stock.oneWeekChange.toFixed(2)}%
                                     </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Month Return</span>
                                     <span className={`${styles.value} ${stock.oneMonthChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.oneMonthChange >= 0 ? '+' : ''}{stock.oneMonthChange.toFixed(1)}%
+                                        {stock.oneMonthChange >= 0 ? '+' : ''}{stock.oneMonthChange.toFixed(2)}%
                                     </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>3 Month Return</span>
                                     <span className={`${styles.value} ${stock.threeMonthChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.threeMonthChange >= 0 ? '+' : ''}{stock.threeMonthChange.toFixed(1)}%
+                                        {stock.threeMonthChange >= 0 ? '+' : ''}{stock.threeMonthChange.toFixed(2)}%
                                     </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>6 Month Return</span>
                                     <span className={`${styles.value} ${stock.sixMonthChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.sixMonthChange >= 0 ? '+' : ''}{stock.sixMonthChange.toFixed(1)}%
+                                        {stock.sixMonthChange >= 0 ? '+' : ''}{stock.sixMonthChange.toFixed(2)}%
                                     </span>
                                 </div>
                             </div>
@@ -212,9 +213,10 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                     </div>
 
                     <div className={styles.chartSection}>
-                        <div className={styles.chartPlaceholder}>
-                            <p>Stock Chart Coming Soon</p>
-                        </div>
+                        <StockChart 
+                            ticker={stock.symbol} 
+                            stockName={stock.name}
+                        />
                     </div>
                 </div>
             </div>

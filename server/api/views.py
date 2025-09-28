@@ -10,6 +10,10 @@ from simulator.models import User as SimulatorUser
 from rest_framework.permissions import IsAuthenticated
 from decimal import Decimal
 from django.db import transaction
+from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
+from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
+from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, getPriceDataForPeriod
+from simulator.utils import get_current_simulation_date
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -347,5 +351,102 @@ class WatchlistView(APIView):
             
         except SimulatorUser.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulateStartOfDayView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Simulate start of day price changes"""
+        try:
+            calculateMarketChanges()
+            return Response({
+                "message": "Start of day simulation completed successfully",
+                "status": "success"
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulateDuringDayView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Simulate during day price changes"""
+        try:
+            price_changes = generateDuringDayChanges()
+            applyDuringDayChanges(price_changes)
+            return Response({
+                "message": "During day simulation completed successfully",
+                "status": "success",
+                "changes_applied": len(price_changes)
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class StockChartDataView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Get historical stock data for charts"""
+        try:
+            ticker = request.query_params.get('ticker')
+            period = request.query_params.get('period', '1m')  # Default to 1 month
+            
+            if not ticker:
+                return Response({"error": "Ticker is required"}, status=400)
+            
+            # Get historical data for the specified period
+            history = getPriceDataForPeriod(ticker, period)
+            
+            # Get current stock data
+            try:
+                stock = Stock.objects.get(ticker=ticker)
+                current_price = float(stock.currPrice)
+                opening_price = float(stock.prevPrice)
+                current_change = current_price - opening_price
+                current_date = get_current_simulation_date()
+            except Stock.DoesNotExist:
+                return Response({"error": "Stock not found"}, status=404)
+            
+            # Start with historical data
+            chart_data = []
+            if history:
+                chart_data = [{
+                    "date": record.date.strftime("%Y-%m-%d"),
+                    "open": float(record.openingPrice),
+                    "close": float(record.closingPrice),
+                    "change": float(record.dayChange)
+                } for record in history]
+            
+            # Add current day's data to the chart
+            current_day_data = {
+                "date": current_date.strftime("%Y-%m-%d"),
+                "open": opening_price,
+                "close": current_price,
+                "change": current_change
+            }
+            chart_data.append(current_day_data)
+            
+            return Response({
+                "ticker": ticker,
+                "period": period,
+                "data": chart_data
+            })
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulateEndOfDayView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Simulate end of day and store daily prices"""
+        try:
+            storeEndOfDayPrices()
+            return Response({
+                "message": "End of day simulation completed successfully",
+                "status": "success"
+            })
         except Exception as e:
             return Response({"error": str(e)}, status=500)
