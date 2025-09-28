@@ -46,13 +46,34 @@ class ViewSimulatorUser(APIView):
     def get(self, request, format=None):
         try:
             simulator_user = SimulatorUser.objects.get(username=request.user.username)
+            user_stocks = UserStock.objects.filter(user=simulator_user)
+            
+            portfolio_data = []
+            
+            for user_stock in user_stocks:
+                stock = user_stock.stock
+                stock_data = {
+                    "ticker": stock.ticker,
+                    "stockName": stock.stockName,
+                    "shares": float(user_stock.sharesAmount),
+                    "averageCost": float(user_stock.averageCost),
+                    "sector": stock.sectorType.ticker
+                }
+                
+                portfolio_data.append(stock_data)
+            
+            return Response({
+                "portfolio": portfolio_data,
+                "summary": {
+                    "username": simulator_user.username,
+                    "cashBalance": float(simulator_user.cashBalance)
+                }
+            })
+            
         except SimulatorUser.DoesNotExist:
-            return Response({"error": "Simulator user not found"}, status=404)
-        data = {
-            "username": simulator_user.username,
-            "cashBalance": simulator_user.cashBalance,
-        }
-        return Response(data)
+            return Response({"error": "User not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 class buyStock(APIView):
     permission_classes = [IsAuthenticated]
@@ -208,62 +229,6 @@ class sellStock(APIView):
         except SimulatorUser.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
 
-class UserPortfolio(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        try:
-            simulator_user = SimulatorUser.objects.get(username=request.user.username)
-            user_stocks = UserStock.objects.filter(user=simulator_user)
-            
-            portfolio_data = []
-            total_portfolio_value = 0
-            total_cost_basis = 0
-            
-            for user_stock in user_stocks:
-                stock = user_stock.stock
-                current_value = stock.currPrice * user_stock.sharesAmount
-                cost_basis = user_stock.averageCost * user_stock.sharesAmount
-                profit_loss = current_value - cost_basis
-                profit_loss_percent = (profit_loss / cost_basis * 100) if cost_basis > 0 else 0
-                stockPrevPrice = stock.prevPrice
-                stock_data = {
-                    "ticker": stock.ticker,
-                    "stockName": stock.stockName,
-                    "shares": float(user_stock.sharesAmount),
-                    "averageCost": float(user_stock.averageCost),
-                    "currentPrice": float(stock.currPrice),
-                    "openingPrice": float(stockPrevPrice),
-                    "currentValue": float(current_value),
-                    "costBasis": float(cost_basis),
-                    "profitLoss": float(profit_loss),
-                    "profitLossPercent": float(profit_loss_percent),
-                    "sector": stock.sectorType.ticker
-                }
-                
-                portfolio_data.append(stock_data)
-                total_portfolio_value += current_value
-                total_cost_basis += cost_basis
-            
-            overall_profit_loss = total_portfolio_value - total_cost_basis
-            overall_profit_loss_percent = (overall_profit_loss / total_cost_basis * 100) if total_cost_basis > 0 else 0
-            
-            return Response({
-                "portfolio": portfolio_data,
-                "summary": {
-                    "totalPortfolioValue": float(total_portfolio_value),
-                    "totalCostBasis": float(total_cost_basis),
-                    "overallProfitLoss": float(overall_profit_loss),
-                    "overallProfitLossPercent": float(overall_profit_loss_percent),
-                    "cashBalance": float(simulator_user.cashBalance),
-                    "totalNetWorth": float(total_portfolio_value + simulator_user.cashBalance)
-                }
-            })
-            
-        except SimulatorUser.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
 
 class TransactionHistoryView(APIView):
     permission_classes = [IsAuthenticated]

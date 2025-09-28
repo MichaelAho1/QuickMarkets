@@ -9,7 +9,7 @@ const PortfolioCard = ({ portfolioValue, portfolioDayChange, loading = false }) 
             <div className={styles.portfolioCard}>
                 <div className={styles.portfolioHeader}>
                     <BsPiggyBank />
-                    <p className={styles.portfolioTitle}>Portfolio Value</p>
+                    <p className={styles.portfolioTitle}>Total Net Worth</p>
                 </div>
                 <div className={styles.valueLine}>
                     <h2 className={styles.portfolioValue}>Loading...</h2>
@@ -31,7 +31,7 @@ const PortfolioCard = ({ portfolioValue, portfolioDayChange, loading = false }) 
         <div className={styles.portfolioCard}>
             <div className={styles.portfolioHeader}>
                 <BsPiggyBank />
-                <p className={styles.portfolioTitle}>Portfolio Value</p>
+                <p className={styles.portfolioTitle}>Total Net Worth</p>
             </div>
             <div className={styles.valueLine}>
                 <h2 className={styles.portfolioValue}>${portfolioValue.toLocaleString()}</h2>

@@ -5,35 +5,21 @@ import StockTable from './components/StockTable';
 import DonutChart from './components/DonutChart';
 import StockModal from '../components/StockModal/StockModal';
 import styles from "./portfolio.module.css";
-import api from '../../../api/api.js';
+import { useStockData } from '../../../contexts/StockContext';
 
 function stocksOwned() {
-    const [portfolioData, setPortfolioData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [selectedStock, setSelectedStock] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        fetchPortfolioData();
-    }, []);
-
-    const fetchPortfolioData = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/api/user-portfolio/');
-            setPortfolioData(response.data);
-            setError(null);
-        } catch (err) {
-            setError('Failed to fetch portfolio data');
-            console.error('Error fetching portfolio:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { 
+        calculatedPortfolio, 
+        portfolioLoading, 
+        portfolioError, 
+        refreshPortfolioData 
+    } = useStockData();
 
     const handleTransactionComplete = () => {
-        fetchPortfolioData();
+        refreshPortfolioData();
     };
 
     const handleStockClick = (stock) => {
@@ -58,7 +44,7 @@ function stocksOwned() {
         setSelectedStock(null);
     };
 
-    if (loading) {
+    if (portfolioLoading) {
         return (
             <div className={styles.portfolio}>
                 <Navbar />
@@ -69,46 +55,10 @@ function stocksOwned() {
         );
     }
 
-    if (error) {
-        return (
-            <div className={styles.portfolio}>
-                <Navbar />
-                <div className={styles.errorContainer}>
-                    <p>Error: {error}</p>
-                    <button onClick={fetchPortfolioData}>Retry</button>
-                </div>
-            </div>
-        );
-    }
-
-    if (!portfolioData) {
-        return (
-            <div className={styles.portfolio}>
-                <Navbar />
-                <div className={styles.emptyContainer}>
-                    <p>No portfolio data available</p>
-                </div>
-            </div>
-        );
-    }
-
-    // Transforms API data to match component expectations
-    const stocks = portfolioData.portfolio.map(stock => ({
-        symbol: stock.ticker,
-        name: stock.stockName,
-        shares: stock.shares,
-        avgCost: stock.averageCost,
-        currentPrice: stock.currentPrice,
-        openingPrice: stock.openingPrice,
-        totalValue: stock.currentValue,
-        profitLoss: stock.profitLoss,
-        profitLossPercentage: stock.profitLossPercent,
-        sector: stock.sector
-    }));
-
-    const portfolioValue = portfolioData.summary.totalPortfolioValue;
-    const cashBalance = portfolioData.summary.cashBalance;
-    const totalNetWorth = portfolioData.summary.totalNetWorth;
+    const stocks = calculatedPortfolio.portfolio;
+    const portfolioValue = calculatedPortfolio.summary.totalPortfolioValue;
+    const cashBalance = calculatedPortfolio.summary.cashBalance;
+    const totalNetWorth = calculatedPortfolio.summary.totalNetWorth;
 
     return (
         <div className={styles.portfolio}> 
@@ -130,9 +80,9 @@ function stocksOwned() {
                     </div>
                     <div className={styles.summaryItem}>
                         <span className={styles.label}>Overall P&L:</span>
-                        <span className={`${styles.value} ${portfolioData.summary.overallProfitLoss >= 0 ? styles.positive : styles.negative}`}>
-                            {portfolioData.summary.overallProfitLoss >= 0 ? '+' : ''}${portfolioData.summary.overallProfitLoss.toFixed(2)} 
-                            ({portfolioData.summary.overallProfitLossPercent >= 0 ? '+' : ''}{portfolioData.summary.overallProfitLossPercent.toFixed(2)}%)
+                        <span className={`${styles.value} ${calculatedPortfolio.summary.overallProfitLoss >= 0 ? styles.positive : styles.negative}`}>
+                            {calculatedPortfolio.summary.overallProfitLoss >= 0 ? '+' : ''}${calculatedPortfolio.summary.overallProfitLoss.toFixed(2)} 
+                            ({calculatedPortfolio.summary.overallProfitLossPercent >= 0 ? '+' : ''}{calculatedPortfolio.summary.overallProfitLossPercent.toFixed(2)}%)
                         </span>
                     </div>
                 </div>
@@ -149,7 +99,7 @@ function stocksOwned() {
                     </div>
                 </div>
             </div>
-            <BottomTables portfolioData={portfolioData} />
+            <BottomTables portfolioData={calculatedPortfolio} />
             
             {selectedStock && (
                 <StockModal

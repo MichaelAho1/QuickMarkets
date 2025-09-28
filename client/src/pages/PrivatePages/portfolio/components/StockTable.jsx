@@ -51,7 +51,7 @@ const StockTable = ({ stocks, onStockClick }) => {
                                     {formatCurrency(stock.profitLoss)}
                                 </td>
                                 <td className={stock.profitLossPercentage >= 0 ? styles.positive : styles.negative}>
-                                    {formatPercentage(stock.profitLossPercentage)}
+                                    {stock.profitLossPercentage.toFixed(2)}%
                                 </td>
                             </tr>
                         ))}
