@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import styles from './StockModal.module.css';
 import { IoClose } from "react-icons/io5";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import api from '../../../../api/api.js';
+import { useStockData } from '../../../../contexts/StockContext';
 
 const StockModal = ({ stock, onClose, onTransactionComplete }) => {
     const [shares, setShares] = useState('');
     const [transactionType, setTransactionType] = useState('buy');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [watchlistLoading, setWatchlistLoading] = useState(false);
+
+    const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useStockData();
 
     if (!stock) return null;
 
@@ -49,14 +53,39 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
         }
     };
 
+    const handleWatchlistToggle = async () => {
+        setWatchlistLoading(true);
+        try {
+            if (isInWatchlist(stock.symbol)) {
+                await removeFromWatchlist(stock.symbol);
+            } else {
+                await addToWatchlist(stock.symbol);
+            }
+        } catch (error) {
+            console.error('Error toggling watchlist:', error);
+        } finally {
+            setWatchlistLoading(false);
+        }
+    };
+
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
                     <h1>Stock Overview</h1>
-                    <button className={styles.closeButton} onClick={onClose}>
-                        <IoClose size={24} />
-                    </button>
+                    <div className={styles.headerActions}>
+                        <button 
+                            className={styles.watchlistButton} 
+                            onClick={handleWatchlistToggle}
+                            disabled={watchlistLoading}
+                            title={isInWatchlist(stock.symbol) ? "Remove from watchlist" : "Add to watchlist"}
+                        >
+                            {isInWatchlist(stock.symbol) ? <FaBookmark size={20} /> : <FaRegBookmark size={20} />}
+                        </button>
+                        <button className={styles.closeButton} onClick={onClose}>
+                            <IoClose size={24} />
+                        </button>
+                    </div>
                 </div>
 
                 <div className={styles.modalBody}>

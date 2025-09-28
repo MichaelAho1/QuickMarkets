@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, StockSerializer, StockHistorySerializer, TransactStock, UserStockSerializer
+from .serializers import UserSerializer, StockSerializer, StockHistorySerializer, TransactStock, UserStockSerializer, WatchlistSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from simulator.models import Stock, StockPriceHistory, UserStock, Transaction
+from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, Watchlist
 from simulator.models import User as SimulatorUser
 from rest_framework.permissions import IsAuthenticated
 from decimal import Decimal
@@ -283,5 +283,69 @@ class LeaderboardView(APIView):
             
             return Response(leaderboard_data[:3])
             
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class WatchlistView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Get user's watchlist"""
+        try:
+            simulator_user = SimulatorUser.objects.get(username=request.user.username)
+            watchlist_items = Watchlist.objects.filter(user=simulator_user)
+            serializer = WatchlistSerializer(watchlist_items, many=True)
+            return Response(serializer.data)
+        except SimulatorUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+    def post(self, request):
+        """Add stock to watchlist"""
+        try:
+            ticker = request.data.get('ticker')
+            if not ticker:
+                return Response({"error": "Ticker is required"}, status=400)
+            
+            simulator_user = SimulatorUser.objects.get(username=request.user.username)
+            
+            # Check if user already has 5 items in watchlist
+            current_watchlist_count = Watchlist.objects.filter(user=simulator_user).count()
+            if current_watchlist_count >= 5:
+                return Response({"error": "Watchlist is full (maximum 5 stocks)"}, status=400)
+            
+            # Check if stock is already in watchlist
+            if Watchlist.objects.filter(user=simulator_user, ticker=ticker).exists():
+                return Response({"error": "Stock is already in watchlist"}, status=400)
+            
+            # Add to watchlist
+            watchlist_item = Watchlist.objects.create(user=simulator_user, ticker=ticker)
+            serializer = WatchlistSerializer(watchlist_item)
+            return Response(serializer.data, status=201)
+            
+        except SimulatorUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+    def delete(self, request):
+        """Remove stock from watchlist"""
+        try:
+            ticker = request.data.get('ticker')
+            if not ticker:
+                return Response({"error": "Ticker is required"}, status=400)
+            
+            simulator_user = SimulatorUser.objects.get(username=request.user.username)
+            
+            try:
+                watchlist_item = Watchlist.objects.get(user=simulator_user, ticker=ticker)
+                watchlist_item.delete()
+                return Response({"message": "Stock removed from watchlist"}, status=200)
+            except Watchlist.DoesNotExist:
+                return Response({"error": "Stock not found in watchlist"}, status=404)
+            
+        except SimulatorUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
         except Exception as e:
             return Response({"error": str(e)}, status=500)

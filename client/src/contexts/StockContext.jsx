@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import stockCacheService from '../services/stockCacheService.js';
 import portfolioCacheService from '../services/portfolioCacheService.js';
+import watchlistService from '../services/watchlistService.js';
 import { calculatePortfolioValues, calculatePortfolioSummary } from '../utils/portfolioCalculations.js';
 
 const StockContext = createContext();
@@ -25,10 +26,16 @@ export const StockProvider = ({ children }) => {
     const [portfolioError, setPortfolioError] = useState(null);
     const [calculatedPortfolio, setCalculatedPortfolio] = useState(null);
 
+    // Watchlist state
+    const [watchlist, setWatchlist] = useState([]);
+    const [watchlistLoading, setWatchlistLoading] = useState(false);
+    const [watchlistError, setWatchlistError] = useState(null);
+
     // Load stock data on mount
     useEffect(() => {
         loadStockData();
         loadPortfolioData();
+        loadWatchlist();
     }, []);
 
     // Recalculate portfolio values when portfolio data or stock data changes
@@ -118,6 +125,51 @@ export const StockProvider = ({ children }) => {
         return await stockCacheService.getLeaderboard();
     };
 
+    const loadWatchlist = async () => {
+        try {
+            setWatchlistLoading(true);
+            setWatchlistError(null);
+            const watchlistData = await watchlistService.getWatchlist();
+            setWatchlist(watchlistData);
+        } catch (err) {
+            setWatchlistError('Failed to load watchlist');
+            console.error('Error loading watchlist:', err);
+        } finally {
+            setWatchlistLoading(false);
+        }
+    };
+
+    const addToWatchlist = async (ticker) => {
+        try {
+            await watchlistService.addToWatchlist(ticker);
+            await loadWatchlist(); // Refresh watchlist
+        } catch (err) {
+            console.error('Error adding to watchlist:', err);
+            throw err;
+        }
+    };
+
+    const removeFromWatchlist = async (ticker) => {
+        try {
+            await watchlistService.removeFromWatchlist(ticker);
+            await loadWatchlist(); // Refresh watchlist
+        } catch (err) {
+            console.error('Error removing from watchlist:', err);
+            throw err;
+        }
+    };
+
+    const isInWatchlist = (ticker) => {
+        return watchlist.some(item => item.ticker === ticker);
+    };
+
+    const getWatchlistStocks = () => {
+        return watchlist.map(item => {
+            const stock = getStockByTicker(item.ticker);
+            return stock ? stock : null;
+        }).filter(Boolean);
+    };
+
     const value = {
         stocks,
         loading,
@@ -138,7 +190,15 @@ export const StockProvider = ({ children }) => {
         loadPortfolioData,
         refreshPortfolioData,
         calculatedPortfolio,
-        getPortfolioSummary
+        getPortfolioSummary,
+        watchlist,
+        watchlistLoading,
+        watchlistError,
+        loadWatchlist,
+        addToWatchlist,
+        removeFromWatchlist,
+        isInWatchlist,
+        getWatchlistStocks
     };
 
     return (

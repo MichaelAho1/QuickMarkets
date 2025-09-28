@@ -40,6 +40,28 @@
     font-weight: 600;
 }
 
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.watchlistButton {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.watchlistButton:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
 .closeButton {
     background: none;
     border: none;
