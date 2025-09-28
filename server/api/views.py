@@ -13,6 +13,7 @@ from django.db import transaction
 from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
 from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
 from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, getPriceDataForPeriod
+from simulator.utils import get_current_simulation_date
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -398,16 +399,34 @@ class StockChartDataView(APIView):
             # Get historical data for the specified period
             history = getPriceDataForPeriod(ticker, period)
             
-            if not history:
-                return Response({"error": "No historical data found for this stock"}, status=404)
+            # Get current stock data
+            try:
+                stock = Stock.objects.get(ticker=ticker)
+                current_price = float(stock.currPrice)
+                opening_price = float(stock.prevPrice)
+                current_change = current_price - opening_price
+                current_date = get_current_simulation_date()
+            except Stock.DoesNotExist:
+                return Response({"error": "Stock not found"}, status=404)
             
-            # Format data for chart
-            chart_data = [{
-                "date": record.date.strftime("%Y-%m-%d"),
-                "open": float(record.openingPrice),
-                "close": float(record.closingPrice),
-                "change": float(record.dayChange)
-            } for record in history]
+            # Start with historical data
+            chart_data = []
+            if history:
+                chart_data = [{
+                    "date": record.date.strftime("%Y-%m-%d"),
+                    "open": float(record.openingPrice),
+                    "close": float(record.closingPrice),
+                    "change": float(record.dayChange)
+                } for record in history]
+            
+            # Add current day's data to the chart
+            current_day_data = {
+                "date": current_date.strftime("%Y-%m-%d"),
+                "open": opening_price,
+                "close": current_price,
+                "change": current_change
+            }
+            chart_data.append(current_day_data)
             
             return Response({
                 "ticker": ticker,
