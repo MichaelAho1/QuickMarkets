@@ -12,6 +12,7 @@ from decimal import Decimal
 from django.db import transaction
 from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
 from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
+from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, getPriceDataForPeriod
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -378,6 +379,57 @@ class SimulateDuringDayView(APIView):
                 "message": "During day simulation completed successfully",
                 "status": "success",
                 "changes_applied": len(price_changes)
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class StockChartDataView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Get historical stock data for charts"""
+        try:
+            ticker = request.query_params.get('ticker')
+            period = request.query_params.get('period', '1m')  # Default to 1 month
+            
+            if not ticker:
+                return Response({"error": "Ticker is required"}, status=400)
+            
+            # Get historical data for the specified period
+            history = getPriceDataForPeriod(ticker, period)
+            
+            if not history:
+                return Response({"error": "No historical data found for this stock"}, status=404)
+            
+            # Format data for chart
+            chart_data = []
+            for record in history:
+                chart_data.append({
+                    "date": record.date.strftime("%Y-%m-%d"),
+                    "open": float(record.openingPrice),
+                    "close": float(record.closingPrice),
+                    "change": float(record.dayChange)
+                })
+            
+            return Response({
+                "ticker": ticker,
+                "period": period,
+                "data": chart_data
+            })
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulateEndOfDayView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Simulate end of day and store daily prices"""
+        try:
+            storeEndOfDayPrices()
+            return Response({
+                "message": "End of day simulation completed successfully",
+                "status": "success"
             })
         except Exception as e:
             return Response({"error": str(e)}, status=500)

@@ -12,4 +12,6 @@ urlpatterns = [
     path('watchlist/', views.WatchlistView.as_view(), name='watchlist'),
     path('simulate-start-of-day/', views.SimulateStartOfDayView.as_view(), name='simulate-start-of-day'),
     path('simulate-during-day/', views.SimulateDuringDayView.as_view(), name='simulate-during-day'),
+    path('simulate-end-of-day/', views.SimulateEndOfDayView.as_view(), name='simulate-end-of-day'),
+    path('stock-chart-data/', views.StockChartDataView.as_view(), name='stock-chart-data'),
 ]

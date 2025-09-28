@@ -26,8 +26,11 @@ const Dashboard = () => {
     const handleStartOfDaySimulation = async () => {
         setSimulationLoading(true);
         try {
+            // First run end of day simulation to store previous day's data
+            await api.post('/api/simulate-end-of-day/');
+            console.log('End of day simulation completed - previous day data stored');
+            
             await api.post('/api/simulate-start-of-day/');
-            alert('Start of day simulation completed successfully!');
             // Refresh both stock data and portfolio data to show updated prices
             await Promise.all([
                 refreshStockData(),

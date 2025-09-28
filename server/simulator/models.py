@@ -49,7 +49,9 @@ class UserStock(models.Model):
 class StockPriceHistory(models.Model):
     stockTicker = models.ForeignKey(Stock, on_delete=models.CASCADE, db_column='ticker', to_field='ticker')
     date = models.DateField() 
-    closingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00) 
+    closingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    openingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    dayChange = models.DecimalField(max_digits=8, decimal_places=4, default=0.0)
 
     class Meta:
         unique_together = (('stockTicker', 'date'),)
