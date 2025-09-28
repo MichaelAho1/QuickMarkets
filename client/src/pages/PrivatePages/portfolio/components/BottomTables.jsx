@@ -1,7 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './BottomTables.module.css';
+import api from '../../../../api/api.js';
 
 const BottomTables = ({ portfolioData }) => {
+    const [transactionHistory, setTransactionHistory] = useState([]);
+    const [historyLoading, setHistoryLoading] = useState(true);
+
+    useEffect(() => {
+        fetchTransactionHistory();
+    }, []);
+
+    const fetchTransactionHistory = async () => {
+        try {
+            setHistoryLoading(true);
+            const response = await api.get('/api/transaction-history/');
+            setTransactionHistory(response.data);
+        } catch (err) {
+            console.error('Error fetching transaction history:', err);
+            setTransactionHistory([]);
+        } finally {
+            setHistoryLoading(false);
+        }
+    };
+
     // Calculate sector allocation from portfolio data
     const calculateSectorAllocation = () => {
         if (!portfolioData || !portfolioData.portfolio) {
@@ -42,14 +63,6 @@ const BottomTables = ({ portfolioData }) => {
 
     const sectors = calculateSectorAllocation();
 
-    const history = [
-        { date: '2024-03-15', value: 4800, change: '+2.5%' },
-        { date: '2024-03-14', value: 4680, change: '-1.2%' },
-        { date: '2024-03-13', value: 4736, change: '+1.8%' },
-        { date: '2024-03-12', value: 4652, change: '-0.5%' },
-        { date: '2024-03-11', value: 4675, change: '+0.3%' }
-    ];
-
     return (
         <div className={styles.bottomSection}>
             <div className={styles.sectorCard}>
@@ -86,26 +99,34 @@ const BottomTables = ({ portfolioData }) => {
                 </div>
             </div>
             <div className={styles.historyCard}>
-                <h3>Portfolio History</h3>
+                <h3>Transaction History</h3>
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
                         <thead>
                             <tr>
                                 <th>Date</th>
                                 <th>Value</th>
-                                <th>Change</th>
+                                <th>Transaction</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {history.map((entry, index) => (
-                                <tr key={index}>
-                                    <td>{entry.date}</td>
-                                    <td>${entry.value.toLocaleString()}</td>
-                                    <td className={entry.change.startsWith('+') ? styles.positiveChange : styles.negativeChange}>
-                                        {entry.change}
+                            {historyLoading ? (
+                                <tr>
+                                    <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
+                                        Loading transactions...
                                     </td>
                                 </tr>
-                            ))}
+                            ) : 
+                                transactionHistory.map((transaction, index) => (
+                                    <tr key={index}>
+                                        <td>{transaction.date}</td>
+                                        <td>${transaction.value.toLocaleString()}</td>
+                                        <td className={transaction.change.startsWith('BUY') ? styles.positiveChange : styles.negativeChange}>
+                                            {transaction.change}
+                                        </td>
+                                    </tr>
+                                ))
+                            }
                         </tbody>
                     </table>
                 </div>

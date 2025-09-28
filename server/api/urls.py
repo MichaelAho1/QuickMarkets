@@ -8,4 +8,5 @@ urlpatterns = [
     path('buy-stock/', views.buyStock.as_view(), name="buy-stock"),
     path('sell-stock/', views.sellStock.as_view(), name='sell-stock'),
     path('user-portfolio/', views.UserPortfolio.as_view(), name='user-portfolio'),
+    path('transaction-history/', views.TransactionHistoryView.as_view(), name='transaction-history'),
 ]
