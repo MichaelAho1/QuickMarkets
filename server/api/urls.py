@@ -15,4 +15,5 @@ urlpatterns = [
     path('simulate-end-of-day/', views.SimulateEndOfDayView.as_view(), name='simulate-end-of-day'),
     path('stock-chart-data/', views.StockChartDataView.as_view(), name='stock-chart-data'),
     path('portfolio-chart-data/', views.PortfolioChartDataView.as_view(), name='portfolio-chart-data'),
+    path('simulation-day/', views.SimulationDayView.as_view(), name='simulation-day'),
 ]

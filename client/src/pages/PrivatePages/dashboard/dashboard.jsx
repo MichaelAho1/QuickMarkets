@@ -14,7 +14,9 @@ const Dashboard = () => {
         portfolioLoading, 
         smoothRefreshAll,
         isRefreshing,
-        getPortfolioSummary
+        getPortfolioSummary,
+        simulationDay,
+        simulationDayLoading
     } = useStockData();
 
     const [chartRefreshKey, setChartRefreshKey] = useState(0);
@@ -57,8 +59,11 @@ const Dashboard = () => {
                 <header>
                     <div className={styles.headerTop}>
                         <div>
-                            <h1>Simulated Day 1</h1>
-                            <h2>Time until Next day: 4 minutes 59 seconds </h2>
+                            <h1>
+                                {simulationDayLoading ? 'Loading...' : 
+                                 simulationDay ? `Simulated Day ${simulationDay.current_day}` : 
+                                 'Simulated Day 1'}
+                            </h1>
                         </div>
                         <RefreshIndicator isRefreshing={isRefreshing} size="small" />
                     </div>

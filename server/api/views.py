@@ -13,7 +13,7 @@ from django.db import transaction
 from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
 from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
 from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues, getPriceDataForPeriod
-from simulator.utils import get_current_simulation_date
+from simulator.utils import get_current_simulation_date, get_simulation_day
 from datetime import timedelta
 
 class CreateUserView(generics.CreateAPIView):
@@ -520,6 +520,20 @@ class SimulateEndOfDayView(APIView):
             return Response({
                 "message": "End of day simulation completed successfully",
                 "status": "success"
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulationDayView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        """Get the current simulation day"""
+        try:
+            simulation_day = get_simulation_day()
+            
+            return Response({
+                "current_day": simulation_day.current_day
             })
         except Exception as e:
             return Response({"error": str(e)}, status=500)

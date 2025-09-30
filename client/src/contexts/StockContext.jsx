@@ -31,6 +31,11 @@ export const StockProvider = ({ children }) => {
     const [watchlistLoading, setWatchlistLoading] = useState(false);
     const [watchlistError, setWatchlistError] = useState(null);
 
+    // Simulation day state
+    const [simulationDay, setSimulationDay] = useState(null);
+    const [simulationDayLoading, setSimulationDayLoading] = useState(true);
+    const [simulationDayError, setSimulationDayError] = useState(null);
+
     // Refresh indicator state
     const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -39,6 +44,7 @@ export const StockProvider = ({ children }) => {
         loadStockData();
         loadPortfolioData();
         loadWatchlist();
+        loadSimulationDay();
     }, []);
 
     // Recalculate portfolio values when portfolio data or stock data changes
@@ -177,6 +183,40 @@ export const StockProvider = ({ children }) => {
         }
     };
 
+    const loadSimulationDay = async (forceRefresh = false, showLoading = true) => {
+        try {
+            if (showLoading) {
+                setSimulationDayLoading(true);
+            }
+            setSimulationDayError(null);
+            
+            const response = await fetch('http://localhost:8000/api/simulation-day/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            setSimulationDay(data);
+        } catch (err) {
+            setSimulationDayError('Failed to load simulation day');
+            console.error('Error loading simulation day:', err);
+            // Set a default value if the API fails
+            setSimulationDay({
+                current_day: 1
+            });
+        } finally {
+            if (showLoading) {
+                setSimulationDayLoading(false);
+            }
+        }
+    };
+
     const addToWatchlist = async (ticker) => {
         try {
             await watchlistService.addToWatchlist(ticker);
@@ -237,7 +277,11 @@ export const StockProvider = ({ children }) => {
         addToWatchlist,
         removeFromWatchlist,
         isInWatchlist,
-        getWatchlistStocks
+        getWatchlistStocks,
+        simulationDay,
+        simulationDayLoading,
+        simulationDayError,
+        loadSimulationDay
     };
 
     return (
