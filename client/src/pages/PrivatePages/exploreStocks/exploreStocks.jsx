@@ -20,8 +20,22 @@ function ExploreStocks() {
         getPopularStocks, 
         getAllStocks, 
         getStocksBySector,
-        refreshPortfolioData
+        refreshPortfolioData,
+        refreshStockData
     } = useStockData();
+
+    // Auto-refresh data every 5 seconds to match simulation frequency
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            try {
+                await refreshStockData();
+            } catch (error) {
+                console.error('Error refreshing stock data:', error);
+            }
+        }, 5000); // Refresh every 5 seconds to catch simulation updates
+
+        return () => clearInterval(interval);
+    }, [refreshStockData]);
 
     // Sector mapping for filtering
     const sectors = [
