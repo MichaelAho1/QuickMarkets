@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./LeaderboardCard.module.css";
-import { useStockData } from '../../../../contexts/StockContext';
+import SmoothNumber from '../../../../components/SmoothNumber';
+import api from '../../../../api/api';
 
-const LeaderboardCard = () => {
+const LeaderboardCard = ({ refreshKey = 0 }) => {
     const [leaderboardData, setLeaderboardData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const { getLeaderboard } = useStockData();
-
     useEffect(() => {
         fetchLeaderboardData();
-    }, [getLeaderboard]);
+    }, []);
+
+    // Refresh data when refreshKey changes (every 5 minutes)
+    useEffect(() => {
+        if (refreshKey > 0) {
+            fetchLeaderboardData();
+        }
+    }, [refreshKey]);
 
     const fetchLeaderboardData = async () => {
         try {
             setLoading(true);
             setError(null);
-            const data = await getLeaderboard();
-            setLeaderboardData(data);
+            
+            // Fetch leaderboard data directly from API
+            const response = await api.get('/api/leaderboard/');
+            setLeaderboardData(response.data);
         } catch (err) {
             setError('Failed to load leaderboard data');
             console.error('Error fetching leaderboard:', err);
@@ -64,7 +72,13 @@ const LeaderboardCard = () => {
                     >
                         <span className={styles.rank}>#{index + 1}</span>
                         <span className={styles.username}>{user.username}</span>
-                        <span className={styles.score}>{formatCurrency(user.totalNetWorth)}</span>
+                        <span className={styles.score}>
+                            <SmoothNumber 
+                                value={user.totalNetWorth} 
+                                format="currency" 
+                                decimals={0}
+                            />
+                        </span>
                     </div>
                 ))}
             </div>

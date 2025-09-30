@@ -1,31 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./TopGainersCard.module.css";
-import { useStockData } from '../../../../contexts/StockContext';
+import SmoothNumber from '../../../../components/SmoothNumber';
+import api from '../../../../api/api';
 
-const TopGainersCard = () => {
+const TopGainersCard = ({ refreshKey = 0 }) => {
     const [activeTab, setActiveTab] = useState('gainers');
     const [tableData, setTableData] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const { getTopGainers, getTopLosers } = useStockData();
-
     useEffect(() => {
         loadTableData();
-    }, [activeTab, getTopGainers, getTopLosers]);
+    }, [activeTab]);
+
+    // Refresh data when refreshKey changes (every 5 minutes)
+    useEffect(() => {
+        if (refreshKey > 0) {
+            loadTableData();
+        }
+    }, [refreshKey]);
 
     const loadTableData = async () => {
         try {
             setLoading(true);
-            const data = activeTab === 'gainers' 
-                ? await getTopGainers(5) 
-                : await getTopLosers(5);
             
-            const transformedData = data.map(stock => ({
+            // Fetch stock data directly from API to avoid context refresh interference
+            const response = await api.get('/api/view-stock-prices/');
+            const stocks = response.data;
+            
+            // Calculate percentage change for each stock
+            const stocksWithChange = stocks.map(stock => ({
+                ...stock,
+                percentageChange: ((stock.currPrice - stock.prevPrice) / stock.prevPrice) * 100
+            }));
+
+            // Sort by percentage change
+            const sortedStocks = stocksWithChange.sort((a, b) => {
+                if (activeTab === 'gainers') {
+                    return b.percentageChange - a.percentageChange;
+                } else {
+                    return a.percentageChange - b.percentageChange;
+                }
+            });
+
+            // Take top 5
+            const topStocks = sortedStocks.slice(0, 5);
+            
+            const transformedData = topStocks.map(stock => ({
                 name: stock.stockName,
                 stock: stock.ticker,
                 openingPrice: stock.prevPrice,
                 currentPrice: stock.currPrice,
-                oneWeekChange: ((stock.currPrice - stock.prevPrice) / stock.prevPrice) * 100,
+                oneWeekChange: stock.percentageChange,
                 sector: stock.sectorType
             }));
             
@@ -89,9 +114,20 @@ const TopGainersCard = () => {
                                 <tr key={index}>
                                     <td>{row.stock}</td>
                                     <td>{row.name}</td>
-                                    <td>${row.currentPrice.toFixed(2)}</td>
+                                    <td>
+                                        <SmoothNumber 
+                                            value={row.currentPrice} 
+                                            format="currency" 
+                                            decimals={2}
+                                        />
+                                    </td>
                                     <td className={row.oneWeekChange >= 0 ? styles.positiveChange : styles.negativeChange}>
-                                        {row.oneWeekChange >= 0 ? '+' : ''}{row.oneWeekChange.toFixed(2)}%
+                                        <SmoothNumber 
+                                            value={row.oneWeekChange} 
+                                            format="percentage"
+                                            prefix={row.oneWeekChange >= 0 ? '+' : ''}
+                                            decimals={2}
+                                        />
                                     </td>
                                     <td>{row.sector}</td>
                                 </tr>

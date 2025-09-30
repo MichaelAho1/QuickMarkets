@@ -2,7 +2,7 @@ import api from '../api/api.js';
 
 const PORTFOLIO_CACHE_KEY = 'portfolio_data_cache';
 const PORTFOLIO_CACHE_EXPIRY_KEY = 'portfolio_cache_expiry';
-const CACHE_DURATION = 1 * 60 * 1000; // 1 minute
+const CACHE_DURATION = 5 * 1000; // 5 seconds 
 
 class PortfolioCacheService {
     constructor() {

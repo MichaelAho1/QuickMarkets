@@ -7,58 +7,46 @@ import PortfolioChartCard from './components/PortfolioChartCard';
 import TopGainersCard from './components/TopGainersCard';
 import NewsCard from './components/newsCard';
 import { useStockData } from '../../../contexts/StockContext';
-import api from '../../../api/api';
+import RefreshIndicator from '../../../components/RefreshIndicator';
+import SimulationTimer from '../../../components/SimulationTimer';
 
 const Dashboard = () => {
     const { 
         portfolioLoading, 
-        refreshPortfolioData,
-        refreshStockData,
-        getPortfolioSummary
+        smoothRefreshAll,
+        isRefreshing,
+        getPortfolioSummary,
+        simulationDay,
+        simulationDayLoading
     } = useStockData();
 
-    const [simulationLoading, setSimulationLoading] = useState(false);
     const [chartRefreshKey, setChartRefreshKey] = useState(0);
+    const [topGainersRefreshKey, setTopGainersRefreshKey] = useState(0);
+    const [leaderboardRefreshKey, setLeaderboardRefreshKey] = useState(0);
 
+    // Auto-refresh portfolio and stock data every 5 seconds
+    React.useEffect(() => {
+        const interval = setInterval(async () => {
+            try {
+                await smoothRefreshAll();
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+            }
+        }, 5000); // Refresh every 5 seconds to catch simulation updates
 
-    const handleStartOfDaySimulation = async () => {
-        setSimulationLoading(true);
-        try {
-            // First run end of day simulation to store previous day's data
-            await api.post('/api/simulate-end-of-day/');
-            await api.post('/api/simulate-start-of-day/');
-            // Refresh both stock data and portfolio data to show updated prices
-            await Promise.all([
-                refreshStockData(),
-                refreshPortfolioData()
-            ]);
-            // Trigger chart refresh
+        return () => clearInterval(interval);
+    }, [smoothRefreshAll]);
+
+    // Refresh chart, top gainers, and leaderboard every 5 minutes (300000ms) - on day change
+    React.useEffect(() => {
+        const interval = setInterval(() => {
             setChartRefreshKey(prev => prev + 1);
-        } catch (error) {
-            console.error('Error running start of day simulation:', error);
-            alert('Error running start of day simulation. Please try again.');
-        } finally {
-            setSimulationLoading(false);
-        }
-    };
+            setTopGainersRefreshKey(prev => prev + 1);
+            setLeaderboardRefreshKey(prev => prev + 1);
+        }, 300000); // Refresh every 5 minutes
 
-    const handleDuringDaySimulation = async () => {
-        setSimulationLoading(true);
-        try {
-            await api.post('/api/simulate-during-day/');
-            alert('During day simulation completed successfully!');
-            // Refresh both stock data and portfolio data to show updated prices
-            await Promise.all([
-                refreshStockData(),
-                refreshPortfolioData()
-            ]);
-        } catch (error) {
-            console.error('Error running during day simulation:', error);
-            alert('Error running during day simulation. Please try again.');
-        } finally {
-            setSimulationLoading(false);
-        }
-    };
+        return () => clearInterval(interval);
+    }, []);
 
     // Get calculated portfolio summary
     const portfolioSummary = getPortfolioSummary();
@@ -72,25 +60,14 @@ const Dashboard = () => {
                 <header>
                     <div className={styles.headerTop}>
                         <div>
-                            <h1>Simulated Day 1</h1>
-                            <h2>Time until Next day: 4 minutes 59 seconds </h2>
+                            <h1>
+                                {simulationDayLoading ? 'Loading...' : 
+                                 simulationDay ? `Simulated Day ${simulationDay.current_day}` : 
+                                 'Simulated Day 1'}
+                            </h1>
+                            <SimulationTimer />
                         </div>
-                        <div className={styles.simulationButtons}>
-                            <button 
-                                className={styles.simButton}
-                                onClick={handleStartOfDaySimulation}
-                                disabled={simulationLoading}
-                            >
-                                {simulationLoading ? 'Running...' : 'Simulate Start of Day'}
-                            </button>
-                            <button 
-                                className={styles.simButton}
-                                onClick={handleDuringDaySimulation}
-                                disabled={simulationLoading}
-                            >
-                                {simulationLoading ? 'Running...' : 'Simulate During Day'}
-                            </button>
-                        </div>
+                        <RefreshIndicator isRefreshing={isRefreshing} size="small" />
                     </div>
                 </header>
                 <div className={styles.mainSection}>
@@ -100,12 +77,12 @@ const Dashboard = () => {
                             portfolioDayChange={portfolioDayChange}
                             loading={portfolioLoading}
                         />
-                        <LeaderboardCard />
+                        <LeaderboardCard refreshKey={leaderboardRefreshKey} />
                     </div>
                     <PortfolioChartCard refreshKey={chartRefreshKey} />
                 </div>
                 <div className={styles.bottomSection}>
-                    <TopGainersCard />
+                    <TopGainersCard refreshKey={topGainersRefreshKey} />
                     <NewsCard />
                 </div>
             </div>

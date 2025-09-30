@@ -1,0 +1,56 @@
+.refreshIndicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6B7280;
+    font-size: 12px;
+    opacity: 0.8;
+    animation: fadeIn 0.3s ease-in;
+    min-height: 20px; 
+    transition: opacity 0.3s ease-in-out;
+    white-space: nowrap; 
+}
+
+.refreshIndicator.small {
+    font-size: 11px;
+}
+
+.refreshIndicator.large {
+    font-size: 14px;
+    gap: 8px;
+}
+
+.refreshIndicator.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #E5E7EB;
+    border-top: 2px solid #3B82F6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.refreshIndicator.large .spinner {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+.text {
+    font-weight: 500;
+    color: #6B7280;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 0.8; }
+}
