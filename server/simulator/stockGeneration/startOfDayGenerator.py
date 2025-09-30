@@ -1,10 +1,20 @@
 from simulator.utils import getStockData, getETFData, increment_simulation_day
 from ..models import ETF, Stock
+from .endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues
 import math, random
 
 "Generates the prices for the first price of the day (market open)"
 #Calls everything in the order it needs to be called
 def calculateMarketChanges():
+    # Store end-of-day data before starting new day
+    print("Storing end-of-day data before starting new day...")
+    try:
+        storeEndOfDayPrices()
+        storePortfolioValues()
+        print("End-of-day data stored successfully")
+    except Exception as e:
+        print(f"Error storing end-of-day data: {e}")
+    
     # Increment simulation day when starting a new day
     new_simulation_date = increment_simulation_day()
     print(f"Starting new simulation day: {new_simulation_date}")

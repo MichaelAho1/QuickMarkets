@@ -3,7 +3,12 @@ import { useStockData } from '../contexts/StockContext';
 import styles from './SimulationTimer.module.css';
 
 const SimulationTimer = () => {
-    const { refreshSimulationDay } = useStockData();
+    const { 
+        refreshSimulationDay, 
+        smoothRefreshAll,
+        smoothRefreshStockData,
+        smoothRefreshPortfolioData 
+    } = useStockData();
     const [timeRemaining, setTimeRemaining] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -14,11 +19,19 @@ const SimulationTimer = () => {
                 const data = await response.json();
                 setTimeRemaining(data);
                 
-                // If a new day was triggered, refresh the simulation day data
+                // If a new day was triggered, refresh all data
                 if (data.day_changed === false) {
-                    console.log('New simulation day triggered! Refreshing day data...');
-                    // Refresh the simulation day data in the context
-                    await refreshSimulationDay();
+                    console.log('New simulation day triggered! Refreshing all data...');
+                    try {
+                        // Refresh all data comprehensively
+                        await Promise.all([
+                            refreshSimulationDay(),
+                            smoothRefreshAll()
+                        ]);
+                        console.log('All data refreshed successfully for new day');
+                    } catch (error) {
+                        console.error('Error refreshing data on day change:', error);
+                    }
                 }
             }
         } catch (error) {
