@@ -60,23 +60,16 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING('Simulation scheduler stopped.'))
 
     def _run_scheduler(self, start_of_day_interval, during_day_interval):
-        """Run the simulation scheduler"""
-        start_of_day_seconds = start_of_day_interval * 60  # Convert minutes to seconds
+        """Run the simulation scheduler - now only handles during-day updates"""
         during_day_seconds = during_day_interval  # Already in seconds
         
-        last_start_of_day = timezone.now()
         last_during_day = timezone.now()
         
         while True:
             current_time = timezone.now()
             
-            # Check if it's time for start of day simulation
-            if (current_time - last_start_of_day).total_seconds() >= start_of_day_seconds:
-                try:
-                    self._run_start_of_day_simulation()
-                    last_start_of_day = current_time
-                except Exception as e:
-                    logger.error(f"Error in start of day simulation: {e}")
+            # Note: Start of day simulation is now handled automatically by the timer API
+            # when the countdown reaches 0. No manual scheduling needed.
             
             # Check if it's time for during day simulation
             if (current_time - last_during_day).total_seconds() >= during_day_seconds:
@@ -88,25 +81,6 @@ class Command(BaseCommand):
             
             # Sleep for 1 second before checking again (since during day runs every 5 seconds)
             time.sleep(1)
-
-    def _run_start_of_day_simulation(self):
-        """Run start of day simulation"""
-        logger.info("Running start of day simulation...")
-        
-        # First run end of day to store previous day's data
-        try:
-            storeEndOfDayPrices()
-            storePortfolioValues()
-            logger.info("End of day simulation completed")
-        except Exception as e:
-            logger.error(f"Error in end of day simulation: {e}")
-        
-        # Then run start of day
-        try:
-            calculateMarketChanges()
-            logger.info("Start of day simulation completed")
-        except Exception as e:
-            logger.error(f"Error in start of day simulation: {e}")
 
     def _run_during_day_simulation(self):
         """Run during day simulation"""

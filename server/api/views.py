@@ -1,13 +1,11 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from .serializers import UserSerializer, StockSerializer, StockHistorySerializer, TransactStock, UserStockSerializer, WatchlistSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, Watchlist, PortfolioHistory
 from simulator.models import User as SimulatorUser
-from rest_framework.permissions import IsAuthenticated
 from decimal import Decimal
 from django.db import transaction
 from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
@@ -355,19 +353,6 @@ class WatchlistView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
-class SimulateStartOfDayView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        """Simulate start of day price changes"""
-        try:
-            calculateMarketChanges()
-            return Response({
-                "message": "Start of day simulation completed successfully",
-                "status": "success"
-            })
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
 
 class SimulateDuringDayView(APIView):
     permission_classes = [IsAuthenticated]
@@ -509,20 +494,6 @@ class PortfolioChartDataView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
-class SimulateEndOfDayView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        """Simulate end of day and store daily prices"""
-        try:
-            storeEndOfDayPrices()
-            storePortfolioValues()
-            return Response({
-                "message": "End of day simulation completed successfully",
-                "status": "success"
-            })
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
 
 class SimulationDayView(APIView):
     permission_classes = [AllowAny]
@@ -534,6 +505,41 @@ class SimulationDayView(APIView):
             
             return Response({
                 "current_day": simulation_day.current_day
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulationTimerView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        """Get countdown timer for next simulation day and auto-trigger new day when timer reaches 0"""
+        try:
+            simulation_day = get_simulation_day()
+            
+            # Calculate time until next day
+            seconds_remaining = simulation_day.get_time_until_next_day()
+            
+            # If timer has reached 0, trigger new day
+            if seconds_remaining <= 0:
+                # Trigger start of day simulation
+                try:
+                    calculateMarketChanges()  # This will increment the day and reset the timer
+                    simulation_day = get_simulation_day()  # Refresh to get updated data
+                    seconds_remaining = simulation_day.get_time_until_next_day()
+                except Exception as e:
+                    return Response({"error": f"Failed to trigger new day: {str(e)}"}, status=500)
+            
+            # Format as MM:SS
+            minutes = int(seconds_remaining // 60)
+            seconds = int(seconds_remaining % 60)
+            
+            return Response({
+                "seconds_remaining": seconds_remaining,
+                "formatted_time": f"{minutes}:{seconds:02d}",
+                "minutes": minutes,
+                "seconds": seconds,
+                "day_changed": seconds_remaining > 0  # False if we just triggered a new day
             })
         except Exception as e:
             return Response({"error": str(e)}, status=500)

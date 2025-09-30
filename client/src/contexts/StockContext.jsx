@@ -217,6 +217,10 @@ export const StockProvider = ({ children }) => {
         }
     };
 
+    const refreshSimulationDay = async () => {
+        return loadSimulationDay(true, false);
+    };
+
     const addToWatchlist = async (ticker) => {
         try {
             await watchlistService.addToWatchlist(ticker);
@@ -281,7 +285,8 @@ export const StockProvider = ({ children }) => {
         simulationDay,
         simulationDayLoading,
         simulationDayError,
-        loadSimulationDay
+        loadSimulationDay,
+        refreshSimulationDay
     };
 
     return (

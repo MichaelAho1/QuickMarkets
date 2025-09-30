@@ -8,6 +8,7 @@ import TopGainersCard from './components/TopGainersCard';
 import NewsCard from './components/newsCard';
 import { useStockData } from '../../../contexts/StockContext';
 import RefreshIndicator from '../../../components/RefreshIndicator';
+import SimulationTimer from '../../../components/SimulationTimer';
 
 const Dashboard = () => {
     const { 
@@ -64,6 +65,7 @@ const Dashboard = () => {
                                  simulationDay ? `Simulated Day ${simulationDay.current_day}` : 
                                  'Simulated Day 1'}
                             </h1>
+                            <SimulationTimer />
                         </div>
                         <RefreshIndicator isRefreshing={isRefreshing} size="small" />
                     </div>
