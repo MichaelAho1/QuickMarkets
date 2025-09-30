@@ -5,15 +5,16 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, Watchlist
+from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, Watchlist, PortfolioHistory
 from simulator.models import User as SimulatorUser
 from rest_framework.permissions import IsAuthenticated
 from decimal import Decimal
 from django.db import transaction
 from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
 from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
-from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, getPriceDataForPeriod
+from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues, getPriceDataForPeriod
 from simulator.utils import get_current_simulation_date
+from datetime import timedelta
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -437,6 +438,77 @@ class StockChartDataView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
+class PortfolioChartDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Get portfolio value data for charts"""
+        try:
+            period = request.query_params.get('period', '1m')  # Default to 1 month
+            
+            # Get user
+            simulator_user = SimulatorUser.objects.get(username=request.user.username)
+            
+            # Get current date
+            current_date = get_current_simulation_date()
+            
+            # Get date range based on period
+            start_date = current_date
+            
+            if period == '1w':
+                start_date = current_date - timedelta(days=7)
+            elif period == '1m':
+                start_date = current_date - timedelta(days=30)
+            elif period == '6m':
+                start_date = current_date - timedelta(days=180)
+            elif period == '1y':
+                start_date = current_date - timedelta(days=365)
+            else:  # all
+                start_date = current_date - timedelta(days=365*2)  # 2 years max
+            
+            # Get portfolio history for the period
+            portfolio_history = PortfolioHistory.objects.filter(
+                user=simulator_user,
+                date__gte=start_date,
+                date__lte=current_date
+            ).order_by('date')
+            
+            # Convert to chart data
+            chart_data = []
+            for record in portfolio_history:
+                chart_data.append({
+                    "date": record.date.strftime("%Y-%m-%d"),
+                    "portfolioValue": float(record.portfolioValue)
+                })
+            
+            # Add current day's portfolio value if not already in history
+            current_date_str = current_date.strftime("%Y-%m-%d")
+            if not chart_data or chart_data[-1]["date"] != current_date_str:
+                # Calculate current portfolio value
+                user_stocks = UserStock.objects.filter(user=simulator_user)
+                current_portfolio_value = float(simulator_user.cashBalance)
+                
+                for user_stock in user_stocks:
+                    try:
+                        stock = Stock.objects.get(ticker=user_stock.stock.ticker)
+                        price = float(stock.currPrice)
+                        current_portfolio_value += price * float(user_stock.sharesAmount)
+                    except Stock.DoesNotExist:
+                        continue
+                
+                chart_data.append({
+                    "date": current_date_str,
+                    "portfolioValue": current_portfolio_value
+                })
+            
+            return Response({
+                "period": period,
+                "data": chart_data
+            })
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
 class SimulateEndOfDayView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -444,6 +516,7 @@ class SimulateEndOfDayView(APIView):
         """Simulate end of day and store daily prices"""
         try:
             storeEndOfDayPrices()
+            storePortfolioValues()
             return Response({
                 "message": "End of day simulation completed successfully",
                 "status": "success"

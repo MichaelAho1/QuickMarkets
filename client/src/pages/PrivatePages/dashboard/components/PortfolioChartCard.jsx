@@ -1,15 +1,11 @@
 import React from 'react';
+import PortfolioChart from '../../../../components/PortfolioChart';
 import styles from "./PortfolioChartCard.module.css";
 
-const PortfolioChartCard = () => {
+const PortfolioChartCard = ({ refreshKey }) => {
     return (
         <div className={styles.portfolioChartCard}>
-            <div className={styles.cardHeader}>
-                <h3>Portfolio Performance</h3>
-            </div>
-            <div className={styles.chartContent}>
-                {/* Chart will be added here */}
-            </div>
+            <PortfolioChart refreshKey={refreshKey} />
         </div>
     );
 };

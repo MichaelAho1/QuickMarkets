@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Stock, User, UserStock, StockPriceHistory, ETF, Transaction
-
+from .models import Stock, User, UserStock, StockPriceHistory, ETF, Transaction, PortfolioHistory, Watchlist
+admin.site.register(PortfolioHistory)
+admin.site.register(Watchlist)
 admin.site.register(Stock)
 admin.site.register(User)
 admin.site.register(UserStock)

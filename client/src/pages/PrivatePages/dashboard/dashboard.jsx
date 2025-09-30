@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import styles from "./dashboard.module.css";
 import PortfolioCard from './components/PortfolioCard';
@@ -18,24 +18,22 @@ const Dashboard = () => {
     } = useStockData();
 
     const [simulationLoading, setSimulationLoading] = useState(false);
+    const [chartRefreshKey, setChartRefreshKey] = useState(0);
 
-    const handleTransactionComplete = () => {
-        refreshPortfolioData();
-    };
 
     const handleStartOfDaySimulation = async () => {
         setSimulationLoading(true);
         try {
             // First run end of day simulation to store previous day's data
             await api.post('/api/simulate-end-of-day/');
-            console.log('End of day simulation completed - previous day data stored');
-            
             await api.post('/api/simulate-start-of-day/');
             // Refresh both stock data and portfolio data to show updated prices
             await Promise.all([
                 refreshStockData(),
                 refreshPortfolioData()
             ]);
+            // Trigger chart refresh
+            setChartRefreshKey(prev => prev + 1);
         } catch (error) {
             console.error('Error running start of day simulation:', error);
             alert('Error running start of day simulation. Please try again.');
@@ -104,7 +102,7 @@ const Dashboard = () => {
                         />
                         <LeaderboardCard />
                     </div>
-                    <PortfolioChartCard />
+                    <PortfolioChartCard refreshKey={chartRefreshKey} />
                 </div>
                 <div className={styles.bottomSection}>
                     <TopGainersCard />
