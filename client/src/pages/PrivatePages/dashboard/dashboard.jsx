@@ -23,6 +23,7 @@ const Dashboard = () => {
     const [chartRefreshKey, setChartRefreshKey] = useState(0);
     const [topGainersRefreshKey, setTopGainersRefreshKey] = useState(0);
     const [leaderboardRefreshKey, setLeaderboardRefreshKey] = useState(0);
+    const [previousDay, setPreviousDay] = useState(null);
 
     // Auto-refresh portfolio and stock data every 5 seconds
     React.useEffect(() => {
@@ -37,7 +38,25 @@ const Dashboard = () => {
         return () => clearInterval(interval);
     }, [smoothRefreshAll]);
 
-    // Refresh chart, top gainers, and leaderboard every 5 minutes (300000ms) - on day change
+    // Detect day changes and refresh dashboard components
+    React.useEffect(() => {
+        if (simulationDay && simulationDay.current_day !== previousDay) {
+            console.log(`Day changed from ${previousDay} to ${simulationDay.current_day}. Refreshing dashboard components...`);
+            setChartRefreshKey(prev => prev + 1);
+            setTopGainersRefreshKey(prev => prev + 1);
+            setLeaderboardRefreshKey(prev => prev + 1);
+            setPreviousDay(simulationDay.current_day);
+        }
+    }, [simulationDay, previousDay]);
+
+    // Initialize previous day when simulation day loads
+    React.useEffect(() => {
+        if (simulationDay && previousDay === null) {
+            setPreviousDay(simulationDay.current_day);
+        }
+    }, [simulationDay, previousDay]);
+
+    // Refresh chart, top gainers, and leaderboard every 5 minutes (300000ms) - fallback
     React.useEffect(() => {
         const interval = setInterval(() => {
             setChartRefreshKey(prev => prev + 1);
