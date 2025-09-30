@@ -1,0 +1,164 @@
+.chartContainer {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.chartHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.chartTitle h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.periodSelector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.periodButton {
+    padding: 8px 16px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #6b7280;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.periodButton:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.periodButton.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+}
+
+.chartContent {
+    position: relative;
+    min-height: 300px;
+}
+
+.chartWrapper {
+    height: 300px;
+    width: 100%;
+}
+
+.loadingMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #6b7280;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.errorMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #ef4444;
+    text-align: center;
+}
+
+.retryButton {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+    background: #2563eb;
+}
+
+.noDataMessage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #6b7280;
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .chartHeader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .periodSelector {
+        justify-content: center;
+    }
+    
+    .periodButton {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+    }
+    
+    .chartWrapper {
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chartContainer {
+        padding: 16px;
+    }
+    
+    .chartTitle h3 {
+        font-size: 16px;
+    }
+    
+    .periodButton {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .chartWrapper {
+        height: 200px;
+    }
+}

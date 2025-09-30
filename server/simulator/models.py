@@ -91,11 +91,25 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 class Watchlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='username', to_field='username')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     ticker = models.CharField(max_length=10)
+    addedAt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
         unique_together = (('user', 'ticker'),)
 
     def __str__(self):
         return f"{self.user.username} - {self.ticker}"
+
+class PortfolioHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField()
+    portfolioValue = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    cashBalance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    stockValue = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+
+    class Meta:
+        unique_together = (('user', 'date'),)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.date} - ${self.portfolioValue}"
