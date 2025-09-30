@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import styles from "./exploreStocks.module.css";
 import { FaSearch, FaArrowUp, FaArrowDown, FaTimes } from "react-icons/fa";
@@ -6,6 +7,7 @@ import StockModal from '../components/StockModal/StockModal';
 import { useStockData } from '../../../contexts/StockContext';
 
 function ExploreStocks() {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSector, setSelectedSector] = useState('all');
     const [selectedStock, setSelectedStock] = useState(null);
@@ -21,6 +23,7 @@ function ExploreStocks() {
         getAllStocks, 
         getStocksBySector,
         smoothRefreshStockData,
+        smoothRefreshPortfolioData,
         isRefreshing
     } = useStockData();
 
@@ -103,8 +106,12 @@ function ExploreStocks() {
         setSelectedStock(null);
     };
 
-    const handleTransactionComplete = () => {
-        refreshPortfolioData();
+    const handleTransactionComplete = async (transactionData) => {
+        // Refresh portfolio data to reflect the new purchase
+        await smoothRefreshPortfolioData();
+        
+        // Navigate to portfolio page after successful purchase
+        navigate('/admin/portfolio');
     };
 
     if (loading) {
