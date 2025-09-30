@@ -2,7 +2,7 @@ import api from '../api/api.js';
 
 const STOCK_CACHE_KEY = 'stock_prices_cache';
 const CACHE_EXPIRY_KEY = 'stock_cache_expiry';
-const CACHE_DURATION = 0.5 * 60 * 1000; //  30 seconds
+const CACHE_DURATION = 5 * 1000; // 5 seconds
 
 class StockCacheService {
     constructor() {
