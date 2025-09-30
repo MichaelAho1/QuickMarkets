@@ -7,39 +7,43 @@ import PortfolioChartCard from './components/PortfolioChartCard';
 import TopGainersCard from './components/TopGainersCard';
 import NewsCard from './components/newsCard';
 import { useStockData } from '../../../contexts/StockContext';
-import api from '../../../api/api';
+import RefreshIndicator from '../../../components/RefreshIndicator';
 
 const Dashboard = () => {
     const { 
         portfolioLoading, 
-        refreshPortfolioData,
-        refreshStockData,
+        smoothRefreshAll,
+        isRefreshing,
         getPortfolioSummary
     } = useStockData();
 
     const [chartRefreshKey, setChartRefreshKey] = useState(0);
-    const [simulationStatus, setSimulationStatus] = useState({
-        isRunning: true,
-        nextStartOfDay: null,
-        nextDuringDay: null
-    });
+    const [topGainersRefreshKey, setTopGainersRefreshKey] = useState(0);
+    const [leaderboardRefreshKey, setLeaderboardRefreshKey] = useState(0);
 
-    // Auto-refresh data every 3 seconds to match simulation frequency
+    // Auto-refresh portfolio and stock data every 5 seconds
     React.useEffect(() => {
         const interval = setInterval(async () => {
             try {
-                await Promise.all([
-                    refreshStockData(),
-                    refreshPortfolioData()
-                ]);
-                setChartRefreshKey(prev => prev + 1);
+                await smoothRefreshAll();
             } catch (error) {
                 console.error('Error refreshing data:', error);
             }
-        }, 5000); // Refresh every 3 seconds to catch simulation updates
+        }, 5000); // Refresh every 5 seconds to catch simulation updates
 
         return () => clearInterval(interval);
-    }, [refreshStockData, refreshPortfolioData]);
+    }, [smoothRefreshAll]);
+
+    // Refresh chart, top gainers, and leaderboard every 5 minutes (300000ms) - on day change
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setChartRefreshKey(prev => prev + 1);
+            setTopGainersRefreshKey(prev => prev + 1);
+            setLeaderboardRefreshKey(prev => prev + 1);
+        }, 300000); // Refresh every 5 minutes
+
+        return () => clearInterval(interval);
+    }, []);
 
     // Get calculated portfolio summary
     const portfolioSummary = getPortfolioSummary();
@@ -56,6 +60,7 @@ const Dashboard = () => {
                             <h1>Simulated Day 1</h1>
                             <h2>Time until Next day: 4 minutes 59 seconds </h2>
                         </div>
+                        <RefreshIndicator isRefreshing={isRefreshing} size="small" />
                     </div>
                 </header>
                 <div className={styles.mainSection}>
@@ -65,12 +70,12 @@ const Dashboard = () => {
                             portfolioDayChange={portfolioDayChange}
                             loading={portfolioLoading}
                         />
-                        <LeaderboardCard />
+                        <LeaderboardCard refreshKey={leaderboardRefreshKey} />
                     </div>
                     <PortfolioChartCard refreshKey={chartRefreshKey} />
                 </div>
                 <div className={styles.bottomSection}>
-                    <TopGainersCard />
+                    <TopGainersCard refreshKey={topGainersRefreshKey} />
                     <NewsCard />
                 </div>
             </div>

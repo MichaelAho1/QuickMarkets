@@ -2,6 +2,7 @@ import React from 'react';
 import { BsPiggyBank } from "react-icons/bs";
 import styles from "./PortfolioCard.module.css";
 import { Link } from 'react-router-dom';
+import SmoothNumber from '../../../../components/SmoothNumber';
 
 const PortfolioCard = ({ portfolioValue, portfolioDayChange, loading = false }) => {
     if (loading) {
@@ -34,10 +35,20 @@ const PortfolioCard = ({ portfolioValue, portfolioDayChange, loading = false }) 
                 <p className={styles.portfolioTitle}>Total Net Worth</p>
             </div>
             <div className={styles.valueLine}>
-                <h2 className={styles.portfolioValue}>${portfolioValue.toLocaleString()}</h2>
+                <h2 className={styles.portfolioValue}>
+                    <SmoothNumber 
+                        value={portfolioValue} 
+                        format="currency" 
+                        decimals={0}
+                    />
+                </h2>
                 <h4 className={portfolioDayChange >= 0 ? styles.positiveChange : styles.negativeChange}>
-                    {portfolioDayChange >= 0 ? '+' : ''}
-                    {portfolioDayChange.toFixed(2)}%
+                    <SmoothNumber 
+                        value={portfolioDayChange} 
+                        format="percentage"
+                        prefix={portfolioDayChange >= 0 ? '+' : ''}
+                        decimals={2}
+                    />
                 </h4>
             </div>
             <div className={styles.buttonContainer}>

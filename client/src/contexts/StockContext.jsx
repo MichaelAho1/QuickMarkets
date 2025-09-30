@@ -31,6 +31,9 @@ export const StockProvider = ({ children }) => {
     const [watchlistLoading, setWatchlistLoading] = useState(false);
     const [watchlistError, setWatchlistError] = useState(null);
 
+    // Refresh indicator state
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
     // Load stock data on mount
     useEffect(() => {
         loadStockData();
@@ -46,9 +49,11 @@ export const StockProvider = ({ children }) => {
         }
     }, [portfolioData, stocks]);
 
-    const loadStockData = async (forceRefresh = false) => {
+    const loadStockData = async (forceRefresh = false, showLoading = true) => {
         try {
-            setLoading(true);
+            if (showLoading) {
+                setLoading(true);
+            }
             setError(null);
             
             const stockData = await stockCacheService.getStockPrices(forceRefresh);
@@ -58,7 +63,9 @@ export const StockProvider = ({ children }) => {
             setError('Failed to load stock data');
             console.error('Error loading stock data:', err);
         } finally {
-            setLoading(false);
+            if (showLoading) {
+                setLoading(false);
+            }
         }
     };
 
@@ -66,9 +73,11 @@ export const StockProvider = ({ children }) => {
         return loadStockData(true);
     };
 
-    const loadPortfolioData = async (forceRefresh = false) => {
+    const loadPortfolioData = async (forceRefresh = false, showLoading = true) => {
         try {
-            setPortfolioLoading(true);
+            if (showLoading) {
+                setPortfolioLoading(true);
+            }
             setPortfolioError(null);
             
             const data = await portfolioCacheService.getPortfolioData(forceRefresh);
@@ -77,12 +86,51 @@ export const StockProvider = ({ children }) => {
             setPortfolioError('Failed to load portfolio data');
             console.error('Error loading portfolio data:', err);
         } finally {
-            setPortfolioLoading(false);
+            if (showLoading) {
+                setPortfolioLoading(false);
+            }
         }
     };
 
     const refreshPortfolioData = () => {
         return loadPortfolioData(true);
+    };
+
+    // Smooth refresh functions for auto-refresh (no loading states)
+    const smoothRefreshStockData = async () => {
+        try {
+            setIsRefreshing(true);
+            await loadStockData(true, false);
+        } catch (error) {
+            console.error('Error during smooth stock refresh:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
+
+    const smoothRefreshPortfolioData = async () => {
+        try {
+            setIsRefreshing(true);
+            await loadPortfolioData(true, false);
+        } catch (error) {
+            console.error('Error during smooth portfolio refresh:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
+
+    const smoothRefreshAll = async () => {
+        try {
+            setIsRefreshing(true);
+            await Promise.all([
+                loadStockData(true, false),
+                loadPortfolioData(true, false)
+            ]);
+        } catch (error) {
+            console.error('Error during smooth refresh:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
     };
 
     const getPortfolioSummary = () => {
@@ -103,13 +151,6 @@ export const StockProvider = ({ children }) => {
         return stocks.filter(stock => stock.sectorType === sectorTicker);
     };
 
-    const getTopGainers = async (limit = 5) => {
-        return await stockCacheService.getTopStocks(limit, 'gainers');
-    };
-
-    const getTopLosers = async (limit = 5) => {
-        return await stockCacheService.getTopStocks(limit, 'losers');
-    };
 
     const getPopularStocks = (limit = 5) => {
         // For now, return the first few stocks as "popular"
@@ -121,9 +162,6 @@ export const StockProvider = ({ children }) => {
         return stocks;
     };
 
-    const getLeaderboard = async () => {
-        return await stockCacheService.getLeaderboard();
-    };
 
     const loadWatchlist = async () => {
         try {
@@ -177,13 +215,14 @@ export const StockProvider = ({ children }) => {
         lastUpdated,
         loadStockData,
         refreshStockData,
+        smoothRefreshStockData,
+        smoothRefreshPortfolioData,
+        smoothRefreshAll,
+        isRefreshing,
         getStockByTicker,
         getStocksBySector,
-        getTopGainers,
-        getTopLosers,
         getPopularStocks,
         getAllStocks,
-        getLeaderboard,
         portfolioData,
         portfolioLoading,
         portfolioError,

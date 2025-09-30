@@ -26,6 +26,14 @@
     align-items: center;
 }
 
+.headerTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    min-height: 60px; 
+    gap: 16px; 
+}
+
 .mainSection {
     display: flex;
     flex-wrap: wrap;

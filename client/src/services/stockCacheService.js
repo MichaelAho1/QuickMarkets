@@ -97,27 +97,6 @@ class StockCacheService {
         return stocks.filter(stock => stock.sectorType === sectorTicker);
     }
 
-    // Get top gainers/losers
-    async getTopStocks(limit = 5, type = 'gainers') {
-        const stocks = await this.getStockPrices();
-        
-        // Calculate percentage change for each stock
-        const stocksWithChange = stocks.map(stock => ({
-            ...stock,
-            percentageChange: ((stock.currPrice - stock.prevPrice) / stock.prevPrice) * 100
-        }));
-
-        // Sort by percentage change
-        const sortedStocks = stocksWithChange.sort((a, b) => {
-            if (type === 'gainers') {
-                return b.percentageChange - a.percentageChange;
-            } else {
-                return a.percentageChange - b.percentageChange;
-            }
-        });
-
-        return sortedStocks.slice(0, limit);
-    }
 
     // Clear cache
     clearCache() {
@@ -132,16 +111,6 @@ class StockCacheService {
         return await this.getStockPrices(true);
     }
 
-    // Get leaderboard data
-    async getLeaderboard() {
-        try {
-            const response = await api.get('/api/leaderboard/');
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching leaderboard:', error);
-            throw error;
-        }
-    }
 }
 
 // Create singleton instance

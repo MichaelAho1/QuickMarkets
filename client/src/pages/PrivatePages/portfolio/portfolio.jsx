@@ -15,28 +15,25 @@ function stocksOwned() {
         calculatedPortfolio, 
         portfolioLoading, 
         portfolioError, 
-        refreshPortfolioData,
-        refreshStockData
+        smoothRefreshAll,
+        isRefreshing
     } = useStockData();
 
     // Auto-refresh data every 5 seconds to match simulation frequency
     useEffect(() => {
         const interval = setInterval(async () => {
             try {
-                await Promise.all([
-                    refreshStockData(),
-                    refreshPortfolioData()
-                ]);
+                await smoothRefreshAll();
             } catch (error) {
                 console.error('Error refreshing portfolio data:', error);
             }
         }, 5000); // Refresh every 5 seconds to catch simulation updates
 
         return () => clearInterval(interval);
-    }, [refreshStockData, refreshPortfolioData]);
+    }, [smoothRefreshAll]);
 
     const handleTransactionComplete = () => {
-        refreshPortfolioData();
+        smoothRefreshAll();
     };
 
     const handleStockClick = (stock) => {
