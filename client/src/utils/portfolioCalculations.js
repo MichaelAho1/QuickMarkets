@@ -79,8 +79,13 @@ export const calculatePortfolioSummary = (portfolioData, stockPrices) => {
 
     const { summary } = calculatePortfolioValues(portfolioData, stockPrices);
     
+    // Calculate percentage change from initial $100,000
+    const initialValue = 100000;
+    const currentNetWorth = summary.totalNetWorth;
+    const netWorthPercentageChange = ((currentNetWorth - initialValue) / initialValue) * 100;
+    
     return {
-        totalNetWorth: summary.totalNetWorth,
-        portfolioDayChange: summary.overallProfitLossPercent
+        totalNetWorth: currentNetWorth,
+        portfolioDayChange: netWorthPercentageChange
     };
 };
