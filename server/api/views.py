@@ -632,9 +632,36 @@ class StockReturnsView(APIView):
                 returns['sixMonth'] = 0.0
             
             
+            # Get the opening price for the current day
+            current_day = get_current_simulation_day()
+            current_day_data = StockPriceHistory.objects.filter(
+                stockTicker=stock,
+                day=current_day
+            ).first()
+            
+            opening_price = current_price  # Default to current price if no history
+            if current_day_data:
+                opening_price = float(current_day_data.openingPrice)
+            else:
+                # If no current day data, use prevPrice as fallback
+                opening_price = float(stock.prevPrice)
+            
+            # Get the previous day's closing price for percentage change calculation
+            previous_day = current_day - 1
+            previous_day_data = StockPriceHistory.objects.filter(
+                stockTicker=stock,
+                day=previous_day
+            ).first()
+            
+            previous_closing_price = float(stock.prevPrice)  # Default fallback
+            if previous_day_data:
+                previous_closing_price = float(previous_day_data.closingPrice)
+            
             return Response({
                 'ticker': ticker,
                 'currentPrice': current_price,
+                'openingPrice': opening_price,
+                'previousClosingPrice': previous_closing_price,
                 'returns': returns
             })
             

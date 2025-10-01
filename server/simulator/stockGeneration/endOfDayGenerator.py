@@ -79,8 +79,33 @@ def incrementSimulationDay():
         # Generate new opening prices for the new day
         from .startOfDayGenerator import generateStartOfDayPrices
         generateStartOfDayPrices()
+        
+        # Update the StockPriceHistory with the correct opening price for the new day
+        updateOpeningPricesForNewDay()
     else:
         print("Warning: No timer found to increment day")
+
+def updateOpeningPricesForNewDay():
+    """
+    Update the StockPriceHistory with the correct opening price for the new day
+    This should be called after generateStartOfDayPrices()
+    """
+    current_day = get_current_simulation_day()
+    stocks = Stock.objects.all()
+    
+    for stock in stocks:
+        # Update the StockPriceHistory with the correct opening price for the new day
+        StockPriceHistory.objects.update_or_create(
+            stockTicker=stock,
+            day=current_day,
+            defaults={
+                'openingPrice': stock.currPrice,  # The new opening price
+                'closingPrice': stock.currPrice,  # Opening price is also the initial closing price
+                'dayChange': 0.0  # No change at opening
+            }
+        )
+    
+    print(f"Updated opening prices for {len(stocks)} stocks on day {current_day}")
 
 def getPriceDataForPeriod(ticker, period):
     """

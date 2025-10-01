@@ -20,6 +20,11 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
     });
     const [returnsLoading, setReturnsLoading] = useState(true);
     const [currentStockData, setCurrentStockData] = useState(stock);
+    const [apiStockData, setApiStockData] = useState({
+        currentPrice: stock?.currentPrice || 0,
+        openingPrice: stock?.openingPrice || 0,
+        previousClosingPrice: stock?.openingPrice || 0
+    });
 
     const { isInWatchlist, addToWatchlist, removeFromWatchlist, smoothRefreshStockData, stocks } = useStockData();
 
@@ -32,6 +37,11 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
             try {
                 const response = await api.get(`/api/stock-returns/?ticker=${stock.symbol}`);
                 setReturnData(response.data.returns);
+                setApiStockData({
+                    currentPrice: response.data.currentPrice,
+                    openingPrice: response.data.openingPrice,
+                    previousClosingPrice: response.data.previousClosingPrice
+                });
             } catch (error) {
                 console.error('Error fetching return data:', error);
                 // Set default values on error
@@ -63,6 +73,11 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                     try {
                         const response = await api.get(`/api/stock-returns/?ticker=${stock.symbol}`);
                         setReturnData(response.data.returns);
+                        setApiStockData({
+                            currentPrice: response.data.currentPrice,
+                            openingPrice: response.data.openingPrice,
+                            previousClosingPrice: response.data.previousClosingPrice
+                        });
                     } catch (error) {
                         console.error('Error auto-refreshing return data:', error);
                     }
@@ -180,10 +195,10 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                     </div>
                                 </div>
                                 <div className={styles.priceInfo}>
-                                    <span className={styles.price}>${currentStockData.currentPrice.toFixed(2)}</span>
-                                    <span className={currentStockData.currentPrice >= currentStockData.openingPrice ? styles.positive : styles.negative}>
-                                        {currentStockData.currentPrice >= currentStockData.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
-                                        {Math.abs(((currentStockData.currentPrice - currentStockData.openingPrice) / currentStockData.openingPrice * 100)).toFixed(2)}%
+                                    <span className={styles.price}>${apiStockData.currentPrice.toFixed(2)}</span>
+                                    <span className={apiStockData.currentPrice >= apiStockData.previousClosingPrice ? styles.positive : styles.negative}>
+                                        {apiStockData.currentPrice >= apiStockData.previousClosingPrice ? <FaArrowUp /> : <FaArrowDown />}
+                                        {Math.abs(((apiStockData.currentPrice - apiStockData.previousClosingPrice) / apiStockData.previousClosingPrice * 100)).toFixed(2)}%
                                     </span>
                                 </div>
                             </div>
@@ -193,11 +208,11 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                             <div className={styles.statsGrid}>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>Opening Price</span>
-                                    <span className={styles.value}>${currentStockData.openingPrice.toFixed(2)}</span>
+                                    <span className={styles.value}>${apiStockData.openingPrice.toFixed(2)}</span>
                                 </div>
                                 <div className={styles.statCard}>
-                                    <span className={styles.label}>Sector Type</span>
-                                    <span className={styles.value}>{stock.sector || 'N/A'}</span>
+                                    <span className={styles.label}>Last Closing Price</span>
+                                    <span className={styles.value}>${apiStockData.previousClosingPrice.toFixed(2)}</span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Week Return</span>
@@ -264,7 +279,7 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                     <div className={styles.transactionSummary}>
                                         <p>Total {transactionType === 'buy' ? 'Cost' : 'Value'}: 
                                             <span className={styles.totalAmount}>
-                                                ${(parseFloat(shares || 0) * stock.currentPrice).toFixed(2)}
+                                                ${(parseFloat(shares || 0) * apiStockData.currentPrice).toFixed(2)}
                                             </span>
                                         </p>
                                     </div>
