@@ -9,20 +9,65 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { IoIosArrowDown, IoMdMenu } from "react-icons/io";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../../api/constants';
-import { useStockData } from '../../../../contexts/StockContext'; 
+import { useStockData } from '../../../../contexts/StockContext';
+import api from '../../../../api/api.js'; 
 
 const Navbar = () => {
     const [isWatchlistCollapsed, setIsWatchlistCollapsed] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [simulationTime, setSimulationTime] = useState({
+        currentDay: 1,
+        timeUntilNextDay: 15
+    });
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
+    const lastFetchTimeRef = useRef(0);
+    const isFetchingRef = useRef(false);
 
     const { 
         getWatchlistStocks, 
         watchlistLoading, 
         watchlistError 
     } = useStockData();
+
+    // Fetch simulation time data with caching
+    const fetchSimulationTime = async () => {
+        const now = Date.now();
+        const timeSinceLastFetch = now - lastFetchTimeRef.current;
+        
+        // Only fetch if it's been more than 5 seconds since last fetch and not currently fetching
+        if (timeSinceLastFetch < 5000 || isFetchingRef.current) {
+            return;
+        }
+
+        isFetchingRef.current = true;
+        try {
+            const response = await api.get('/api/simulation-time/');
+            setSimulationTime({
+                currentDay: response.data.current_day,
+                timeUntilNextDay: response.data.time_until_next_day
+            });
+            lastFetchTimeRef.current = now;
+        } catch (error) {
+            console.error('Error fetching simulation time:', error);
+        } finally {
+            isFetchingRef.current = false;
+        }
+    };
+
+    // Fetch simulation time with caching every 5 seconds
+    useEffect(() => {
+        // Fetch immediately on mount
+        fetchSimulationTime();
+        
+        // Then fetch every 5 seconds
+        const interval = setInterval(() => {
+            fetchSimulationTime();
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     const toggleWatchlist = () => {
         setIsWatchlistCollapsed(!isWatchlistCollapsed);
@@ -80,6 +125,13 @@ const Navbar = () => {
                     <h1 className={styles.headerName}>
                         <Link to="/">QuickMarkets</Link>
                     </h1>
+                </div>
+                
+                <div className={styles.simulationInfo}>
+                    <div className={styles.simulationTime}>
+                        <span className={styles.currentDay}>Day: {simulationTime.currentDay}</span>
+                        <span className={styles.timeUntilNext}>Time until Next day: {simulationTime.timeUntilNextDay} seconds</span>
+                    </div>
                 </div>
                 <div className={styles.navBarContent}>
                     <div className={styles.mainNavLinks}>

@@ -32,6 +32,29 @@
     color: #343a40;
 }
 
+.simulationInfo {
+    padding: 15px 25px;
+    background-color: #e9ecef;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.simulationTime {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.currentDay {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.timeUntilNext {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
 .navBarContent {
     flex-grow: 1;
     overflow-y: auto;
