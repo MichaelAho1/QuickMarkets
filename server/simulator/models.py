@@ -92,3 +92,21 @@ class PortfolioHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.date} - ${self.portfolioValue}"
+
+class SimulationTimer(models.Model):
+    """
+    Timer model to track the simulation timer state
+    """
+    is_running = models.BooleanField(default=False)
+    start_time = models.DateTimeField(null=True, blank=True)
+    last_end_of_day_call = models.DateTimeField(null=True, blank=True)
+    last_during_day_call = models.DateTimeField(null=True, blank=True)
+    total_seconds_elapsed = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        pass
+
+    def __str__(self):
+        return f"Timer - Running: {self.is_running}, Elapsed: {self.total_seconds_elapsed}s"
