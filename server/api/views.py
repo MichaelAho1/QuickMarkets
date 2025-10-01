@@ -569,4 +569,76 @@ class SimulationTimeView(APIView):
             return Response({"error": str(e)}, status=500)
 
 
+class StockReturnsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Calculate stock return percentages for different periods"""
+        try:
+            ticker = request.query_params.get('ticker')
+            
+            if not ticker:
+                return Response({"error": "Ticker is required"}, status=400)
+            
+            # Get current stock data
+            try:
+                stock = Stock.objects.get(ticker=ticker)
+                current_price = float(stock.currPrice)
+            except Stock.DoesNotExist:
+                return Response({"error": "Stock not found"}, status=404)
+            
+            # Get current simulation day
+            current_day = get_current_simulation_day()
+            
+            # Calculate returns for different periods
+            returns = {}
+            
+            # 1 Week Return (7 days)
+            week_data = getPriceDataForPeriod(ticker, '1w')
+            if week_data and len(week_data) > 0:
+                week_start_price = float(week_data[0].openingPrice)
+                returns['oneWeek'] = ((current_price - week_start_price) / week_start_price) * 100
+            else:
+                returns['oneWeek'] = 0.0
+            
+            # 1 Month Return (30 days)
+            month_data = getPriceDataForPeriod(ticker, '1m')
+            if month_data and len(month_data) > 0:
+                month_start_price = float(month_data[0].openingPrice)
+                returns['oneMonth'] = ((current_price - month_start_price) / month_start_price) * 100
+            else:
+                returns['oneMonth'] = 0.0
+            
+            # 3 Month Return (90 days)
+            three_month_start_day = max(1, current_day - 90)
+            three_month_data = StockPriceHistory.objects.filter(
+                stockTicker=stock,
+                day__gte=three_month_start_day,
+                day__lte=current_day
+            ).order_by('day')
+            
+            if three_month_data and len(three_month_data) > 0:
+                three_month_start_price = float(three_month_data[0].openingPrice)
+                returns['threeMonth'] = ((current_price - three_month_start_price) / three_month_start_price) * 100
+            else:
+                returns['threeMonth'] = 0.0
+            
+            # 6 Month Return (180 days)
+            six_month_data = getPriceDataForPeriod(ticker, '6m')
+            if six_month_data and len(six_month_data) > 0:
+                six_month_start_price = float(six_month_data[0].openingPrice)
+                returns['sixMonth'] = ((current_price - six_month_start_price) / six_month_start_price) * 100
+            else:
+                returns['sixMonth'] = 0.0
+            
+            return Response({
+                'ticker': ticker,
+                'currentPrice': current_price,
+                'returns': returns
+            })
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './StockModal.module.css';
 import { IoClose } from "react-icons/io5";
 import { FaArrowUp, FaArrowDown, FaBookmark, FaRegBookmark } from "react-icons/fa";
@@ -12,8 +12,41 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [watchlistLoading, setWatchlistLoading] = useState(false);
+    const [returnData, setReturnData] = useState({
+        oneWeek: 0,
+        oneMonth: 0,
+        threeMonth: 0,
+        sixMonth: 0
+    });
+    const [returnsLoading, setReturnsLoading] = useState(true);
 
     const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useStockData();
+
+    // Fetch return data when modal opens
+    useEffect(() => {
+        const fetchReturnData = async () => {
+            if (!stock?.symbol) return;
+            
+            setReturnsLoading(true);
+            try {
+                const response = await api.get(`/api/stock-returns/?ticker=${stock.symbol}`);
+                setReturnData(response.data.returns);
+            } catch (error) {
+                console.error('Error fetching return data:', error);
+                // Set default values on error
+                setReturnData({
+                    oneWeek: 0,
+                    oneMonth: 0,
+                    threeMonth: 0,
+                    sixMonth: 0
+                });
+            } finally {
+                setReturnsLoading(false);
+            }
+        };
+
+        fetchReturnData();
+    }, [stock?.symbol]);
 
     if (!stock) return null;
 
@@ -117,8 +150,8 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                         <div className={styles.statsSection}>
                             <div className={styles.statsGrid}>
                                 <div className={styles.statCard}>
-                                    <span className={styles.label}>Opening Price</span>
-                                    <span className={styles.value}>${stock.openingPrice.toFixed(2)}</span>
+                                    <span className={styles.label}>Sector Type</span>
+                                    <span className={styles.value}>{stock.sector || 'N/A'}</span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>Current Price</span>
@@ -126,26 +159,26 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Week Return</span>
-                                    <span className={`${styles.value} ${stock.oneWeekChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.oneWeekChange >= 0 ? '+' : ''}{stock.oneWeekChange.toFixed(2)}%
+                                    <span className={`${styles.value} ${returnData.oneWeek >= 0 ? styles.positive : styles.negative}`}>
+                                        {returnsLoading ? 'Loading...' : `${returnData.oneWeek >= 0 ? '+' : ''}${returnData.oneWeek.toFixed(2)}%`}
                                     </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Month Return</span>
-                                    <span className={`${styles.value} ${stock.oneMonthChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.oneMonthChange >= 0 ? '+' : ''}{stock.oneMonthChange.toFixed(2)}%
+                                    <span className={`${styles.value} ${returnData.oneMonth >= 0 ? styles.positive : styles.negative}`}>
+                                        {returnsLoading ? 'Loading...' : `${returnData.oneMonth >= 0 ? '+' : ''}${returnData.oneMonth.toFixed(2)}%`}
                                     </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>3 Month Return</span>
-                                    <span className={`${styles.value} ${stock.threeMonthChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.threeMonthChange >= 0 ? '+' : ''}{stock.threeMonthChange.toFixed(2)}%
+                                    <span className={`${styles.value} ${returnData.threeMonth >= 0 ? styles.positive : styles.negative}`}>
+                                        {returnsLoading ? 'Loading...' : `${returnData.threeMonth >= 0 ? '+' : ''}${returnData.threeMonth.toFixed(2)}%`}
                                     </span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>6 Month Return</span>
-                                    <span className={`${styles.value} ${stock.sixMonthChange >= 0 ? styles.positive : styles.negative}`}>
-                                        {stock.sixMonthChange >= 0 ? '+' : ''}{stock.sixMonthChange.toFixed(2)}%
+                                    <span className={`${styles.value} ${returnData.sixMonth >= 0 ? styles.positive : styles.negative}`}>
+                                        {returnsLoading ? 'Loading...' : `${returnData.sixMonth >= 0 ? '+' : ''}${returnData.sixMonth.toFixed(2)}%`}
                                     </span>
                                 </div>
                             </div>

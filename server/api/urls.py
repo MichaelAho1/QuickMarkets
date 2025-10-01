@@ -15,4 +15,5 @@ urlpatterns = [
     path('portfolio-chart-data/', views.PortfolioChartDataView.as_view(), name='portfolio-chart-data'),
     path('timer/', views.TimerManagementView.as_view(), name='timer-management'),
     path('simulation-time/', views.SimulationTimeView.as_view(), name='simulation-time'),
+    path('stock-returns/', views.StockReturnsView.as_view(), name='stock-returns'),
 ]

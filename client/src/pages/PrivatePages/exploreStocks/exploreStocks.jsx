@@ -69,10 +69,6 @@ function ExploreStocks() {
             name: stock.stockName,
             openingPrice: stock.prevPrice,
             currentPrice: stock.currPrice,
-            oneWeekChange: percentageChange,
-            oneMonthChange: 0, // These would need historical data
-            threeMonthChange: 0,
-            sixMonthChange: 0,
             sector: stock.sectorType
         };
     };
@@ -187,7 +183,7 @@ function ExploreStocks() {
                                         <span className={styles.symbol}>{transformedStock.symbol}</span>
                                         <span className={transformedStock.currentPrice >= transformedStock.openingPrice ? styles.positive : styles.negative}>
                                             {transformedStock.currentPrice >= transformedStock.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
-                                            {Math.abs(transformedStock.oneWeekChange).toFixed(1)}%
+                                            {Math.abs(((transformedStock.currentPrice - transformedStock.openingPrice) / transformedStock.openingPrice) * 100).toFixed(1)}%
                                         </span>
                                     </div>
                                     <div className={styles.stockName}>{transformedStock.name}</div>
@@ -216,7 +212,7 @@ function ExploreStocks() {
                                         <span className={styles.symbol}>{transformedStock.symbol}</span>
                                         <span className={transformedStock.currentPrice >= transformedStock.openingPrice ? styles.positive : styles.negative}>
                                             {transformedStock.currentPrice >= transformedStock.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
-                                            {Math.abs(transformedStock.oneWeekChange).toFixed(1)}%
+                                            {Math.abs(((transformedStock.currentPrice - transformedStock.openingPrice) / transformedStock.openingPrice) * 100).toFixed(1)}%
                                         </span>
                                     </div>
                                     <div className={styles.stockName}>{transformedStock.name}</div>

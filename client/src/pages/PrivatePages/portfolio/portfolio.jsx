@@ -42,10 +42,6 @@ function stocksOwned() {
             name: stock.name,
             openingPrice: stock.openingPrice, 
             currentPrice: stock.currentPrice,
-            oneWeekChange: 0,
-            oneMonthChange: 0,
-            threeMonthChange: 0,
-            sixMonthChange: 0,
             sector: stock.sector
         };
         
