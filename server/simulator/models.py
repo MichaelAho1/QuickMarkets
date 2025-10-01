@@ -8,46 +8,6 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
-class SimulationDay(models.Model):
-    """Tracks the current simulation day"""
-    current_day = models.IntegerField(default=1)
-    start_date = models.DateField(default='2024-01-01')  # Base date for simulation
-    last_day_change = models.DateTimeField(default=timezone.now)  # When the last day change occurred
-    day_interval_minutes = models.IntegerField(default=5)  # Minutes between day changes
-    
-    class Meta:
-        verbose_name = "Simulation Day"
-        verbose_name_plural = "Simulation Days"
-    
-    def __str__(self):
-        return f"Day {self.current_day}"
-    
-    def get_simulation_date(self):
-        """Get the actual date for the current simulation day"""
-        from datetime import timedelta
-        return self.start_date + timedelta(days=self.current_day - 1)
-    
-    def increment_day(self):
-        """Move to the next simulation day"""
-        from django.utils import timezone
-        self.current_day += 1
-        self.last_day_change = timezone.now()
-        self.save()
-        return self.get_simulation_date()
-    
-    def get_next_day_time(self):
-        """Get when the next day change will occur"""
-        from datetime import timedelta
-        return self.last_day_change + timedelta(minutes=self.day_interval_minutes)
-    
-    def get_time_until_next_day(self):
-        """Get seconds until next day change"""
-        from django.utils import timezone
-        next_day_time = self.get_next_day_time()
-        now = timezone.now()
-        if next_day_time > now:
-            return (next_day_time - now).total_seconds()
-        return 0
     
 class ETF(models.Model):
     ticker = models.CharField(max_length=4, unique=True, primary_key=True) 

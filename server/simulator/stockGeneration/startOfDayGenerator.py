@@ -1,4 +1,4 @@
-from simulator.utils import getStockData, getETFData, increment_simulation_day
+from simulator.utils import getStockData, getETFData
 from ..models import ETF, Stock
 from .endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues
 import math, random
@@ -15,9 +15,7 @@ def calculateMarketChanges():
     except Exception as e:
         print(f"Error storing end-of-day data: {e}")
     
-    # Increment simulation day when starting a new day
-    new_simulation_date = increment_simulation_day()
-    print(f"Starting new simulation day: {new_simulation_date}")
+    print("Starting new market simulation")
     marketChange = generateTotalMarketPercentage("ALL") #Calculate first because it is needed for other calculations
     ETFPercentChanges = {"ALL":marketChange} #Add All because it has already been calculated
     stockPercentChanges = {}

@@ -8,7 +8,6 @@ import TopGainersCard from './components/TopGainersCard';
 import NewsCard from './components/newsCard';
 import { useStockData } from '../../../contexts/StockContext';
 import RefreshIndicator from '../../../components/RefreshIndicator';
-import SimulationTimer from '../../../components/SimulationTimer';
 
 const Dashboard = () => {
     const { 
@@ -16,8 +15,6 @@ const Dashboard = () => {
         smoothRefreshAll,
         isRefreshing,
         getPortfolioSummary,
-        simulationDay,
-        simulationDayLoading
     } = useStockData();
 
     const [chartRefreshKey, setChartRefreshKey] = useState(0);
@@ -38,23 +35,6 @@ const Dashboard = () => {
         return () => clearInterval(interval);
     }, [smoothRefreshAll]);
 
-    // Detect day changes and refresh dashboard components
-    React.useEffect(() => {
-        if (simulationDay && simulationDay.current_day !== previousDay) {
-            console.log(`Day changed from ${previousDay} to ${simulationDay.current_day}. Refreshing dashboard components...`);
-            setChartRefreshKey(prev => prev + 1);
-            setTopGainersRefreshKey(prev => prev + 1);
-            setLeaderboardRefreshKey(prev => prev + 1);
-            setPreviousDay(simulationDay.current_day);
-        }
-    }, [simulationDay, previousDay]);
-
-    // Initialize previous day when simulation day loads
-    React.useEffect(() => {
-        if (simulationDay && previousDay === null) {
-            setPreviousDay(simulationDay.current_day);
-        }
-    }, [simulationDay, previousDay]);
 
     // Refresh chart, top gainers, and leaderboard every 5 minutes (300000ms) - fallback
     React.useEffect(() => {
@@ -79,12 +59,7 @@ const Dashboard = () => {
                 <header>
                     <div className={styles.headerTop}>
                         <div>
-                            <h1>
-                                {simulationDayLoading ? 'Loading...' : 
-                                 simulationDay ? `Simulated Day ${simulationDay.current_day}` : 
-                                 'Simulated Day 1'}
-                            </h1>
-                            <SimulationTimer />
+                            <h1>Dashboard</h1>
                         </div>
                         <RefreshIndicator isRefreshing={isRefreshing} size="small" />
                     </div>

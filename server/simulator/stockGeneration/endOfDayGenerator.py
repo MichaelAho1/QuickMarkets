@@ -26,7 +26,7 @@ def storeEndOfDayPrices():
             }
         )
     
-    print(f"Stored end-of-day prices for {len(stocks)} stocks on simulation day {simulation_date}")
+    print(f"Stored end-of-day prices for {len(stocks)} stocks")
 
 def storePortfolioValues():
     """
@@ -63,7 +63,7 @@ def storePortfolioValues():
             }
         )
     
-    print(f"Stored portfolio values for {len(users)} users on simulation day {simulation_date}")
+    print(f"Stored portfolio values for {len(users)} users")
 
 def getPriceDataForPeriod(ticker, period):
     """

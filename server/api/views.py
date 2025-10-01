@@ -8,10 +8,9 @@ from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, W
 from simulator.models import User as SimulatorUser
 from decimal import Decimal
 from django.db import transaction
-from simulator.stockGeneration.startOfDayGenerator import calculateMarketChanges
 from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
 from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues, getPriceDataForPeriod
-from simulator.utils import get_current_simulation_date, get_simulation_day
+from simulator.utils import get_current_simulation_date
 from datetime import timedelta
 
 class CreateUserView(generics.CreateAPIView):
@@ -494,52 +493,3 @@ class PortfolioChartDataView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
-
-class SimulationDayView(APIView):
-    permission_classes = [AllowAny]
-    
-    def get(self, request):
-        """Get the current simulation day"""
-        try:
-            simulation_day = get_simulation_day()
-            
-            return Response({
-                "current_day": simulation_day.current_day
-            })
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
-
-class SimulationTimerView(APIView):
-    permission_classes = [AllowAny]
-    
-    def get(self, request):
-        """Get countdown timer for next simulation day and auto-trigger new day when timer reaches 0"""
-        try:
-            simulation_day = get_simulation_day()
-            
-            # Calculate time until next day
-            seconds_remaining = simulation_day.get_time_until_next_day()
-            
-            # If timer has reached 0, trigger new day
-            if seconds_remaining <= 0:
-                # Trigger start of day simulation
-                try:
-                    calculateMarketChanges()  # This will increment the day and reset the timer
-                    simulation_day = get_simulation_day()  # Refresh to get updated data
-                    seconds_remaining = simulation_day.get_time_until_next_day()
-                except Exception as e:
-                    return Response({"error": f"Failed to trigger new day: {str(e)}"}, status=500)
-            
-            # Format as MM:SS
-            minutes = int(seconds_remaining // 60)
-            seconds = int(seconds_remaining % 60)
-            
-            return Response({
-                "seconds_remaining": seconds_remaining,
-                "formatted_time": f"{minutes}:{seconds:02d}",
-                "minutes": minutes,
-                "seconds": seconds,
-                "day_changed": seconds_remaining > 0  # False if we just triggered a new day
-            })
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
