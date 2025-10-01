@@ -1,5 +1,5 @@
 .heroSection {
-    height: 90vh;
+    min-height: 100vh; /* Changed from 90vh, and using min-height for better responsiveness */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -116,4 +116,32 @@ section {
 
 .startButton:hover {
     cursor: pointer;
+}
+
+
+
+/* Testing responsive adjustments */
+@media (max-width: 768px) {
+    .heroContent h1 {
+        font-size: 2.5rem;
+    }
+    
+    .heroContent p {
+        font-size: 1.2rem;
+    }
+    
+    .heroButton {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .heroContent h1 {
+        font-size: 2rem;
+    }
+    
+    .heroContent p {
+        font-size: 1rem;
+    }
 }

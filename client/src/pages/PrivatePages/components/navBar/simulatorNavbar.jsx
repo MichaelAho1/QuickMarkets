@@ -91,11 +91,11 @@ const Navbar = () => {
                             </p>
                             <p className={styles.navBarItem}>
                                 <BsPiggyBank />
-                                <Link to="/admin/portfolio">Portfolio</Link>
+                                <Link to="/admin/portfolio">My Stocks</Link>
                             </p>
                             <p className={styles.navBarItem}>
                                 <AiOutlineStock />
-                                <Link to="/admin/exploreStocks">Stocks</Link>
+                                <Link to="/admin/exploreStocks">Explore Stocks</Link>
                             </p>
                         </div>
                     </div>
