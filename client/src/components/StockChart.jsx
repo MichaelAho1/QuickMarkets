@@ -67,9 +67,7 @@ const StockChart = ({ ticker, stockName }) => {
             }
 
             // Format data for Chart.js
-            const labels = data.map(item => 
-                new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            );
+            const labels = data.map(item => item.date);
             const prices = data.map(item => parseFloat(item.close));
             const totalChange = ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100;
 

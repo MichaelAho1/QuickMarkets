@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import styles from "./dashboard.module.css";
 import PortfolioCard from './components/PortfolioCard';
@@ -8,7 +8,7 @@ import TopGainersCard from './components/TopGainersCard';
 import NewsCard from './components/newsCard';
 import { useStockData } from '../../../contexts/StockContext';
 import RefreshIndicator from '../../../components/RefreshIndicator';
-import SimulationTimer from '../../../components/SimulationTimer';
+import api from '../../../api/api.js';
 
 const Dashboard = () => {
     const { 
@@ -16,14 +16,29 @@ const Dashboard = () => {
         smoothRefreshAll,
         isRefreshing,
         getPortfolioSummary,
-        simulationDay,
-        simulationDayLoading
     } = useStockData();
 
     const [chartRefreshKey, setChartRefreshKey] = useState(0);
     const [topGainersRefreshKey, setTopGainersRefreshKey] = useState(0);
     const [leaderboardRefreshKey, setLeaderboardRefreshKey] = useState(0);
     const [previousDay, setPreviousDay] = useState(null);
+    const [simulationTime, setSimulationTime] = useState({
+        currentDay: 1,
+        timeUntilNextDay: 15
+    });
+
+    // Fetch simulation time data
+    const fetchSimulationTime = async () => {
+        try {
+            const response = await api.get('/api/simulation-time/');
+            setSimulationTime({
+                currentDay: response.data.current_day,
+                timeUntilNextDay: response.data.time_until_next_day
+            });
+        } catch (error) {
+            console.error('Error fetching simulation time:', error);
+        }
+    };
 
     // Auto-refresh portfolio and stock data every 5 seconds
     React.useEffect(() => {
@@ -38,23 +53,19 @@ const Dashboard = () => {
         return () => clearInterval(interval);
     }, [smoothRefreshAll]);
 
-    // Detect day changes and refresh dashboard components
-    React.useEffect(() => {
-        if (simulationDay && simulationDay.current_day !== previousDay) {
-            console.log(`Day changed from ${previousDay} to ${simulationDay.current_day}. Refreshing dashboard components...`);
-            setChartRefreshKey(prev => prev + 1);
-            setTopGainersRefreshKey(prev => prev + 1);
-            setLeaderboardRefreshKey(prev => prev + 1);
-            setPreviousDay(simulationDay.current_day);
-        }
-    }, [simulationDay, previousDay]);
+    // Fetch simulation time every 5 seconds
+    useEffect(() => {
+        // Fetch immediately on mount
+        fetchSimulationTime();
+        
+        // Then fetch every 5 seconds
+        const interval = setInterval(() => {
+            fetchSimulationTime();
+        }, 5000);
 
-    // Initialize previous day when simulation day loads
-    React.useEffect(() => {
-        if (simulationDay && previousDay === null) {
-            setPreviousDay(simulationDay.current_day);
-        }
-    }, [simulationDay, previousDay]);
+        return () => clearInterval(interval);
+    }, []);
+
 
     // Refresh chart, top gainers, and leaderboard every 5 minutes (300000ms) - fallback
     React.useEffect(() => {
@@ -79,12 +90,8 @@ const Dashboard = () => {
                 <header>
                     <div className={styles.headerTop}>
                         <div>
-                            <h1>
-                                {simulationDayLoading ? 'Loading...' : 
-                                 simulationDay ? `Simulated Day ${simulationDay.current_day}` : 
-                                 'Simulated Day 1'}
-                            </h1>
-                            <SimulationTimer />
+                            <h1>Day: {simulationTime.currentDay}</h1>
+                            <h2>Time until Next day: {simulationTime.timeUntilNextDay} seconds</h2>
                         </div>
                         <RefreshIndicator isRefreshing={isRefreshing} size="small" />
                     </div>

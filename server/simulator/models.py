@@ -8,46 +8,6 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
-class SimulationDay(models.Model):
-    """Tracks the current simulation day"""
-    current_day = models.IntegerField(default=1)
-    start_date = models.DateField(default='2024-01-01')  # Base date for simulation
-    last_day_change = models.DateTimeField(default=timezone.now)  # When the last day change occurred
-    day_interval_minutes = models.IntegerField(default=5)  # Minutes between day changes
-    
-    class Meta:
-        verbose_name = "Simulation Day"
-        verbose_name_plural = "Simulation Days"
-    
-    def __str__(self):
-        return f"Day {self.current_day}"
-    
-    def get_simulation_date(self):
-        """Get the actual date for the current simulation day"""
-        from datetime import timedelta
-        return self.start_date + timedelta(days=self.current_day - 1)
-    
-    def increment_day(self):
-        """Move to the next simulation day"""
-        from django.utils import timezone
-        self.current_day += 1
-        self.last_day_change = timezone.now()
-        self.save()
-        return self.get_simulation_date()
-    
-    def get_next_day_time(self):
-        """Get when the next day change will occur"""
-        from datetime import timedelta
-        return self.last_day_change + timedelta(minutes=self.day_interval_minutes)
-    
-    def get_time_until_next_day(self):
-        """Get seconds until next day change"""
-        from django.utils import timezone
-        next_day_time = self.get_next_day_time()
-        now = timezone.now()
-        if next_day_time > now:
-            return (next_day_time - now).total_seconds()
-        return 0
     
 class ETF(models.Model):
     ticker = models.CharField(max_length=4, unique=True, primary_key=True) 
@@ -90,16 +50,16 @@ class UserStock(models.Model):
 
 class StockPriceHistory(models.Model):
     stockTicker = models.ForeignKey(Stock, on_delete=models.CASCADE, db_column='ticker', to_field='ticker')
-    date = models.DateField() 
+    day = models.IntegerField(default=1)
     closingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     openingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     dayChange = models.DecimalField(max_digits=8, decimal_places=4, default=0.0)
 
     class Meta:
-        unique_together = (('stockTicker', 'date'),)
+        unique_together = (('stockTicker', 'day'),)
 
     def __str__(self):
-        return f"{self.stockTicker.ticker} on {self.date}"
+        return f"{self.stockTicker.ticker} on day {self.day}"
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -122,13 +82,33 @@ class Watchlist(models.Model):
 
 class PortfolioHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField()
+    day = models.IntegerField(default=1)
     portfolioValue = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     cashBalance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     stockValue = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
     class Meta:
-        unique_together = (('user', 'date'),)
+        unique_together = (('user', 'day'),)
 
     def __str__(self):
-        return f"{self.user.username} - {self.date} - ${self.portfolioValue}"
+        return f"{self.user.username} - day {self.day} - ${self.portfolioValue}"
+
+class SimulationTimer(models.Model):
+    """
+    Timer model to track the simulation timer state
+    """
+    is_running = models.BooleanField(default=False)
+    start_time = models.DateTimeField(null=True, blank=True)
+    last_end_of_day_call = models.DateTimeField(null=True, blank=True)
+    last_during_day_call = models.DateTimeField(null=True, blank=True)
+    total_seconds_elapsed = models.IntegerField(default=0)
+    current_day = models.IntegerField(default=1)
+    time_until_next_day = models.IntegerField(default=15)  # seconds until next day
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        pass
+
+    def __str__(self):
+        return f"Timer - Running: {self.is_running}, Elapsed: {self.total_seconds_elapsed}s"
