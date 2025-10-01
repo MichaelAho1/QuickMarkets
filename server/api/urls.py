@@ -13,4 +13,5 @@ urlpatterns = [
     path('simulate-during-day/', views.SimulateDuringDayView.as_view(), name='simulate-during-day'),
     path('stock-chart-data/', views.StockChartDataView.as_view(), name='stock-chart-data'),
     path('portfolio-chart-data/', views.PortfolioChartDataView.as_view(), name='portfolio-chart-data'),
+    path('timer/', views.TimerManagementView.as_view(), name='timer-management'),
 ]

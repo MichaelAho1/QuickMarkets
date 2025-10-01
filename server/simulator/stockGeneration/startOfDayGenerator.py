@@ -1,21 +1,15 @@
 from simulator.utils import getStockData, getETFData
 from ..models import ETF, Stock
-from .endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues
 import math, random
 
 "Generates the prices for the first price of the day (market open)"
-#Calls everything in the order it needs to be called
-def calculateMarketChanges():
-    # Store end-of-day data before starting new day
-    print("Storing end-of-day data before starting new day...")
-    try:
-        storeEndOfDayPrices()
-        storePortfolioValues()
-        print("End-of-day data stored successfully")
-    except Exception as e:
-        print(f"Error storing end-of-day data: {e}")
-    
-    print("Starting new market simulation")
+
+def generateStartOfDayPrices():
+    """
+    Generate new opening prices for the start of a new trading day
+    This should be called after the day has been incremented
+    """
+    print("Generating start of day prices...")
     marketChange = generateTotalMarketPercentage("ALL") #Calculate first because it is needed for other calculations
     ETFPercentChanges = {"ALL":marketChange} #Add All because it has already been calculated
     stockPercentChanges = {}
@@ -41,9 +35,7 @@ def calculateMarketChanges():
         stock.currPrice = stockChanges[stock.ticker]
         stock.save()
     
-    #print(marketChange)
-    #print(etfChanges)
-    #print(stockChanges)
+    print(f"Generated opening prices for {len(stocks)} stocks and {len(ETFs)} ETFs")
 
 def generateTotalMarketPercentage(ticker):
     TotalMarketETF = getETFData(ticker)

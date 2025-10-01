@@ -50,16 +50,16 @@ class UserStock(models.Model):
 
 class StockPriceHistory(models.Model):
     stockTicker = models.ForeignKey(Stock, on_delete=models.CASCADE, db_column='ticker', to_field='ticker')
-    date = models.DateField() 
+    day = models.IntegerField(default=1)
     closingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     openingPrice = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     dayChange = models.DecimalField(max_digits=8, decimal_places=4, default=0.0)
 
     class Meta:
-        unique_together = (('stockTicker', 'date'),)
+        unique_together = (('stockTicker', 'day'),)
 
     def __str__(self):
-        return f"{self.stockTicker.ticker} on {self.date}"
+        return f"{self.stockTicker.ticker} on day {self.day}"
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -82,16 +82,16 @@ class Watchlist(models.Model):
 
 class PortfolioHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField()
+    day = models.IntegerField(default=1)
     portfolioValue = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     cashBalance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     stockValue = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
     class Meta:
-        unique_together = (('user', 'date'),)
+        unique_together = (('user', 'day'),)
 
     def __str__(self):
-        return f"{self.user.username} - {self.date} - ${self.portfolioValue}"
+        return f"{self.user.username} - day {self.day} - ${self.portfolioValue}"
 
 class SimulationTimer(models.Model):
     """
@@ -102,6 +102,7 @@ class SimulationTimer(models.Model):
     last_end_of_day_call = models.DateTimeField(null=True, blank=True)
     last_during_day_call = models.DateTimeField(null=True, blank=True)
     total_seconds_elapsed = models.IntegerField(default=0)
+    current_day = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

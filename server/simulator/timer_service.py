@@ -7,7 +7,7 @@ import time
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .models import SimulationTimer
-from .stockGeneration.endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues
+from .stockGeneration.endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues, incrementSimulationDay
 from .stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
 
 
@@ -37,7 +37,8 @@ class SimulationTimerService:
             timer, created = SimulationTimer.objects.get_or_create(
                 defaults={
                     'is_running': False,
-                    'total_seconds_elapsed': 0
+                    'total_seconds_elapsed': 0,
+                    'current_day': 1
                 }
             )
             return timer
@@ -127,22 +128,26 @@ class SimulationTimerService:
             # Check if 15 seconds have passed since last end of day call
             if (current_time - last_end_of_day_time).total_seconds() >= 15:  # 15 seconds
                 try:
-                    print("Calling EndOfDayGenerator...")
+                    print("Processing end of day...")
                     storeEndOfDayPrices()
                     storePortfolioValues()
+                    incrementSimulationDay()
                     last_end_of_day_time = current_time
+                    
+                    # Refresh timer object from database to get updated current_day
+                    timer.refresh_from_db()
                     
                     # Update database
                     timer.last_end_of_day_call = current_time
                     timer.save()
-                    print("EndOfDayGenerator completed successfully")
+                    print(f"End of day completed - Day: {timer.current_day}")
                 except Exception as e:
-                    print(f"Error in EndOfDayGenerator: {e}")
+                    print(f"Error in end of day processing: {e}")
             
             # Check if 5 seconds have passed since last during day call
             if (current_time - last_during_day_time).total_seconds() >= 5:
                 try:
-                    print("Calling duringDayGenerator...")
+                    print("Processing during day changes...")
                     price_changes = generateDuringDayChanges()
                     applyDuringDayChanges(price_changes)
                     last_during_day_time = current_time
@@ -150,9 +155,9 @@ class SimulationTimerService:
                     # Update database
                     timer.last_during_day_call = current_time
                     timer.save()
-                    print("duringDayGenerator completed successfully")
+                    print("During day changes completed")
                 except Exception as e:
-                    print(f"Error in duringDayGenerator: {e}")
+                    print(f"Error in during day processing: {e}")
             
             # Update total elapsed time
             elapsed_seconds = int((current_time - start_time).total_seconds())
@@ -162,25 +167,19 @@ class SimulationTimerService:
             # Sleep for 1 second before next check
             time.sleep(1)
 
-    def reset_timer(self):
-        """Reset the timer to initial state"""
-        with self._lock:
-            # Stop timer if running
-            if self._timer_thread and self._timer_thread.is_alive():
-                self._stop_event.set()
-                self._timer_thread.join(timeout=2.0)
-            
-            # Reset database
+
+
+    def get_current_day(self):
+        """Get the current simulation day"""
+        try:
             timer = SimulationTimer.objects.first()
             if timer:
-                timer.is_running = False
-                timer.start_time = None
-                timer.last_end_of_day_call = None
-                timer.last_during_day_call = None
-                timer.total_seconds_elapsed = 0
-                timer.save()
-            
-            return {"status": "success", "message": "Timer reset"}
+                # Refresh from database to ensure we have the latest data
+                timer.refresh_from_db()
+                return timer.current_day
+            return 1
+        except Exception as e:
+            return 1
 
 
 # Global instance

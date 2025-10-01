@@ -10,7 +10,8 @@ from decimal import Decimal
 from django.db import transaction
 from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
 from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues, getPriceDataForPeriod
-from simulator.utils import get_current_simulation_date
+from simulator.utils import get_current_simulation_date, get_current_simulation_day
+from simulator.timer_service import timer_service
 from datetime import timedelta
 
 class CreateUserView(generics.CreateAPIView):
@@ -390,7 +391,7 @@ class StockChartDataView(APIView):
                 current_price = float(stock.currPrice)
                 opening_price = float(stock.prevPrice)
                 current_change = current_price - opening_price
-                current_date = get_current_simulation_date()
+                current_day = get_current_simulation_day()
             except Stock.DoesNotExist:
                 return Response({"error": "Stock not found"}, status=404)
             
@@ -398,7 +399,7 @@ class StockChartDataView(APIView):
             chart_data = []
             if history:
                 chart_data = [{
-                    "date": record.date.strftime("%Y-%m-%d"),
+                    "date": f"Day {record.day}",
                     "open": float(record.openingPrice),
                     "close": float(record.closingPrice),
                     "change": float(record.dayChange)
@@ -406,7 +407,7 @@ class StockChartDataView(APIView):
             
             # Add current day's data to the chart
             current_day_data = {
-                "date": current_date.strftime("%Y-%m-%d"),
+                "date": f"Day {current_day}",
                 "open": opening_price,
                 "close": current_price,
                 "change": current_change
@@ -433,41 +434,41 @@ class PortfolioChartDataView(APIView):
             # Get user
             simulator_user = SimulatorUser.objects.get(username=request.user.username)
             
-            # Get current date
-            current_date = get_current_simulation_date()
+            # Get current day
+            current_day = get_current_simulation_day()
             
-            # Get date range based on period
-            start_date = current_date
+            # Get day range based on period
+            start_day = current_day
             
             if period == '1w':
-                start_date = current_date - timedelta(days=7)
+                start_day = max(1, current_day - 7)
             elif period == '1m':
-                start_date = current_date - timedelta(days=30)
+                start_day = max(1, current_day - 30)
             elif period == '6m':
-                start_date = current_date - timedelta(days=180)
+                start_day = max(1, current_day - 180)
             elif period == '1y':
-                start_date = current_date - timedelta(days=365)
+                start_day = max(1, current_day - 365)
             else:  # all
-                start_date = current_date - timedelta(days=365*2)  # 2 years max
+                start_day = max(1, current_day - 365*2)  # 2 years max
             
             # Get portfolio history for the period
             portfolio_history = PortfolioHistory.objects.filter(
                 user=simulator_user,
-                date__gte=start_date,
-                date__lte=current_date
-            ).order_by('date')
+                day__gte=start_day,
+                day__lte=current_day
+            ).order_by('day')
             
             # Convert to chart data
             chart_data = []
             for record in portfolio_history:
                 chart_data.append({
-                    "date": record.date.strftime("%Y-%m-%d"),
+                    "date": f"Day {record.day}",
                     "portfolioValue": float(record.portfolioValue)
                 })
             
             # Add current day's portfolio value if not already in history
-            current_date_str = current_date.strftime("%Y-%m-%d")
-            if not chart_data or chart_data[-1]["date"] != current_date_str:
+            current_day_str = f"Day {current_day}"
+            if not chart_data or chart_data[-1]["date"] != current_day_str:
                 # Calculate current portfolio value
                 user_stocks = UserStock.objects.filter(user=simulator_user)
                 current_portfolio_value = float(simulator_user.cashBalance)
@@ -481,7 +482,7 @@ class PortfolioChartDataView(APIView):
                         continue
                 
                 chart_data.append({
-                    "date": current_date_str,
+                    "date": current_day_str,
                     "portfolioValue": current_portfolio_value
                 })
             
@@ -492,4 +493,35 @@ class PortfolioChartDataView(APIView):
             
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+class TimerManagementView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Get timer status and current day"""
+        try:
+            status = timer_service.get_timer_status()
+            current_day = timer_service.get_current_day()
+            status['current_day'] = current_day
+            return Response(status)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+    def post(self, request):
+        """Start the timer"""
+        try:
+            result = timer_service.start_timer()
+            return Response(result)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+    def delete(self, request):
+        """Stop the timer"""
+        try:
+            result = timer_service.stop_timer()
+            return Response(result)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
 

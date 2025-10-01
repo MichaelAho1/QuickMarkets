@@ -3,22 +3,22 @@ End of day generator to store daily stock prices in StockPriceHistory
 This should be called at the end of each trading day to store the day's price data
 """
 from datetime import timedelta
-from ..models import Stock, StockPriceHistory, UserStock, User as SimulatorUser, PortfolioHistory
-from ..utils import get_current_simulation_date
+from ..models import Stock, StockPriceHistory, UserStock, User as SimulatorUser, PortfolioHistory, SimulationTimer
+from ..utils import get_current_simulation_date, get_current_simulation_day
 
 def storeEndOfDayPrices():
     """
     Store the current day's stock prices in StockPriceHistory
     This should be called at the end of each trading day
     """
-    simulation_date = get_current_simulation_date()
+    current_day = get_current_simulation_day()
     stocks = Stock.objects.all()
     
     for stock in stocks:
         day_change = float(stock.currPrice) - float(stock.prevPrice)
         StockPriceHistory.objects.update_or_create(
             stockTicker=stock,
-            date=simulation_date,
+            day=current_day,
             defaults={
                 'closingPrice': stock.currPrice,
                 'openingPrice': stock.prevPrice,
@@ -26,14 +26,14 @@ def storeEndOfDayPrices():
             }
         )
     
-    print(f"Stored end-of-day prices for {len(stocks)} stocks")
+    print(f"Stored prices for {len(stocks)} stocks on day {current_day}")
 
 def storePortfolioValues():
     """
     Store the current day's portfolio values for all users
     This should be called at the end of each trading day
     """
-    simulation_date = get_current_simulation_date()
+    current_day = get_current_simulation_day()
     users = SimulatorUser.objects.all()
     
     for user in users:
@@ -55,7 +55,7 @@ def storePortfolioValues():
         # Store portfolio history
         PortfolioHistory.objects.update_or_create(
             user=user,
-            date=simulation_date,
+            day=current_day,
             defaults={
                 'portfolioValue': portfolio_value,
                 'cashBalance': cash_balance,
@@ -63,7 +63,24 @@ def storePortfolioValues():
             }
         )
     
-    print(f"Stored portfolio values for {len(users)} users")
+    print(f"Stored portfolio values for {len(users)} users on day {current_day}")
+
+def incrementSimulationDay():
+    """
+    Increment the simulation day after storing end-of-day data
+    This should be called after storeEndOfDayPrices and storePortfolioValues
+    """
+    timer = SimulationTimer.objects.first()
+    if timer:
+        timer.current_day += 1
+        timer.save()
+        print(f"Day incremented to {timer.current_day}")
+        
+        # Generate new opening prices for the new day
+        from .startOfDayGenerator import generateStartOfDayPrices
+        generateStartOfDayPrices()
+    else:
+        print("Warning: No timer found to increment day")
 
 def getPriceDataForPeriod(ticker, period):
     """
@@ -72,7 +89,7 @@ def getPriceDataForPeriod(ticker, period):
     """
     try:
         stock = Stock.objects.get(ticker=ticker)
-        current_simulation_date = get_current_simulation_date()
+        current_day = get_current_simulation_day()
         
         if period == '1w':
             days = 7
@@ -87,13 +104,13 @@ def getPriceDataForPeriod(ticker, period):
         else:
             days = 30  # Default to 1 month
         
-        start_date = current_simulation_date - timedelta(days=days)
+        start_day = current_day - days
         
         history = StockPriceHistory.objects.filter(
             stockTicker=stock,
-            date__gte=start_date,
-            date__lte=current_simulation_date
-        ).order_by('date')
+            day__gte=start_day,
+            day__lte=current_day
+        ).order_by('day')
         
         return history
     except Stock.DoesNotExist:
