@@ -631,6 +631,7 @@ class StockReturnsView(APIView):
             else:
                 returns['sixMonth'] = 0.0
             
+            
             return Response({
                 'ticker': ticker,
                 'currentPrice': current_price,

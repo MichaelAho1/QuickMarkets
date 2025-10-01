@@ -19,8 +19,9 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
         sixMonth: 0
     });
     const [returnsLoading, setReturnsLoading] = useState(true);
+    const [currentStockData, setCurrentStockData] = useState(stock);
 
-    const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useStockData();
+    const { isInWatchlist, addToWatchlist, removeFromWatchlist, smoothRefreshStockData, stocks } = useStockData();
 
     // Fetch return data when modal opens
     useEffect(() => {
@@ -47,6 +48,47 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
 
         fetchReturnData();
     }, [stock?.symbol]);
+
+    // Auto-refresh return data every 5 seconds (after price data)
+    useEffect(() => {
+        if (!stock?.symbol) return;
+
+        const interval = setInterval(async () => {
+            try {
+                // First refresh stock data to get latest prices
+                await smoothRefreshStockData();
+                
+                // Then fetch return data after a short delay to ensure price data is updated
+                setTimeout(async () => {
+                    try {
+                        const response = await api.get(`/api/stock-returns/?ticker=${stock.symbol}`);
+                        setReturnData(response.data.returns);
+                    } catch (error) {
+                        console.error('Error auto-refreshing return data:', error);
+                    }
+                }, 100); // Small delay to ensure price data is processed
+            } catch (error) {
+                console.error('Error auto-refreshing stock data:', error);
+            }
+        }, 5000); // Refresh every 5 seconds
+
+        return () => clearInterval(interval);
+    }, [stock?.symbol, smoothRefreshStockData]);
+
+
+    // Update current stock data when stocks context updates
+    useEffect(() => {
+        if (stocks && stocks.length > 0 && stock?.symbol) {
+            const currentStock = stocks.find(s => s.ticker === stock.symbol);
+            if (currentStock) {
+                setCurrentStockData(prev => ({
+                    ...prev,
+                    currentPrice: currentStock.currPrice,
+                    openingPrice: currentStock.prevPrice
+                }));
+            }
+        }
+    }, [stocks, stock?.symbol]);
 
     if (!stock) return null;
 
@@ -138,10 +180,10 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                                     </div>
                                 </div>
                                 <div className={styles.priceInfo}>
-                                    <span className={styles.price}>${stock.currentPrice.toFixed(2)}</span>
-                                    <span className={stock.currentPrice >= stock.openingPrice ? styles.positive : styles.negative}>
-                                        {stock.currentPrice >= stock.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
-                                        {Math.abs(((stock.currentPrice - stock.openingPrice) / stock.openingPrice * 100)).toFixed(2)}%
+                                    <span className={styles.price}>${currentStockData.currentPrice.toFixed(2)}</span>
+                                    <span className={currentStockData.currentPrice >= currentStockData.openingPrice ? styles.positive : styles.negative}>
+                                        {currentStockData.currentPrice >= currentStockData.openingPrice ? <FaArrowUp /> : <FaArrowDown />}
+                                        {Math.abs(((currentStockData.currentPrice - currentStockData.openingPrice) / currentStockData.openingPrice * 100)).toFixed(2)}%
                                     </span>
                                 </div>
                             </div>
@@ -150,12 +192,12 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                         <div className={styles.statsSection}>
                             <div className={styles.statsGrid}>
                                 <div className={styles.statCard}>
-                                    <span className={styles.label}>Sector Type</span>
-                                    <span className={styles.value}>{stock.sector || 'N/A'}</span>
+                                    <span className={styles.label}>Opening Price</span>
+                                    <span className={styles.value}>${currentStockData.openingPrice.toFixed(2)}</span>
                                 </div>
                                 <div className={styles.statCard}>
-                                    <span className={styles.label}>Current Price</span>
-                                    <span className={styles.value}>${stock.currentPrice.toFixed(2)}</span>
+                                    <span className={styles.label}>Sector Type</span>
+                                    <span className={styles.value}>{stock.sector || 'N/A'}</span>
                                 </div>
                                 <div className={styles.statCard}>
                                     <span className={styles.label}>1 Week Return</span>
