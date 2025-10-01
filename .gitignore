@@ -27,13 +27,3 @@ dist-ssr
 env/
 
 .env
-
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-db.sqlite3
-*.pyc
