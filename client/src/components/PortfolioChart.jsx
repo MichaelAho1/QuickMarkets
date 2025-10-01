@@ -71,9 +71,7 @@ const PortfolioChart = ({ refreshKey }) => {
             }
 
             // Format data for Chart.js
-            const labels = data.map(item => 
-                new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            );
+            const labels = data.map(item => item.date);
             const portfolioValues = data.map(item => parseFloat(item.portfolioValue));
             const totalChange = portfolioValues.length > 1 ? 
                 ((portfolioValues[portfolioValues.length - 1] - portfolioValues[0]) / portfolioValues[0]) * 100 : 0;

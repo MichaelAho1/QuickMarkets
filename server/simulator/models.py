@@ -103,6 +103,7 @@ class SimulationTimer(models.Model):
     last_during_day_call = models.DateTimeField(null=True, blank=True)
     total_seconds_elapsed = models.IntegerField(default=0)
     current_day = models.IntegerField(default=1)
+    time_until_next_day = models.IntegerField(default=15)  # seconds until next day
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -263,15 +263,17 @@ class LeaderboardView(APIView):
 
     def get(self, request):
         try:
+            from simulator.models import User, UserStock
+            
             # Get all users and calculate their total net worth
-            users = SimulatorUser.objects.all()
+            users = User.objects.all()
             leaderboard_data = []
             
             for user in users:
-                # Calculate portfolio value
-                user_stocks = UserStock.objects.filter(user=user)
                 total_net_worth = user.cashBalance or 0
                 
+                # Get user's stocks
+                user_stocks = UserStock.objects.filter(user=user)
                 for user_stock in user_stocks:
                     current_value = user_stock.stock.currPrice * user_stock.sharesAmount
                     total_net_worth += current_value
@@ -520,6 +522,49 @@ class TimerManagementView(APIView):
         try:
             result = timer_service.stop_timer()
             return Response(result)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+class SimulationTimeView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Get current simulation day and time until next day"""
+        try:
+            from simulator.models import SimulationTimer
+            from django.utils import timezone
+            
+            # Get timer from database
+            timer = SimulationTimer.objects.first()
+            
+            if not timer:
+                return Response({
+                    "current_day": 1,
+                    "time_until_next_day": 15,
+                    "error": "No timer found"
+                })
+            
+            # Refresh from database to get latest data
+            timer.refresh_from_db()
+            
+            # Calculate time until next day dynamically
+            current_time = timezone.now()
+            time_until_next_day = 15  # Default 15 seconds
+            
+            if timer.is_running and timer.last_end_of_day_call:
+                # Calculate seconds since last end of day call
+                seconds_since_last_end = (current_time - timer.last_end_of_day_call).total_seconds()
+                # Time until next day is 15 seconds minus time since last end of day
+                time_until_next_day = max(0, 15 - seconds_since_last_end)
+            elif not timer.is_running:
+                # If timer is not running, show full 15 seconds
+                time_until_next_day = 15
+            
+            return Response({
+                "current_day": timer.current_day,
+                "time_until_next_day": int(time_until_next_day)
+            })
+            
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 

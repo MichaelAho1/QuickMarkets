@@ -38,7 +38,8 @@ class SimulationTimerService:
                 defaults={
                     'is_running': False,
                     'total_seconds_elapsed': 0,
-                    'current_day': 1
+                    'current_day': 1,
+                    'time_until_next_day': 15
                 }
             )
             return timer
@@ -162,6 +163,18 @@ class SimulationTimerService:
             # Update total elapsed time
             elapsed_seconds = int((current_time - start_time).total_seconds())
             timer.total_seconds_elapsed = elapsed_seconds
+            
+            # Calculate time until next day (15 seconds per day in simulation)
+            if timer.is_running and timer.last_end_of_day_call:
+                # Calculate seconds since last end of day call
+                seconds_since_last_end = (current_time - timer.last_end_of_day_call).total_seconds()
+                # Time until next day is 15 seconds minus time since last end of day
+                time_until_next_day = max(0, 15 - seconds_since_last_end)
+            else:
+                # If timer is not running or no previous end of day call, assume full 15 seconds
+                time_until_next_day = 15
+            
+            timer.time_until_next_day = int(time_until_next_day)
             timer.save()
             
             # Sleep for 1 second before next check

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from "../components/navBar/simulatorNavbar.jsx";
 import styles from "./dashboard.module.css";
 import PortfolioCard from './components/PortfolioCard';
@@ -8,6 +8,7 @@ import TopGainersCard from './components/TopGainersCard';
 import NewsCard from './components/newsCard';
 import { useStockData } from '../../../contexts/StockContext';
 import RefreshIndicator from '../../../components/RefreshIndicator';
+import api from '../../../api/api.js';
 
 const Dashboard = () => {
     const { 
@@ -21,6 +22,23 @@ const Dashboard = () => {
     const [topGainersRefreshKey, setTopGainersRefreshKey] = useState(0);
     const [leaderboardRefreshKey, setLeaderboardRefreshKey] = useState(0);
     const [previousDay, setPreviousDay] = useState(null);
+    const [simulationTime, setSimulationTime] = useState({
+        currentDay: 1,
+        timeUntilNextDay: 15
+    });
+
+    // Fetch simulation time data
+    const fetchSimulationTime = async () => {
+        try {
+            const response = await api.get('/api/simulation-time/');
+            setSimulationTime({
+                currentDay: response.data.current_day,
+                timeUntilNextDay: response.data.time_until_next_day
+            });
+        } catch (error) {
+            console.error('Error fetching simulation time:', error);
+        }
+    };
 
     // Auto-refresh portfolio and stock data every 5 seconds
     React.useEffect(() => {
@@ -34,6 +52,19 @@ const Dashboard = () => {
 
         return () => clearInterval(interval);
     }, [smoothRefreshAll]);
+
+    // Fetch simulation time every 5 seconds
+    useEffect(() => {
+        // Fetch immediately on mount
+        fetchSimulationTime();
+        
+        // Then fetch every 5 seconds
+        const interval = setInterval(() => {
+            fetchSimulationTime();
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, []);
 
 
     // Refresh chart, top gainers, and leaderboard every 5 minutes (300000ms) - fallback
@@ -59,7 +90,8 @@ const Dashboard = () => {
                 <header>
                     <div className={styles.headerTop}>
                         <div>
-                            <h1>Dashboard</h1>
+                            <h1>Day: {simulationTime.currentDay}</h1>
+                            <h2>Time until Next day: {simulationTime.timeUntilNextDay} seconds</h2>
                         </div>
                         <RefreshIndicator isRefreshing={isRefreshing} size="small" />
                     </div>
