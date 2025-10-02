@@ -1,4 +1,4 @@
-from simulator.stockGeneration.startOfDayGenerator import generateStartOfDayPrices
+from simulator.stockGeneration.duringDayGenerator import generateDuringDayPrices
 from simulator.utils import getStockData, getETFData
 from ..models import ETF, Stock
 
@@ -8,7 +8,7 @@ def test_update_refresh_price():
     for i in range(0, 1000, 25):
         print("Price", i, ": ", cvxStock.currPrice)
         print("Prev Price:",cvxStock.prevPrice)
-        generateStartOfDayPrices()
+        generateDuringDayPrices()
         cvxStock.refresh_from_db()
     #refresh_price()
 
@@ -17,7 +17,7 @@ def test_update_price():
     for i in range(0, 1000, 10):
         print("Price", i, cvxStock.currPrice)
         print("Prev Price:",cvxStock.prevPrice)
-        generateStartOfDayPrices()
+        generateDuringDayPrices()
         cvxStock.refresh_from_db()
 
 def refresh_price():
