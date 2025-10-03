@@ -10,8 +10,8 @@ services:
     env_file:
       - .env
     command: >
-      sh -c "python manage.py migrate --settings=server.settings.production &&
-             python manage.py collectstatic --noinput --settings=server.settings.production &&
+      sh -c "python manage.py migrate --settings=server.settings &&
+             python manage.py collectstatic --noinput --settings=server.settings &&
              gunicorn --bind 0.0.0.0:8000 --workers 2 server.wsgi:application"
 
   frontend:
