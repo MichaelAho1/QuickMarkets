@@ -11,11 +11,11 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DEBUG}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - DB_NAME=postgres
-      - DB_USER=QuickMarketsDB
-      - DB_PASSWORD=Ruster1392!@
-      - DB_HOST=quickmarkets-db.cev286m487pi.us-east-1.rds.amazonaws.com
-      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
     command: >
       sh -c "python manage.py migrate --settings=server.settings &&
              gunicorn --bind 0.0.0.0:8000 --workers 2 server.wsgi:application"
