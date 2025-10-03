@@ -26,8 +26,22 @@ echo sudo apt install docker.io docker-compose -y
 echo sudo usermod -aG docker ubuntu
 echo git clone YOUR_REPO
 echo cd YOUR_REPO
+
+echo.
+echo Step 7: Set up SSL certificates (choose one):
+echo Option A - Let's Encrypt (Free, recommended):
+echo sudo apt install certbot python3-certbot-nginx
+echo sudo certbot certonly --standalone -d quickmarketz.com -d www.quickmarketz.com
+echo.
+echo Option B - Self-signed (Development only):
+echo sudo mkdir -p /etc/nginx/ssl
+echo sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/key.pem -out /etc/nginx/ssl/cert.pem -subj "/C=US/ST=State/L=City/O=QuickMarkets/CN=quickmarketz.com"
+
+echo.
+echo Step 8: Deploy the application:
 echo docker-compose -f docker-compose.simple.yml up -d
 
 echo.
-echo Done! Your app will be at http://YOUR_EC2_IP
+echo Done! Your app will be at https://quickmarketz.com
+echo (HTTP requests will automatically redirect to HTTPS)
 

@@ -7,8 +7,27 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine
+
+# Install openssl for SSL certificate generation (for development)
+RUN apk add --no-cache openssl
+
+# Create SSL directory
+RUN mkdir -p /etc/nginx/ssl
+
+# Copy built app
 COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration
 COPY nginx.simple.conf /etc/nginx/nginx.conf
-EXPOSE 80
+
+# Create a self-signed certificate for development (replace with real certs in production)
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/key.pem \
+    -out /etc/nginx/ssl/cert.pem \
+    -subj "/C=US/ST=State/L=City/O=Organization/CN=quickmarketz.com"
+
+# Expose both HTTP and HTTPS ports
+EXPOSE 80 443
+
 CMD ["nginx", "-g", "daemon off;"]
 

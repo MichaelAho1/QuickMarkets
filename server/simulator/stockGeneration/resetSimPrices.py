@@ -20,7 +20,7 @@ def setStockPrices():
 
     for ticker, data in prices.items():
         sector = ETF.objects.get(ticker=data["etf_ticker"])
-
+py
         Stock.objects.update_or_create(
             ticker=ticker,
             defaults={
