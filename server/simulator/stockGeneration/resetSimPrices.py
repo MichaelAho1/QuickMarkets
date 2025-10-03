@@ -34,6 +34,7 @@ def setStockPrices():
             
 def setETFPrices():
     etfs = {
+        "ALL": {"name": "Total Market", "price": 100.00, "industry": "Market"},
         "TECH": {"name": "Top Tech 10", "price": 150.00, "industry": "Tech"},
         "FIN": {"name": "Top Finance 20", "price": 120.00, "industry": "Finance"},
         "ENRG": {"name": "Top Energy 5", "price": 95.00, "industry": "Energy"},
@@ -41,6 +42,14 @@ def setETFPrices():
     }
 
     for ticker, data in etfs.items():
+        # Set different volatility and avgReturn for ALL ETF
+        if ticker == "ALL":
+            volatility = 0.15  # Market volatility
+            avg_return = 0.08  # Market average return
+        else:
+            volatility = 0.2   # Industry volatility
+            avg_return = 0.18   # Industry average return
+            
         ETF.objects.update_or_create(
             ticker=ticker,
             defaults={
@@ -48,8 +57,8 @@ def setETFPrices():
                 "price": data["price"],
                 "prev_price": data["price"],
                 "industry": data["industry"],
-                "volatility": .2, #Should be between 10-25
-                "avgReturn": 0.18,
+                "volatility": volatility,
+                "avgReturn": avg_return,
             }
         )
 
