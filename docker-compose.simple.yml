@@ -2,23 +2,26 @@ version: '3.8'
 
 services:
   backend:
-    build: ./server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.simple
     ports:
       - "8000:8000"
-    environment:
-      - SECRET_KEY=your-secret-key-here
-      - DEBUG=False
-      - ALLOWED_HOSTS=*
-      - DATABASE_URL=postgresql://postgres:YourPassword123@YOUR_DB_ENDPOINT:5432/postgres
+    env_file:
+      - .env
     command: >
       sh -c "python manage.py migrate --settings=server.settings.production &&
              python manage.py collectstatic --noinput --settings=server.settings.production &&
              gunicorn --bind 0.0.0.0:8000 --workers 2 server.wsgi:application"
 
   frontend:
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile.simple
     ports:
       - "80:80"
+    env_file:
+      - .env
     depends_on:
       - backend
 
