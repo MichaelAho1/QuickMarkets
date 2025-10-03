@@ -8,4 +8,6 @@ pytz
 sqlparse
 psycopg2-binary
 python-dotenv
-mysqlclient
+gunicorn
+whitenoise
+dj-database-url
