@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./server
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=your-secret-key-here
+      - DEBUG=False
+      - ALLOWED_HOSTS=*
+      - DATABASE_URL=postgresql://postgres:YourPassword123@YOUR_DB_ENDPOINT:5432/postgres
+    command: >
+      sh -c "python manage.py migrate --settings=server.settings.production &&
+             python manage.py collectstatic --noinput --settings=server.settings.production &&
+             gunicorn --bind 0.0.0.0:8000 --workers 2 server.wsgi:application"
+
+  frontend:
+    build: ./client
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
