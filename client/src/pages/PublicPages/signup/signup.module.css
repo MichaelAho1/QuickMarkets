@@ -98,3 +98,35 @@ input::placeholder {
 img {
     max-width: 600px;
 }
+
+/* Error Display Styles */
+.errorContainer {
+    display: flex;
+    align-items: flex-start;
+    background-color: #fee;
+    border: 1px solid #fcc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #c33;
+}
+
+.errorIcon {
+    margin-right: 10px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.errorList {
+    flex: 1;
+}
+
+.errorItem {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.errorItem:last-child {
+    margin-bottom: 0;
+}

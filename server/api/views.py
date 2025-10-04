@@ -4,6 +4,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import status
 from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, Watchlist, PortfolioHistory
 from simulator.models import User as SimulatorUser
 from decimal import Decimal
@@ -19,6 +20,31 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     authentication_classes = []
+
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            # Handle validation errors and return them in a user-friendly format
+            if hasattr(e, 'detail'):
+                # DRF validation errors
+                error_messages = []
+                if isinstance(e.detail, dict):
+                    for field, messages in e.detail.items():
+                        if isinstance(messages, list):
+                            error_messages.extend(messages)
+                        else:
+                            error_messages.append(str(messages))
+                else:
+                    error_messages = [str(e.detail)]
+                
+                return Response({
+                    "error": error_messages[0] if len(error_messages) == 1 else error_messages
+                }, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({
+                    "error": "An error occurred during registration"
+                }, status=status.HTTP_400_BAD_REQUEST)
 
 class ViewStockPrices(APIView):
     serializer_class = StockSerializer
