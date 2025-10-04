@@ -46,6 +46,21 @@ class CreateUserView(generics.CreateAPIView):
                     "error": "An error occurred during registration"
                 }, status=status.HTTP_400_BAD_REQUEST)
 
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        try:
+            return Response({
+                "id": request.user.id,
+                "username": request.user.username,
+                "email": request.user.email,
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class ViewStockPrices(APIView):
     serializer_class = StockSerializer
     permission_classes = [AllowAny]

@@ -9,12 +9,15 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { IoIosArrowDown, IoMdMenu } from "react-icons/io";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../../api/constants';
-import { useStockData } from '../../../../contexts/StockContext'; 
+import { useStockData } from '../../../../contexts/StockContext';
+import api from '../../../../api/api'; 
 
 const Navbar = () => {
     const [isWatchlistCollapsed, setIsWatchlistCollapsed] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [userLoading, setUserLoading] = useState(true);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
 
@@ -23,6 +26,19 @@ const Navbar = () => {
         watchlistLoading, 
         watchlistError 
     } = useStockData();
+
+    // Fetch user data
+    const fetchUserData = async () => {
+        try {
+            setUserLoading(true);
+            const response = await api.get('/api/current-user/');
+            setUserData(response.data);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        } finally {
+            setUserLoading(false);
+        }
+    };
 
     const toggleWatchlist = () => {
         setIsWatchlistCollapsed(!isWatchlistCollapsed);
@@ -47,6 +63,11 @@ const Navbar = () => {
         // Navigate to login page
         navigate('/login');
     };
+
+    // Fetch user data on component mount
+    useEffect(() => {
+        fetchUserData();
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -134,15 +155,34 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div className={styles.userProfile} ref={dropdownRef}>
-                    <img 
-                        className={styles.userImg} 
-                        src="www.hi" 
-                        alt="User" 
-                        onClick={toggleProfileDropdown}
-                    />
+                    {userLoading ? (
+                        <div className={styles.userImgPlaceholder}>
+                            <div className={styles.loadingSpinner}></div>
+                        </div>
+                    ) : userData ? (
+                        <div 
+                            className={styles.userImg} 
+                            onClick={toggleProfileDropdown}
+                            title={`${userData.username} (${userData.email})`}
+                        >
+                            {userData.username ? userData.username.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                    ) : (
+                        <div 
+                            className={styles.userImg} 
+                            onClick={toggleProfileDropdown}
+                            title="User"
+                        >
+                            U
+                        </div>
+                    )}
                     <div>
-                        <p className={styles.userName}>John Doe</p>
-                        <p className={styles.userEmail}>john.doe@example.com</p>
+                        <p className={styles.userName}>
+                            {userLoading ? 'Loading...' : userData ? userData.username : 'User'}
+                        </p>
+                        <p className={styles.userEmail}>
+                            {userLoading ? 'Loading...' : userData ? userData.email : 'user@example.com'}
+                        </p>
                     </div>
                     {isProfileDropdownOpen && (
                         <div className={styles.profileDropdown}>
