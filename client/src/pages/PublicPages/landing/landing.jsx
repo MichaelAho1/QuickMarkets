@@ -20,7 +20,7 @@ function landing() {
             <Navbar />
             <div className={styles.heroSection}>
                 <div className={styles.heroContent}>
-                    <h1>QuickMarkets Stock Simulator</h1>
+                    <h1>QuickMarketz Stock Simulator</h1>
                     <p>Experience accelerated stock trading in a risk-free environment.</p>
                     <button className={styles.heroButton} onClick={handleJoinForFree}>Join For Free</button>
                 </div>
@@ -28,9 +28,9 @@ function landing() {
             <section>
                 <div className={styles.welcomeCard}>
                     <div className={styles.descriptionSection}>
-                        <h1>Welcome to QuickMarkets</h1>
+                        <h1>Welcome to QuickMarketz</h1>
                         <p>
-                            Accelerate your understanding of stock investing with QuickMarkets. Our simulator offers a realistic, fast-paced environment where you can quickly learn market dynamics.
+                            Accelerate your understanding of stock investing with QuickMarketz. Our simulator offers a realistic, fast-paced environment where you can quickly learn market dynamics.
                         </p>
                     </div>
                     <img src={SimulatorGraphics} alt="Simulator Graphics"></img>

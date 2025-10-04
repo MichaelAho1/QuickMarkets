@@ -76,9 +76,9 @@ const Navbar = () => {
 
             <nav className={`${styles.navBar} ${isSidebarOpen ? styles.open : ''}`}>
                 <div className={styles.navbarHeader}>
-                    <img src={logo} alt="QuickMarkets Logo" />
+                    <img src={logo} alt="QuickMarketz Logo" />
                     <h1 className={styles.headerName}>
-                        <Link to="/">QuickMarkets</Link>
+                        <Link to="/">QuickMarketz</Link>
                     </h1>
                 </div>
                 <div className={styles.navBarContent}>

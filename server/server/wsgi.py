@@ -1,5 +1,5 @@
 """
-WSGI config for stockSim project.
+WSGI config for QuickMarketz project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

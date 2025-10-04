@@ -1,5 +1,5 @@
 """
-ASGI config for stockSim project.
+ASGI config for QuickMarketz project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

@@ -33,7 +33,7 @@ const NavBar = () => {
 <nav className={styles.navbar}>
     <div className={styles.navbarLeft}>
         <img src={RisingStockImg} alt="Logo" className={styles.logo} />
-        <h1>QuickMarkets</h1>
+        <h1>QuickMarketz</h1>
     </div>
     <div className={styles.navbarRight}>
         <p className={styles.navbarItem}>
