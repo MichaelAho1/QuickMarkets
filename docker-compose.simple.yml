@@ -19,6 +19,19 @@ services:
     command: >
       sh -c "python manage.py migrate --settings=server.settings &&
              gunicorn --bind 0.0.0.0:8000 --workers 2 server.wsgi:application"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
 
   frontend:
     build:
@@ -33,4 +46,18 @@ services:
       - .env
     depends_on:
       - backend
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
 
