@@ -24,9 +24,7 @@ RUN npm run build
 
 FROM nginx:alpine
 
-# Create non-root user for nginx
-RUN addgroup -g 1001 -S nginx && \
-    adduser -S nginx -u 1001
+# Use existing nginx user (already exists in nginx:alpine)
 
 # Install openssl for SSL certificate generation (for development)
 RUN apk add --no-cache openssl
@@ -51,13 +49,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -subj "/C=US/ST=State/L=City/O=Organization/CN=quickmarketz.com"
 
 # Set proper permissions
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d
-
-# Switch to non-root user
-USER nginx
+RUN chown -R nginx:nginx /usr/share/nginx/html
 
 # Expose both HTTP and HTTPS ports
 EXPOSE 80 443
