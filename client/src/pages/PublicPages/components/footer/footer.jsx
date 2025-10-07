@@ -9,7 +9,6 @@ const Footer = () => {
             <div className={styles.footerContent}>
                 <div className={styles.footerSection}>
                     <a href="mailto:quickmarketz.contact@gmail.com">Email Us</a>
-                    <a href="/about">About Us</a>
                     <a href="https://www.linkedin.com/company/quickmarketz/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                 </div>
                 <span>&copy; {currentYear} QuickMarketz. All rights reserved.</span>

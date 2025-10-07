@@ -52,7 +52,6 @@ function landing() {
                         <p>Coming Soon...</p>
                     </div>
                 </div>
-                <button className={styles.startButton}>Learn More</button>
             </section>
             <Footer />
         </>

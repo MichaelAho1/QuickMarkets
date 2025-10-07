@@ -5,6 +5,7 @@ import { FaUser, FaLock } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../../api/constants.js";
 import api from "../../../api/api.js";
+import LoadingScreen from "../../../components/LoadingScreen.jsx";
 import Styles from "./login.module.css";
 
 function login() {
@@ -13,6 +14,7 @@ function login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showLoadingScreen, setShowLoadingScreen] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -24,7 +26,12 @@ function login() {
             if (method === "login") {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/admin") // Navigate to Simulator Dashboard after successful login
+                
+                // Show loading screen for 2.5 seconds before navigating
+                setShowLoadingScreen(true);
+                setTimeout(() => {
+                    navigate("/admin"); // Navigate to Simulator Dashboard after loading screen
+                }, 2500);
             } else {
                 navigate("/login")
             }
@@ -34,6 +41,11 @@ function login() {
             setLoading(false)
         }
     };
+
+    // Show loading screen if login was successful
+    if (showLoadingScreen) {
+        return <LoadingScreen message="Welcome back!" />;
+    }
 
     return (
         <div>
