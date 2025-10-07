@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, Watchlist, PortfolioHistory
 from simulator.models import User as SimulatorUser
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from django.db import transaction
 from simulator.stockGeneration.duringDayGenerator import generateDuringDayChanges, applyDuringDayChanges
 from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, storePortfolioValues, getPriceDataForPeriod
@@ -124,11 +124,19 @@ class buyStock(APIView):
 
     def post(self, request):
         try:
-            ticker = request.data.get('ticker')
-            shares = Decimal(request.data.get('shares', 0))
+            ticker = request.data.get('ticker', '').strip().upper()
+            shares_input = request.data.get('shares', 0)
             
-            if not ticker or shares <= 0:
-                return Response({"error": "Invalid ticker or shares amount"}, status=400)
+            # Input validation and sanitization
+            if not ticker or len(ticker) > 10:
+                return Response({"error": "Invalid ticker format"}, status=400)
+            
+            try:
+                shares = Decimal(str(shares_input))
+                if shares <= 0 or shares > 1000000:  # Reasonable upper limit
+                    return Response({"error": "Invalid shares amount"}, status=400)
+            except (ValueError, TypeError, InvalidOperation):
+                return Response({"error": "Invalid shares format"}, status=400)
             
             # Get stock and user
             stock = Stock.objects.get(ticker=ticker)
@@ -201,11 +209,19 @@ class sellStock(APIView):
 
     def post(self, request):
         try:
-            ticker = request.data.get('ticker')
-            shares = Decimal(request.data.get('shares', 0))
+            ticker = request.data.get('ticker', '').strip().upper()
+            shares_input = request.data.get('shares', 0)
             
-            if not ticker or shares <= 0:
-                return Response({"error": "Invalid ticker or shares amount"}, status=400)
+            # Input validation and sanitization
+            if not ticker or len(ticker) > 10:
+                return Response({"error": "Invalid ticker format"}, status=400)
+            
+            try:
+                shares = Decimal(str(shares_input))
+                if shares <= 0 or shares > 1000000:  # Reasonable upper limit
+                    return Response({"error": "Invalid shares amount"}, status=400)
+            except (ValueError, TypeError, InvalidOperation):
+                return Response({"error": "Invalid shares format"}, status=400)
             
             # Get stock and user
             stock = Stock.objects.get(ticker=ticker)
@@ -350,9 +366,11 @@ class WatchlistView(APIView):
     def post(self, request):
         """Add stock to watchlist"""
         try:
-            ticker = request.data.get('ticker')
-            if not ticker:
-                return Response({"error": "Ticker is required"}, status=400)
+            ticker = request.data.get('ticker', '').strip().upper()
+            
+            # Input validation and sanitization
+            if not ticker or len(ticker) > 10:
+                return Response({"error": "Invalid ticker format"}, status=400)
             
             simulator_user = SimulatorUser.objects.get(username=request.user.username)
             
@@ -472,10 +490,11 @@ class StockReturnsView(APIView):
     def get(self, request):
         """Get historical returns for a stock"""
         try:
-            ticker = request.query_params.get('ticker')
+            ticker = request.query_params.get('ticker', '').strip().upper()
             
-            if not ticker:
-                return Response({"error": "Ticker is required"}, status=400)
+            # Input validation and sanitization
+            if not ticker or len(ticker) > 10:
+                return Response({"error": "Invalid ticker format"}, status=400)
             
             # Get current stock data
             try:
