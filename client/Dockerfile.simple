@@ -1,12 +1,30 @@
 FROM node:18-alpine as build
 
+# Create non-root user for build
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
 WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
-RUN npm install
+
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci && npm cache clean --force
+
+# Copy source code
 COPY . .
+
+# Change ownership to non-root user
+RUN chown -R nextjs:nodejs /app
+USER nextjs
+
+# Build the application
 RUN npm run build
 
 FROM nginx:alpine
+
+# Use existing nginx user (already exists in nginx:alpine)
 
 # Install openssl for SSL certificate generation (for development)
 RUN apk add --no-cache openssl
@@ -29,6 +47,9 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/key.pem \
     -out /etc/nginx/ssl/cert.pem \
     -subj "/C=US/ST=State/L=City/O=Organization/CN=quickmarketz.com"
+
+# Set proper permissions
+RUN chown -R nginx:nginx /usr/share/nginx/html
 
 # Expose both HTTP and HTTPS ports
 EXPOSE 80 443

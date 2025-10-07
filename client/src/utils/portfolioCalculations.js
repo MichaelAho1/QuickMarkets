@@ -1,6 +1,6 @@
 // Portfolio calculation utilities
 export const calculatePortfolioValues = (portfolioData, stockPrices) => {
-    if (!portfolioData || !stockPrices) {
+    if (!portfolioData || !stockPrices || !portfolioData.portfolio) {
         return {
             portfolio: [],
             summary: {
@@ -70,7 +70,7 @@ export const calculatePortfolioValues = (portfolioData, stockPrices) => {
 
 // Calculate portfolio value for dashboard
 export const calculatePortfolioSummary = (portfolioData, stockPrices) => {
-    if (!portfolioData || !stockPrices) {
+    if (!portfolioData || !stockPrices || !portfolioData.portfolio) {
         return {
             totalNetWorth: portfolioData?.summary?.cashBalance || 0,
             portfolioDayChange: 0

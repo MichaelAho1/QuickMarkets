@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+# Rate limiting is handled by DRF throttling classes
 from simulator.models import Stock, StockPriceHistory, UserStock, Transaction, Watchlist, PortfolioHistory
 from simulator.models import User as SimulatorUser
 from decimal import Decimal, InvalidOperation
@@ -14,12 +16,14 @@ from simulator.stockGeneration.endOfDayGenerator import storeEndOfDayPrices, sto
 from simulator.utils import get_current_simulation_date, get_current_simulation_day
 from simulator.timer_service import timer_service
 from datetime import timedelta
+import re
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     authentication_classes = []
+    throttle_classes = [AnonRateThrottle]
 
     def create(self, request, *args, **kwargs):
         try:
@@ -121,20 +125,28 @@ class ViewSimulatorUser(APIView):
 
 class buyStock(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def post(self, request):
         try:
             ticker = request.data.get('ticker', '').strip().upper()
             shares_input = request.data.get('shares', 0)
             
-            # Input validation and sanitization
-            if not ticker or len(ticker) > 10:
+            # Enhanced input validation and sanitization
+            if not ticker or len(ticker) > 10 or not re.match(r'^[A-Z0-9]+$', ticker):
                 return Response({"error": "Invalid ticker format"}, status=400)
+            
+            # Validate shares input
+            if not isinstance(shares_input, (int, float, str)):
+                return Response({"error": "Invalid shares format"}, status=400)
             
             try:
                 shares = Decimal(str(shares_input))
                 if shares <= 0 or shares > 1000000:  # Reasonable upper limit
                     return Response({"error": "Invalid shares amount"}, status=400)
+                # Check for reasonable precision
+                if shares.as_tuple().exponent < -4:
+                    return Response({"error": "Too many decimal places"}, status=400)
             except (ValueError, TypeError, InvalidOperation):
                 return Response({"error": "Invalid shares format"}, status=400)
             
@@ -206,20 +218,28 @@ class buyStock(APIView):
 
 class sellStock(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def post(self, request):
         try:
             ticker = request.data.get('ticker', '').strip().upper()
             shares_input = request.data.get('shares', 0)
             
-            # Input validation and sanitization
-            if not ticker or len(ticker) > 10:
+            # Enhanced input validation and sanitization
+            if not ticker or len(ticker) > 10 or not re.match(r'^[A-Z0-9]+$', ticker):
                 return Response({"error": "Invalid ticker format"}, status=400)
+            
+            # Validate shares input
+            if not isinstance(shares_input, (int, float, str)):
+                return Response({"error": "Invalid shares format"}, status=400)
             
             try:
                 shares = Decimal(str(shares_input))
                 if shares <= 0 or shares > 1000000:  # Reasonable upper limit
                     return Response({"error": "Invalid shares amount"}, status=400)
+                # Check for reasonable precision
+                if shares.as_tuple().exponent < -4:
+                    return Response({"error": "Too many decimal places"}, status=400)
             except (ValueError, TypeError, InvalidOperation):
                 return Response({"error": "Invalid shares format"}, status=400)
             
@@ -350,6 +370,7 @@ class LeaderboardView(APIView):
 
 class WatchlistView(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def get(self, request):
         """Get user's watchlist"""
