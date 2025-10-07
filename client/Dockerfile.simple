@@ -20,8 +20,11 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.simple.conf /etc/nginx/nginx.conf
 
-# Copy Let's Encrypt certificates if they exist, otherwise create self-signed
-COPY ssl/ /etc/nginx/ssl/ || \
+# Create SSL directory for certificates
+RUN mkdir -p /etc/nginx/ssl
+
+# Generate self-signed certificate as fallback
+# The actual Let's Encrypt certificates will be mounted via volume in docker-compose
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/key.pem \
     -out /etc/nginx/ssl/cert.pem \
