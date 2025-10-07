@@ -466,6 +466,67 @@ class StockChartDataView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
+class StockReturnsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Get historical returns for a stock"""
+        try:
+            ticker = request.query_params.get('ticker')
+            
+            if not ticker:
+                return Response({"error": "Ticker is required"}, status=400)
+            
+            # Get current stock data
+            try:
+                stock = Stock.objects.get(ticker=ticker)
+                current_price = float(stock.currPrice)
+            except Stock.DoesNotExist:
+                return Response({"error": "Stock not found"}, status=404)
+            
+            # Calculate returns for different periods
+            returns = {}
+            
+            # 1 week return (7 days)
+            week_history = getPriceDataForPeriod(ticker, '1w')
+            if week_history and len(week_history) > 0:
+                week_ago_price = float(week_history[0].closingPrice)
+                returns['oneWeekChange'] = ((current_price - week_ago_price) / week_ago_price) * 100
+            else:
+                returns['oneWeekChange'] = 0
+            
+            # 1 month return (30 days)
+            month_history = getPriceDataForPeriod(ticker, '1m')
+            if month_history and len(month_history) > 0:
+                month_ago_price = float(month_history[0].closingPrice)
+                returns['oneMonthChange'] = ((current_price - month_ago_price) / month_ago_price) * 100
+            else:
+                returns['oneMonthChange'] = 0
+            
+            # 3 month return (90 days)
+            three_month_history = getPriceDataForPeriod(ticker, '3m')
+            if three_month_history and len(three_month_history) > 0:
+                three_month_ago_price = float(three_month_history[0].closingPrice)
+                returns['threeMonthChange'] = ((current_price - three_month_ago_price) / three_month_ago_price) * 100
+            else:
+                returns['threeMonthChange'] = 0
+            
+            # 6 month return (180 days)
+            six_month_history = getPriceDataForPeriod(ticker, '6m')
+            if six_month_history and len(six_month_history) > 0:
+                six_month_ago_price = float(six_month_history[0].closingPrice)
+                returns['sixMonthChange'] = ((current_price - six_month_ago_price) / six_month_ago_price) * 100
+            else:
+                returns['sixMonthChange'] = 0
+            
+            return Response({
+                "ticker": ticker,
+                "returns": returns
+            })
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
 class PortfolioChartDataView(APIView):
     permission_classes = [IsAuthenticated]
 

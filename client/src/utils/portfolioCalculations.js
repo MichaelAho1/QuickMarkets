@@ -52,8 +52,8 @@ export const calculatePortfolioValues = (portfolioData, stockPrices) => {
     });
 
     const overallProfitLoss = totalPortfolioValue - totalCostBasis;
-    const overallProfitLossPercent = totalCostBasis > 0 ? (overallProfitLoss / totalCostBasis) * 100 : 0;
     const totalNetWorth = totalPortfolioValue + (portfolioData.summary.cashBalance || 0);
+    const overallProfitLossPercent = ((totalNetWorth - 100000) / 100000) * 100;
 
     return {
         portfolio: calculatedPortfolio,

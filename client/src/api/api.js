@@ -18,4 +18,15 @@ api.interceptors.request.use(
     }
 )
 
+// API functions
+export const getStockReturns = async (ticker) => {
+    try {
+        const response = await api.get(`/api/stock-returns/?ticker=${ticker}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching stock returns:', error);
+        throw error;
+    }
+};
+
 export default api;

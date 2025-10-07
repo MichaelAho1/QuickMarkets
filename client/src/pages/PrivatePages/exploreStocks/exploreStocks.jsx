@@ -5,6 +5,7 @@ import styles from "./exploreStocks.module.css";
 import { FaSearch, FaArrowUp, FaArrowDown, FaTimes } from "react-icons/fa";
 import StockModal from '../components/StockModal/StockModal';
 import { useStockData } from '../../../contexts/StockContext';
+import { getStockReturns } from '../../../api/api';
 
 function ExploreStocks() {
     const navigate = useNavigate();
@@ -95,10 +96,32 @@ function ExploreStocks() {
         setSelectedSector(sectorId);
     };
 
-    const handleStockClick = (stock) => {
-        const transformedStock = transformStockForDisplay(stock);
-        setSelectedStock(transformedStock);
-        setIsModalOpen(true);
+    const handleStockClick = async (stock) => {
+        try {
+            // Fetch historical returns data
+            const returnsData = await getStockReturns(stock.ticker);
+            
+            const transformedStock = {
+                symbol: stock.ticker,
+                name: stock.stockName,
+                openingPrice: stock.prevPrice,
+                currentPrice: stock.currPrice,
+                oneWeekChange: returnsData.returns.oneWeekChange,
+                oneMonthChange: returnsData.returns.oneMonthChange,
+                threeMonthChange: returnsData.returns.threeMonthChange,
+                sixMonthChange: returnsData.returns.sixMonthChange,
+                sector: stock.sectorType
+            };
+            
+            setSelectedStock(transformedStock);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Error fetching stock returns:', error);
+            // Fallback to showing basic data if API fails
+            const transformedStock = transformStockForDisplay(stock);
+            setSelectedStock(transformedStock);
+            setIsModalOpen(true);
+        }
     };
 
     const handleCloseModal = () => {

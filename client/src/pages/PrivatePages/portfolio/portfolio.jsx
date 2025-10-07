@@ -6,6 +6,7 @@ import PieChart from './components/PieChart';
 import StockModal from '../components/StockModal/StockModal';
 import styles from "./portfolio.module.css";
 import { useStockData } from '../../../contexts/StockContext';
+import { getStockReturns } from '../../../api/api';
 
 function stocksOwned() {
     const [selectedStock, setSelectedStock] = useState(null);
@@ -36,21 +37,43 @@ function stocksOwned() {
         smoothRefreshAll();
     };
 
-    const handleStockClick = (stock) => {
-        const stockForModal = {
-            symbol: stock.symbol,
-            name: stock.name,
-            openingPrice: stock.openingPrice, 
-            currentPrice: stock.currentPrice,
-            oneWeekChange: 0,
-            oneMonthChange: 0,
-            threeMonthChange: 0,
-            sixMonthChange: 0,
-            sector: stock.sector
-        };
-        
-        setSelectedStock(stockForModal);
-        setIsModalOpen(true);
+    const handleStockClick = async (stock) => {
+        try {
+            // Fetch historical returns data
+            const returnsData = await getStockReturns(stock.symbol);
+            
+            const stockForModal = {
+                symbol: stock.symbol,
+                name: stock.name,
+                openingPrice: stock.openingPrice, 
+                currentPrice: stock.currentPrice,
+                oneWeekChange: returnsData.returns.oneWeekChange,
+                oneMonthChange: returnsData.returns.oneMonthChange,
+                threeMonthChange: returnsData.returns.threeMonthChange,
+                sixMonthChange: returnsData.returns.sixMonthChange,
+                sector: stock.sector
+            };
+            
+            setSelectedStock(stockForModal);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Error fetching stock returns:', error);
+            // Fallback to showing 0 values if API fails
+            const stockForModal = {
+                symbol: stock.symbol,
+                name: stock.name,
+                openingPrice: stock.openingPrice, 
+                currentPrice: stock.currentPrice,
+                oneWeekChange: 0,
+                oneMonthChange: 0,
+                threeMonthChange: 0,
+                sixMonthChange: 0,
+                sector: stock.sector
+            };
+            
+            setSelectedStock(stockForModal);
+            setIsModalOpen(true);
+        }
     };
 
     const handleCloseModal = () => {

@@ -95,6 +95,8 @@ def getPriceDataForPeriod(ticker, period):
             days = 7
         elif period == '1m':
             days = 30
+        elif period == '3m':
+            days = 90
         elif period == '6m':
             days = 180
         elif period == '1y':

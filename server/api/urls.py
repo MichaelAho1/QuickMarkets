@@ -13,6 +13,7 @@ urlpatterns = [
     path('watchlist/', views.WatchlistView.as_view(), name='watchlist'),
     path('simulate-during-day/', views.SimulateDuringDayView.as_view(), name='simulate-during-day'),
     path('stock-chart-data/', views.StockChartDataView.as_view(), name='stock-chart-data'),
+    path('stock-returns/', views.StockReturnsView.as_view(), name='stock-returns'),
     path('portfolio-chart-data/', views.PortfolioChartDataView.as_view(), name='portfolio-chart-data'),
     path('timer/', views.TimerManagementView.as_view(), name='timer-management'),
     path('simulation-time/', views.SimulationTimeView.as_view(), name='simulation-time'),

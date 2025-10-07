@@ -117,7 +117,7 @@ const StockModal = ({ stock, onClose, onTransactionComplete }) => {
                         <div className={styles.statsSection}>
                             <div className={styles.statsGrid}>
                                 <div className={styles.statCard}>
-                                    <span className={styles.label}>Opening Price</span>
+                                    <span className={styles.label}>Last Closing Price</span>
                                     <span className={styles.value}>${stock.openingPrice.toFixed(2)}</span>
                                 </div>
                                 <div className={styles.statCard}>
