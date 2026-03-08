@@ -2,7 +2,7 @@
 
 **A full-stack stock market simulator that teaches investing through accelerated, realistic trading.**
 
-Users register an account, receive a starting cash balance, and trade stocks in a simulated market where each simulated day lasts just 5 real-world minutes. Stock prices evolve using **Geometric Brownian Motion (GBM)** — the same mathematical model used in the Black-Scholes options pricing formula — with sector-level correlations, drift, volatility, and mean-reversion all factored in.
+Users register an account, receive a starting cash balance, and trade stocks in a simulated market where each simulated day lasts just 5 real-world minutes. Stock prices evolve using **Geometric Brownian Motion (GBM)** - the same mathematical model used in the Black-Scholes options pricing formula - with sector-level correlations, drift, volatility, and mean-reversion all factored in.
 
 ---
 
@@ -174,23 +174,23 @@ Frontend is served by Nginx on ports 80/443; the API runs on port 8000 via Gunic
 
 | Endpoint | Method | Auth | Description |
 |---|---|---|---|
-| `/api/user/register/` | POST | — | Register a new user |
-| `/api/token/` | POST | — | Obtain JWT access + refresh tokens |
-| `/api/token/refresh/` | POST | — | Refresh access token |
+| `/api/user/register/` | POST | - | Register a new user |
+| `/api/token/` | POST | - | Obtain JWT access + refresh tokens |
+| `/api/token/refresh/` | POST | - | Refresh access token |
 | `/api/current-user/` | GET | JWT | Authenticated user info |
-| `/api/view-stock-prices/` | GET | — | All stocks with current prices |
+| `/api/view-stock-prices/` | GET | - | All stocks with current prices |
 | `/api/view-simulator-user/` | GET | JWT | Portfolio holdings & cash balance |
-| `/api/view-price-history/` | GET | — | Historical OHLC for a ticker |
+| `/api/view-price-history/` | GET | - | Historical OHLC for a ticker |
 | `/api/buy-stock/` | POST | JWT | Buy shares |
 | `/api/sell-stock/` | POST | JWT | Sell shares |
 | `/api/transaction-history/` | GET | JWT | Last 5 transactions |
-| `/api/leaderboard/` | GET | — | Top 3 users by net worth |
+| `/api/leaderboard/` | GET | - | Top 3 users by net worth |
 | `/api/watchlist/` | GET/POST/DELETE | JWT | Manage watchlist |
-| `/api/stock-chart-data/` | GET | — | Price history for charting |
-| `/api/stock-returns/` | GET | — | Period returns (1 w, 1 m, etc.) |
+| `/api/stock-chart-data/` | GET | - | Price history for charting |
+| `/api/stock-returns/` | GET | - | Period returns (1 w, 1 m, etc.) |
 | `/api/portfolio-chart-data/` | GET | JWT | Portfolio value over time |
-| `/api/timer/` | GET/POST/DELETE | — | Start / stop / query timer |
-| `/api/simulation-time/` | GET | — | Current day & seconds to next day |
+| `/api/timer/` | GET/POST/DELETE | - | Start / stop / query timer |
+| `/api/simulation-time/` | GET | - | Current day & seconds to next day |
 
 Rate limits: 50 req/hour (anonymous) · 500 req/hour (authenticated)
 
@@ -233,5 +233,5 @@ Tests are located in `server/simulator/stockGeneration/`.
 - API rate limiting (DRF throttling)
 - CORS configured via `django-cors-headers`
 - Atomic database transactions for buy/sell operations
-- Secrets managed via environment variables — never committed to source control
+- Secrets managed via environment variables - never committed to source control
 - Docker containers run with read-only filesystems and dropped Linux capabilities
