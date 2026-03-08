@@ -21,14 +21,14 @@ Users register an account, receive a starting cash balance, and trade stocks in 
 
 ## Features
 
-- **Accelerated trading** — 1 simulated day = 5 real minutes, so users can experience months of market activity in a short session.
-- **Realistic price generation** — GBM drives every stock. Each tick factors in market-wide movement, sector influence, individual volatility, and long-term drift.
-- **Portfolio management** — Buy and sell shares, track average cost basis, view unrealised gains/losses, and see a full transaction history.
-- **Watchlist** — Monitor up to 5 stocks with a single click.
-- **Leaderboard** — Top 3 users ranked by total net worth (cash + holdings).
-- **Interactive charts** — Price history (1 w / 1 m / 3 m / 6 m / 1 y / all) and portfolio-value-over-time charts powered by Chart.js.
-- **Sector-level ETFs** — TECH, FIN, HEALTH, ENRG, and CONS ETFs aggregate individual stocks and drive correlated moves across their sectors.
-- **Separate timer service** — A dedicated Docker container (deployable to its own EC2 instance) runs the end-of-day and intra-day price generation on a fixed schedule, completely decoupled from the API server.
+- **Accelerated trading** - 1 simulated day = 5 real minutes, so users can experience months of market activity in a short session.
+- **Realistic price generation** - GBM drives every stock. Each tick factors in market-wide movement, sector influence, individual volatility, and long-term drift.
+- **Portfolio management** - Buy and sell shares, track average cost basis, view unrealised gains/losses, and see a full transaction history.
+- **Watchlist** - Monitor up to 5 stocks with a single click.
+- **Leaderboard** - Top 3 users ranked by total net worth (cash + holdings).
+- **Interactive charts** - Price history (1 w / 1 m / 3 m / 6 m / 1 y / all) and portfolio-value-over-time charts powered by Chart.js.
+- **Sector-level ETFs** - TECH, FIN, HEALTH, ENRG, and CONS ETFs aggregate individual stocks and drive correlated moves across their sectors.
+- **Separate timer service** - A dedicated Docker container (deployable to its own EC2 instance) runs the end-of-day and intra-day price generation on a fixed schedule, completely decoupled from the API server.
 
 ---
 
@@ -158,7 +158,7 @@ docker-compose -f docker-compose.simple.yml up -d
 
 Frontend is served by Nginx on ports 80/443; the API runs on port 8000 via Gunicorn.
 
-### Timer Service (optional — separate EC2 instance)
+### Timer Service (optional - separate EC2 instance)
 
 ```bash
 ./timer-start.sh              # build & start
