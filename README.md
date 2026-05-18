@@ -6,6 +6,25 @@ Users register an account, receive a starting cash balance, and trade stocks in 
 
 ---
 
+## Live Deployment & Screenshots
+
+QuickMarkets was deployed to **AWS** (EC2 for the web and timer services, RDS for PostgreSQL, Route 53 for DNS, and Let's Encrypt for SSL) and ran as a live, publicly accessible site. The deployment has since been taken down to avoid overusing AWS free-tier credits, but the screenshots below were captured directly from the production environment.
+
+**[View all screenshots →](./screenshots)**
+
+| Page | Screenshot |
+|---|---|
+| Landing - hero | [QuickMarketz - Landing Page.jpg](./screenshots/QuickMarketz%20-%20Landing%20Page.jpg) |
+| Landing - features | [QuickMarketz - Landing Page #2.jpg](./screenshots/QuickMarketz%20-%20Landing%20Page%20%232.jpg) |
+| Sign-up | [QuickMarketz - Signup Page.jpg](./screenshots/QuickMarketz%20-%20Signup%20Page.jpg) |
+| Log-in | [QuickMarketz - Login Page.jpg](./screenshots/QuickMarketz%20-%20Login%20Page.jpg) |
+| Dashboard | [QuickMarketz - Dashboard Page.jpg](./screenshots/QuickMarketz%20-%20Dashboard%20Page.jpg) |
+| Explore Stocks | [QuickMarketz - Explore Stocks Page.jpg](./screenshots/QuickMarketz%20-%20Explore%20Stocks%20Page.jpg) |
+| Buy Stock modal (AAPL) | [QuickMarketz - Buy Stock Modal.jpg](./screenshots/QuickMarketz%20-%20Buy%20Stock%20Modal.jpg) |
+| Portfolio | [QuickMarketz - Portfolio Page.jpg](./screenshots/QuickMarketz%20-%20Portfolio%20Page.jpg) |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
